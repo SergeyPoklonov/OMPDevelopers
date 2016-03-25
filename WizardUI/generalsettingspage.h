@@ -16,8 +16,10 @@ public:
   explicit GeneralSettingsPage(QWidget *parent = 0);
   ~GeneralSettingsPage();
 
-public slots:
-      void onDevelopersListSelChanged(const QModelIndexList &indexes);
+  bool Initialize();
+
+private:
+  bool InitializeDevelopersList();
 
 private:
   Ui::GeneralSettingsPage *ui;

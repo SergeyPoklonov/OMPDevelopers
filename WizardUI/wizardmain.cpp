@@ -17,7 +17,10 @@ WizardMain::~WizardMain()
 
 bool WizardMain::Initialize()
 {
-  QWizardPage *generalSettingsPage = new GeneralSettingsPage;
+  GeneralSettingsPage *generalSettingsPage = new GeneralSettingsPage;
+
+  if( !generalSettingsPage->Initialize() )
+    return false;
 
   addPage( generalSettingsPage );
 

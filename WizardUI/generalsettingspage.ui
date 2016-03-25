@@ -69,13 +69,23 @@
        </item>
       </layout>
      </item>
-     <item row="1" column="0">
-      <widget class="QListView" name="developersList"/>
-     </item>
      <item row="0" column="0">
       <widget class="QLabel" name="label">
        <property name="text">
         <string>OMP developers list:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="0">
+      <widget class="QTableView" name="developrsList">
+       <property name="showGrid">
+        <bool>true</bool>
+       </property>
+       <property name="sortingEnabled">
+        <bool>true</bool>
+       </property>
+       <property name="cornerButtonEnabled">
+        <bool>false</bool>
        </property>
       </widget>
      </item>

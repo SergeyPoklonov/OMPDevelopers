@@ -9,7 +9,10 @@ int main(int argc, char *argv[])
   WizardMain w;
 
   if( !w.Initialize() )
+  {
+    Q_ASSERT( false );
     return 1;
+  }
 
   w.show();
 

@@ -16,6 +16,11 @@ namespace utils
     return ind >= 0 && is_valid_index(arraySize, (size_t) ind);
   }
 
+  bool is_valid_index(size_t arraySize, int ind)
+  {
+    return ind >= 0 && is_valid_index(arraySize, (size_t) ind);
+  }
+
   template <class T>
   bool is_valid_index(const std::vector<T> &vec, size_t ind)
   {
@@ -24,6 +29,12 @@ namespace utils
 
   template <class T>
   bool is_valid_index(const std::vector<T> &vec, long ind)
+  {
+    return is_valid_index( vec.size(), ind );
+  }
+
+  template <class T>
+  bool is_valid_index(const std::vector<T> &vec, int ind)
   {
     return is_valid_index( vec.size(), ind );
   }
