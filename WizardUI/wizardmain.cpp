@@ -1,5 +1,6 @@
 #include "wizardmain.h"
 #include "ui_wizardmain.h"
+#include "generalsettingspage.h"
 
 WizardMain::WizardMain(QWidget *parent) :
     QWizard(parent),
@@ -11,4 +12,14 @@ WizardMain::WizardMain(QWidget *parent) :
 WizardMain::~WizardMain()
 {
     delete ui;
+}
+
+
+bool WizardMain::Initialize()
+{
+  QWizardPage *generalSettingsPage = new GeneralSettingsPage;
+
+  addPage( generalSettingsPage );
+
+  return true;
 }

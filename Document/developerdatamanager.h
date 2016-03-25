@@ -1,5 +1,6 @@
 #include <QString>
 #include <vector>
+#include <functional>
 
 #ifndef DEVELOPERDATA_H
 #define DEVELOPERDATA_H
@@ -36,8 +37,14 @@ public:
 
     size_t Count() const { return m_DevelopersList.size(); }
 
-    CDeveloperData GetByInd( size_t ind ) const;
-    CDeveloperData GetByName( QString name ) const;
+    CDeveloperData GetDataByInd( size_t ind ) const;
+    CDeveloperData GetDataByName( QString name ) const;
+
+    long GetIndByName( QString name ) const;
+
+    bool SetDataByInd( CDeveloperData newData, size_t ind );
+
+    void SortData( std::function<bool(const CDeveloperData &f, const CDeveloperData &s)> sortPredicate );
 
 private:
     std::vector<CDeveloperData> m_DevelopersList;

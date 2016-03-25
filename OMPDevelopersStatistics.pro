@@ -13,15 +13,20 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp\
-        wizardmain.cpp \
     Document/developerdatamanager.cpp \
     Document/gitsettingsdatamanager.cpp \
-    Document/redminesettingsdatamanager.cpp
+    Document/redminesettingsdatamanager.cpp \
+    WizardUI/generalsettingspage.cpp \
+    WizardUI/wizardmain.cpp
 
-HEADERS  += wizardmain.h \
+HEADERS  += \
     Document/developerdatamanager.h \
     Document/gitsettingsdatamanager.h \
     Document/redminesettingsdatamanager.h \
-    apputils.h
+    apputils.h \
+    WizardUI/generalsettingspage.h \
+    WizardUI/wizardmain.h
 
-FORMS    += wizardmain.ui
+FORMS    += \
+    WizardUI/generalsettingspage.ui \
+    WizardUI/wizardmain.ui

@@ -15,6 +15,9 @@ public:
     explicit WizardMain(QWidget *parent = 0);
     ~WizardMain();
 
+public:
+  bool Initialize();
+
 private:
     Ui::WizardMain *ui;
 };
