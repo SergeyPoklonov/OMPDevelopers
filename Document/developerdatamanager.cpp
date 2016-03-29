@@ -18,15 +18,27 @@ bool CDeveloperData::isValid(QString *errStr) const
     return false;
   }
 
-  if( m_WageRate <= 0.0 || m_WageRate > 1.0 )
+  if( m_WageRate <= 0.0 )
   {
     if( errStr )
-      *errStr = "Неверная ставка, ставка разработчика должна быть больше 0 и меньше либо равна 1";
+      *errStr = "Неверная ставка, ставка разработчика должна быть больше 0";
 
     return false;
   }
 
   return true;
+}
+
+void CDeveloperData::ReadFromXML(QDomElement &parentElement)
+{
+  m_Name = parentElement.attribute( "name" );
+  m_WageRate = parentElement.attribute( "wr" ).toDouble();
+}
+
+void CDeveloperData::WriteToXML(QDomElement &parentElement)
+{
+  parentElement.setAttribute( "name", m_Name );
+  parentElement.setAttribute( "wr", m_WageRate );
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -35,8 +47,8 @@ CDeveloperListDataManager::CDeveloperListDataManager( QObject * parent )
 {
 }
 
-CDeveloperListDataManager::CDeveloperListDataManager( const CDeveloperListDataManager &src )
-  : QAbstractTableModel( nullptr )
+CDeveloperListDataManager::CDeveloperListDataManager( const CDeveloperListDataManager &src, QObject * parent )
+  : QAbstractTableModel( parent )
 {
   m_DevelopersList = src.m_DevelopersList;
 }
@@ -82,6 +94,57 @@ CDeveloperData CDeveloperListDataManager::GetDataByName( QString name ) const
     return CDeveloperData();
 
   return *findedIt;
+}
+
+void CDeveloperListDataManager::LoadFromXML(QDomElement &parentElement)
+{
+  beginResetModel();
+
+  clear();
+
+  QDomDocument doc = parentElement.ownerDocument();
+
+  QDomElement baseElement = parentElement.firstChildElement( "DevelopersList" );
+
+  if( !baseElement.isNull() )
+  {
+    size_t devQty = baseElement.attribute( "Qty" ).toUInt();
+
+    for(size_t i = 0; i < devQty; i++)
+    {
+      QDomElement developerElement = baseElement.firstChildElement( QString("Developer%1").arg(i+1) );
+
+      if( !developerElement.isNull() )
+      {
+        CDeveloperData devData;
+
+        devData.ReadFromXML( developerElement );
+
+        if( devData.isValid() )
+          m_DevelopersList.push_back( devData );
+      }
+    }
+  }
+
+  endResetModel();
+}
+
+void CDeveloperListDataManager::WriteToXML(QDomElement &parentElement)
+{
+  QDomDocument doc = parentElement.ownerDocument();
+
+  QDomElement baseElement = doc.createElement("DevelopersList");
+  parentElement.appendChild( baseElement );
+
+  baseElement.setAttribute("Qty", m_DevelopersList.size());
+  for(size_t i = 0; i < m_DevelopersList.size(); i++)
+  {
+    QDomElement developerElement = doc.createElement( QString("Developer%1").arg(i+1) );
+    baseElement.appendChild( developerElement );
+
+    CDeveloperData &devData = m_DevelopersList[i];
+    devData.WriteToXML( developerElement );
+  }
 }
 
 void CDeveloperListDataManager::SortData( std::function<bool(const CDeveloperData &f, const CDeveloperData &s)> sortPredicate )

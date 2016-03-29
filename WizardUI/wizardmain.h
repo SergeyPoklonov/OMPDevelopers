@@ -7,6 +7,8 @@ namespace Ui {
 class WizardMain;
 }
 
+class DocumentDataManager;
+
 class WizardMain : public QWizard
 {
     Q_OBJECT
@@ -20,6 +22,8 @@ public:
 
 private:
     Ui::WizardMain *ui;
+
+    DocumentDataManager *m_Document;
 };
 
 #endif // WIZARDMAIN_H

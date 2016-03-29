@@ -2,6 +2,7 @@
 #include <vector>
 #include <functional>
 #include <QModelIndexList>
+#include <QDomDocument>
 
 #ifndef DEVELOPERDATA_H
 #define DEVELOPERDATA_H
@@ -25,6 +26,9 @@ public:
 
     bool isValid(QString *errStr = nullptr) const;
 
+    void WriteToXML(QDomElement &parentElement);
+    void ReadFromXML(QDomElement &parentElement);
+
 private:
     QString m_Name;
     double m_WageRate;
@@ -36,7 +40,7 @@ class CDeveloperListDataManager : public QAbstractTableModel
 {
 public:
     CDeveloperListDataManager( QObject * parent = nullptr );
-    CDeveloperListDataManager( const CDeveloperListDataManager &src );
+    CDeveloperListDataManager( const CDeveloperListDataManager &src, QObject * parent = nullptr );
 
     void clear();
 
@@ -54,6 +58,9 @@ public:
     bool DeleteData(size_t ind, QString *errStr = nullptr);
 
     void SortData( std::function<bool(const CDeveloperData &f, const CDeveloperData &s)> sortPredicate );
+
+    void WriteToXML(QDomElement &parentElement);
+    void LoadFromXML(QDomElement &parentElement);
 
 // QAbstractTableModel
 public:
