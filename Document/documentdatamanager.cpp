@@ -67,7 +67,53 @@ bool DocumentDataManager::CheckSettings(QString &errStr)
     return false;
   }
 
+  if( !m_DateFrom.isValid() )
+  {
+    errStr = "Не задано начало учитываемого периода.";
+    return false;
+  }
+
+  if( !m_DateTo.isValid() )
+  {
+    errStr = "Не задан конец учитываемого периода.";
+    return false;
+  }
+
+  if( m_DateFrom > m_DateTo )
+  {
+    errStr = "Невереный учитываемый период, дата начала больше даты окончания.";
+    return false;
+  }
+
+  if( !m_WorkingDaysQty )
+  {
+    errStr = "Не задано количество рабочих дней в периоде.";
+    return false;
+  }
+
+  const qint64 periodLen = m_DateFrom.daysTo( m_DateTo );
+  if( qint64(m_WorkingDaysQty) > periodLen )
+  {
+    errStr = "Количество рабочих дней превышает количество дней в учитываемом периоде.";
+    return false;
+  }
+
   return true;
+}
+
+void DocumentDataManager::SetDateFrom(QDate d)
+{
+  m_DateFrom = d;
+}
+
+void DocumentDataManager::SetDateTo(QDate d)
+{
+  m_DateTo = d;
+}
+
+void DocumentDataManager::SetWorkingDaysQty(unsigned d)
+{
+  m_WorkingDaysQty = d;
 }
 
 void DocumentDataManager::AddWorkingDeveloper( CDeveloperData devData, unsigned holidaysDays )

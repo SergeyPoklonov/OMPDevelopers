@@ -1,6 +1,7 @@
 #ifndef DOCUMENTDATAMANAGER_H
 #define DOCUMENTDATAMANAGER_H
 
+#include <QDate>
 #include <QObject>
 #include "developerworkdata.h"
 
@@ -28,6 +29,10 @@ public:
   void ClearWorkingDevelopers();
   void AddWorkingDeveloper( CDeveloperData devData, unsigned holidaysDays );
 
+  void SetDateFrom(QDate d);
+  void SetDateTo(QDate d);
+  void SetWorkingDaysQty(unsigned d);
+
   bool CheckSettings(QString &errStr);
 
 signals:
@@ -41,7 +46,11 @@ private:
 
 private:
   CDeveloperListDataManager *m_DevelopersManager;
+
   std::vector< CDeveloperWorkData > m_DevelopersWorkDataList;
+  QDate m_DateFrom;
+  QDate m_DateTo;
+  unsigned m_WorkingDaysQty;
 };
 
 #endif // DOCUMENTDATAMANAGER_H

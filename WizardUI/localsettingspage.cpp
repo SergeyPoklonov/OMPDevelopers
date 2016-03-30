@@ -36,6 +36,8 @@ bool LocalSettingsPage::validatePage()
 {
   saveDevelopersToDocument();
 
+  saveWorkPeriodToDocument();
+
   QString str;
   if( !getDocument().CheckSettings(str) )
   {
@@ -44,6 +46,31 @@ bool LocalSettingsPage::validatePage()
   }
 
   return QWizardPage::validatePage();
+}
+
+void LocalSettingsPage::initializeWorkPeriodCtrls()
+{
+  const QDate curDate = QDate::currentDate();
+
+  QDate endDate( curDate.year(), curDate.month(), 1 );
+  endDate = endDate.addDays(-1);
+
+  ui->dateTo->setDate( endDate );
+
+  QDate begDate = endDate;
+  begDate = begDate.addDays( (endDate.daysInMonth()-1) * (-1) );
+
+  ui->dateFrom->setDate( begDate );
+
+  ui->workingDays->setMinimum(1);
+  ui->workingDays->setValue( begDate.daysTo(endDate) );
+}
+
+void LocalSettingsPage::saveWorkPeriodToDocument()
+{
+  getDocument().SetDateFrom( ui->dateFrom->date() );
+  getDocument().SetDateTo( ui->dateTo->date() );
+  getDocument().SetWorkingDaysQty( ui->workingDays->value() );
 }
 
 void LocalSettingsPage::saveDevelopersToDocument()
@@ -103,12 +130,19 @@ void LocalSettingsPage::intializeDevelopersList()
   QObject::connect(ui->developersList, &QTableWidget::itemChanged, this, &LocalSettingsPage::onDeveloperDataChanged);
 }
 
+void LocalSettingsPage::initializePage()
+{
+  QWizardPage::initializePage();
+
+  intializeDevelopersList();
+}
+
 bool LocalSettingsPage::initialize( DocumentDataManager *doc )
 {
   if( !CWizardPageDocumentSupport::initialize( doc ) )
     return false;
 
-  intializeDevelopersList();
+  initializeWorkPeriodCtrls();
 
   return true;
 }

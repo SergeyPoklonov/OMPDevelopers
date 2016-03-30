@@ -22,6 +22,7 @@ public:
 
   virtual bool initialize( DocumentDataManager *doc ) override;
 
+  virtual void initializePage() override;
   virtual bool validatePage() override;
 
 public slots:
@@ -30,6 +31,9 @@ public slots:
 private:
   void intializeDevelopersList();
   void saveDevelopersToDocument();
+
+  void initializeWorkPeriodCtrls();
+  void saveWorkPeriodToDocument();
 
 private:
   Ui::LocalSettingsPage *ui;
