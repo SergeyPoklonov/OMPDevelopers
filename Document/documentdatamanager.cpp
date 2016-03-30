@@ -54,6 +54,27 @@ bool DocumentDataManager::LoadGeneralSettings()
   return true;
 }
 
+void DocumentDataManager::ClearWorkingDevelopers()
+{
+  m_DevelopersWorkDataList.clear();
+}
+
+bool DocumentDataManager::CheckSettings(QString &errStr)
+{
+  if( m_DevelopersWorkDataList.empty() )
+  {
+    errStr = "Не выбран ни один разработчик.";
+    return false;
+  }
+
+  return true;
+}
+
+void DocumentDataManager::AddWorkingDeveloper( CDeveloperData devData, unsigned holidaysDays )
+{
+  m_DevelopersWorkDataList.push_back( CDeveloperWorkData(devData, holidaysDays) );
+}
+
 bool DocumentDataManager::SaveGeneralSettings()
 {
   QString xmlText;

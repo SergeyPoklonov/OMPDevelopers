@@ -21,7 +21,10 @@ SOURCES += main.cpp\
     WizardUI/wizardmain.cpp \
     WizardUI/developereditor.cpp \
     Document/documentdatamanager.cpp \
-    WizardUI/wizardpagedocumentsupport.cpp
+    WizardUI/wizardpagedocumentsupport.cpp \
+    WizardUI/localsettingspage.cpp \
+    Document/developerworkdata.cpp \
+    Document/developerdata.cpp
 
 HEADERS  += \
     Document/developerdatamanager.h \
@@ -32,9 +35,13 @@ HEADERS  += \
     WizardUI/wizardmain.h \
     WizardUI/developereditor.h \
     Document/documentdatamanager.h \
-    WizardUI/wizardpagedocumentsupport.h
+    WizardUI/wizardpagedocumentsupport.h \
+    WizardUI/localsettingspage.h \
+    Document/developerworkdata.h \
+    Document/developerdata.h
 
 FORMS    += \
     WizardUI/generalsettingspage.ui \
     WizardUI/wizardmain.ui \
-    WizardUI/developereditor.ui
+    WizardUI/developereditor.ui \
+    WizardUI/localsettingspage.ui

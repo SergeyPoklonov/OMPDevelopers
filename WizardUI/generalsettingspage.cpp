@@ -30,9 +30,10 @@ bool GeneralSettingsPage::validatePage()
   return QWizardPage::validatePage();
 }
 
-bool GeneralSettingsPage::Initialize( DocumentDataManager *doc )
+bool GeneralSettingsPage::initialize( DocumentDataManager *doc )
 {
-  setDocument( doc );
+  if( !CWizardPageDocumentSupport::initialize( doc ) )
+    return false;
 
   ui->developrsList->setModel( &(getDocument().getDevelopersManager()) );
 
@@ -46,7 +47,7 @@ bool GeneralSettingsPage::Initialize( DocumentDataManager *doc )
 
   QObject::connect(ui->developrsList, &QTableView::doubleClicked, this, &GeneralSettingsPage::developerEditClick);
 
-  return isValidDocumentPtr();
+  return true;
 }
 
 void GeneralSettingsPage::developerAddClick()

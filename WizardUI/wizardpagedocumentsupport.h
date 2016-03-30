@@ -8,11 +8,14 @@ class CWizardPageDocumentSupport
 public:
   CWizardPageDocumentSupport();
 
-  void setDocument( DocumentDataManager *doc );
+  virtual bool initialize( DocumentDataManager *doc );
 
   DocumentDataManager& getDocument();
 
   bool isValidDocumentPtr();
+
+protected:
+  void setDocument( DocumentDataManager *doc );
 
 private:
   DocumentDataManager *m_Doc;

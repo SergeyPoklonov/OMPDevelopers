@@ -1,6 +1,7 @@
 #include "wizardmain.h"
 #include "ui_wizardmain.h"
 #include "generalsettingspage.h"
+#include "localsettingspage.h"
 
 #include <Document/documentdatamanager.h>
 
@@ -25,10 +26,17 @@ bool WizardMain::Initialize()
 
   GeneralSettingsPage *generalSettingsPage = new GeneralSettingsPage( this );
 
-  if( !generalSettingsPage->Initialize( m_Document ) )
+  if( !generalSettingsPage->initialize( m_Document ) )
     return false;
 
   addPage( generalSettingsPage );
+
+  LocalSettingsPage *localSettingsPage = new LocalSettingsPage( this );
+
+  if( !localSettingsPage->initialize( m_Document ) )
+    return false;
+
+  addPage( localSettingsPage );
 
   return true;
 }

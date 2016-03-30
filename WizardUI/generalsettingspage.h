@@ -21,7 +21,7 @@ public:
   explicit GeneralSettingsPage(QWidget *parent = 0);
   ~GeneralSettingsPage();
 
-  bool Initialize( DocumentDataManager *doc );
+  virtual bool initialize( DocumentDataManager *doc ) override;
 
   virtual bool validatePage() override;
 

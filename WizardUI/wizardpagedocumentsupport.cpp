@@ -7,6 +7,13 @@ CWizardPageDocumentSupport::CWizardPageDocumentSupport()
   m_Doc = nullptr;
 }
 
+bool CWizardPageDocumentSupport::initialize( DocumentDataManager *doc )
+{
+  setDocument( doc );
+
+  return isValidDocumentPtr();
+}
+
 void CWizardPageDocumentSupport::setDocument( DocumentDataManager *doc )
 {
   m_Doc = doc;
