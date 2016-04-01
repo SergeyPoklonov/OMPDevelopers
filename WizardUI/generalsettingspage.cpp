@@ -38,6 +38,8 @@ bool GeneralSettingsPage::initialize( DocumentDataManager *doc )
   ui->developrsList->setModel( &(getDocument().getDevelopersManager()) );
 
   QObject::connect(ui->developrsList->selectionModel(), &QItemSelectionModel::selectionChanged, this, &GeneralSettingsPage::developersListSelectionChange);
+  
+  ui->developrsList->sortByColumn(0, Qt::AscendingOrder);
 
   developersListSelectionChange();
 

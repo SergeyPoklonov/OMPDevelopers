@@ -123,7 +123,7 @@ void LocalSettingsPage::intializeDevelopersList()
 
     QTableWidgetItem *holidaysItem = new QTableWidgetItem( );
                       holidaysItem->setFlags( Qt::ItemIsEditable | Qt::ItemIsEnabled );
-                      holidaysItem->setTextAlignment( Qt::AlignHCenter );
+                      holidaysItem->setTextAlignment( Qt::AlignHCenter | Qt::AlignVCenter );
     ui->developersList->setItem(i, DEVLIST_COLNUM_HDAYS, holidaysItem);
   }
 
