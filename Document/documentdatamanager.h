@@ -17,6 +17,11 @@ public:
   // generalSettings
 
   CDeveloperListDataManager& getDevelopersManager();
+  
+  void SetGitPath(QString gitPath);
+  QString GetGitPath() const;
+  
+  bool AreGeneralSettingsVaild(QString *errStr = nullptr);
 
   bool SaveGeneralSettings();
   bool LoadGeneralSettings();
@@ -36,6 +41,7 @@ public:
   bool CheckSettings(QString &errStr);
 
 signals:
+  void gitRepositoryChanged(QString gitPath);
 
 public slots:
 
@@ -51,6 +57,8 @@ private:
   QDate m_DateFrom;
   QDate m_DateTo;
   unsigned m_WorkingDaysQty;
+  
+  QString m_GitRepositoryPath;
 };
 
 #endif // DOCUMENTDATAMANAGER_H

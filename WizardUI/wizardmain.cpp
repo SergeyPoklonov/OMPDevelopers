@@ -5,6 +5,10 @@
 
 #include <Document/documentdatamanager.h>
 
+#include <QMessageBox>
+#include <QProcess>
+#include <QTextCodec>
+
 WizardMain::WizardMain(QWidget *parent) :
     QWizard(parent),
     ui(new Ui::WizardMain)
@@ -29,14 +33,14 @@ bool WizardMain::Initialize()
   if( !generalSettingsPage->initialize( m_Document ) )
     return false;
 
-  addPage( generalSettingsPage );
+  setPage((int)PAGEID::GENERAL_SETTINGS, generalSettingsPage);
 
   LocalSettingsPage *localSettingsPage = new LocalSettingsPage( this );
 
   if( !localSettingsPage->initialize( m_Document ) )
     return false;
 
-  addPage( localSettingsPage );
+  setPage((int)PAGEID::LOCAL_SETTINGS, localSettingsPage);
 
   return true;
 }

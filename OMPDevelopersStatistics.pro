@@ -24,7 +24,8 @@ SOURCES += main.cpp\
     WizardUI/wizardpagedocumentsupport.cpp \
     WizardUI/localsettingspage.cpp \
     Document/developerworkdata.cpp \
-    Document/developerdata.cpp
+    Document/developerdata.cpp \
+    Document/gitanalyzer.cpp
 
 HEADERS  += \
     Document/developerdatamanager.h \
@@ -38,7 +39,8 @@ HEADERS  += \
     WizardUI/wizardpagedocumentsupport.h \
     WizardUI/localsettingspage.h \
     Document/developerworkdata.h \
-    Document/developerdata.h
+    Document/developerdata.h \
+    Document/gitanalyzer.h
 
 FORMS    += \
     WizardUI/generalsettingspage.ui \

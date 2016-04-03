@@ -6,6 +6,7 @@
 #include <Document/documentdatamanager.h>
 
 #include <QMessageBox>
+#include <QFileDialog>
 
 GeneralSettingsPage::GeneralSettingsPage(QWidget *parent) :
   QWizardPage(parent),
@@ -21,10 +22,18 @@ GeneralSettingsPage::~GeneralSettingsPage()
 
 bool GeneralSettingsPage::validatePage()
 {
+  QString errStr;
+  if( !getDocument().AreGeneralSettingsVaild(&errStr) )
+  {
+    QMessageBox::warning(this, "Продолжение работы", errStr);
+    return false;
+  }
+  
   if( !getDocument().SaveGeneralSettings() )
   {
-    QMessageBox::critical(this, "Продолжение работы", "Невозможно сохранить файл настроек.");
-    return false;
+    QMessageBox::StandardButton userChoise = QMessageBox::question(this, "Продолжение работы", "Невозможно сохранить файл настроек. Продолжить работу без сохранения?");
+    if( userChoise != QMessageBox::Yes )
+      return false;
   }
 
   return QWizardPage::validatePage();
@@ -41,15 +50,33 @@ bool GeneralSettingsPage::initialize( DocumentDataManager *doc )
   
   ui->developrsList->sortByColumn(0, Qt::AscendingOrder);
 
-  developersListSelectionChange();
-
   QObject::connect(ui->developerAdd, SIGNAL(clicked()), this, SLOT(developerAddClick()));
   QObject::connect(ui->developerEdit, SIGNAL(clicked()), this, SLOT(developerEditClick()));
   QObject::connect(ui->developerDel, SIGNAL(clicked()), this, SLOT(developerDelClick()));
 
   QObject::connect(ui->developrsList, &QTableView::doubleClicked, this, &GeneralSettingsPage::developerEditClick);
+  
+  QObject::connect(ui->repositoryChooseButton, &QPushButton::clicked, this, &GeneralSettingsPage::gitRepositoryChoose);
+  
+  QObject::connect(&getDocument(), &DocumentDataManager::gitRepositoryChanged, this, &GeneralSettingsPage::gitRepositoryChange);
+  
+  developersListSelectionChange();
+  gitRepositoryChange( getDocument().GetGitPath() );
 
   return true;
+}
+
+void GeneralSettingsPage::gitRepositoryChange(QString gitRepository)
+{
+  ui->repositoryEdit->setText( gitRepository );
+}
+
+void GeneralSettingsPage::gitRepositoryChoose()
+{ 
+  const QString gitDir = QFileDialog::getExistingDirectory(this, "Расположение репозитория Git", getDocument().GetGitPath() );
+  
+  if( !gitDir.isEmpty() )
+    getDocument().SetGitPath( gitDir );
 }
 
 void GeneralSettingsPage::developerAddClick()

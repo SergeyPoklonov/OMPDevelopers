@@ -29,6 +29,9 @@ private slots:
   void developerAddClick();
   void developerEditClick();
   void developerDelClick();
+  
+  void gitRepositoryChoose();
+  void gitRepositoryChange(QString gitRepository);
 
   void developersListSelectionChange();
 

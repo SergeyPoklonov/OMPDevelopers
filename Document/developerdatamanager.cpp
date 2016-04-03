@@ -235,6 +235,15 @@ QVariant CDeveloperListDataManager::data(const QModelIndex &index, int role) con
 {
   if( !index.isValid() )
     return QVariant();
+  
+  if( role == Qt::TextAlignmentRole )
+  {
+    const int modelCol = index.column();
+    if( modelCol == COLNUM_WR )
+      return (unsigned)(Qt::AlignHCenter | Qt::AlignVCenter);
+    
+    return (unsigned)(Qt::AlignLeft | Qt::AlignVCenter);
+  }
 
   if( role != Qt::DisplayRole )
     return QVariant();

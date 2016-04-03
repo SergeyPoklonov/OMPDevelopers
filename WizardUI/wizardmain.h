@@ -16,6 +16,13 @@ class WizardMain : public QWizard
 public:
     explicit WizardMain(QWidget *parent = 0);
     ~WizardMain();
+  
+public:
+  enum class PAGEID
+  {
+    GENERAL_SETTINGS = 1,
+    LOCAL_SETTINGS = 2
+  };
 
 public:
   bool Initialize();

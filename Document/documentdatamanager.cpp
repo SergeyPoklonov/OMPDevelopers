@@ -21,6 +21,18 @@ void DocumentDataManager::Construct()
   m_DevelopersManager = new CDeveloperListDataManager( this );
 }
 
+void DocumentDataManager::SetGitPath(QString gitPath)
+{
+  m_GitRepositoryPath = gitPath;
+  
+  emit gitRepositoryChanged(m_GitRepositoryPath);
+}
+
+QString DocumentDataManager::GetGitPath() const
+{
+  return m_GitRepositoryPath;
+}
+
 QString DocumentDataManager::getGeneralSettingsFilePath() const
 {
   QString dirParth = QCoreApplication::instance()->applicationDirPath();
@@ -50,6 +62,12 @@ bool DocumentDataManager::LoadGeneralSettings()
     return false;
 
   m_DevelopersManager->LoadFromXML( root );
+  
+  QDomElement gitElement = root.firstChildElement( "Git" );
+  
+  m_GitRepositoryPath = gitElement.attribute( "RepoPath" );
+  
+  emit gitRepositoryChanged(m_GitRepositoryPath);
 
   return true;
 }
@@ -121,6 +139,27 @@ void DocumentDataManager::AddWorkingDeveloper( CDeveloperData devData, unsigned 
   m_DevelopersWorkDataList.push_back( CDeveloperWorkData(devData, holidaysDays) );
 }
 
+bool DocumentDataManager::AreGeneralSettingsVaild(QString *errStr)
+{
+  if( m_DevelopersManager->Count() == 0 )
+  {
+    if( errStr )
+      *errStr = "Не задан ни один разработчик.";
+    
+    return false;
+  }
+  
+  if( m_GitRepositoryPath.isEmpty() )
+  {
+    if( errStr )
+      *errStr = "Не задан путь к репозиторю Git.";
+    
+    return false;
+  }
+  
+  return true;
+}
+
 bool DocumentDataManager::SaveGeneralSettings()
 {
   QString xmlText;
@@ -148,7 +187,15 @@ bool DocumentDataManager::MakeGeneralSettingsXML(QString &xmlFileText)
 
   doc.appendChild(root);
 
+  // developers
   m_DevelopersManager->WriteToXML( root );
+  
+  // git
+  QDomElement gitElement = doc.createElement("Git");
+  
+  root.appendChild( gitElement );
+  
+  gitElement.setAttribute( "RepoPath", m_GitRepositoryPath );
 
   xmlFileText = doc.toString();
 
