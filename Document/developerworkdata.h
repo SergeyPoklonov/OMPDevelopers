@@ -6,6 +6,29 @@
 #include <QString>
 
 
+class CRevisionData
+{
+public:
+  CRevisionData();
+  
+  void clear();
+  
+  QString SHA() const;
+  void setSHA(const QString &SHA);
+  
+  QString DeveloperName() const;
+  void setDeveloperName(const QString &DeveloperName);
+  
+  double HoursSpent() const;
+  void setHoursSpent(double HoursSpent);
+  
+private:
+  QString m_SHA;
+  QString m_DeveloperName;
+  double  m_HoursSpent;
+};
+
+///////////////////////////////////////////////////////////////////////
 
 class CDeveloperWorkData
 {
@@ -22,10 +45,16 @@ public:
 
   void setDeveloperData(CDeveloperData devData);
   void setHolidaysDays(unsigned d);
+  
+  std::vector<CRevisionData> revisionsList() const;
+  size_t revisionsCount() const;
+  
+  void addRevision(const CRevisionData &revData);
 
 private:
   CDeveloperData m_DevData;
   unsigned m_HolidaysDays;
+  std::vector<CRevisionData> m_RevisionsList;
 };
 
 #endif // CDEVELOPERWORKDATA_H
