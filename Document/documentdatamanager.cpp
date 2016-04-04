@@ -1,5 +1,6 @@
 #include "developerdatamanager.h"
 #include "documentdatamanager.h"
+#include "gitanalyzer.h"
 
 #include <QCoreApplication>
 #include <QDomDocument>
@@ -75,6 +76,49 @@ bool DocumentDataManager::LoadGeneralSettings()
 void DocumentDataManager::ClearWorkingDevelopers()
 {
   m_DevelopersWorkDataList.clear();
+}
+
+AnalyzeSettings DocumentDataManager::gitSettings()
+{
+  AnalyzeSettings gitSettings;
+                  gitSettings.RepositoryPath = m_GitRepositoryPath;
+                  gitSettings.DateFrom = m_DateFrom;
+                  gitSettings.DateTo = m_DateTo;  
+                  
+  return gitSettings;
+}
+
+bool DocumentDataManager::generateWorkData()
+{
+  GitAnalyzer gitAnalyzer( gitSettings() );
+  
+  // 1. Определяем кол-во итераций при генерации
+  int iterationCnt = 0;
+  
+  // git
+  iterationCnt += gitAnalyzer.GetRevisionsCount();
+  
+  // redmine
+  1;
+  
+  // workers
+  //iterationCnt += m_DevelopersWorkDataList.size();
+  
+  // 2. Генерируем данные
+  
+  // git
+  QString errStr;
+    
+  if( !gitAnalyzer.AnalyzeRepository( m_DevelopersWorkDataList, &errStr ) )
+  {
+    1;
+  }
+  
+  // redmine
+  
+  // workers
+  
+  return true;
 }
 
 bool DocumentDataManager::CheckSettings(QString &errStr)

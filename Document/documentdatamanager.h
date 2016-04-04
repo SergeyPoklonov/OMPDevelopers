@@ -4,6 +4,7 @@
 #include <QDate>
 #include <QObject>
 #include "developerworkdata.h"
+#include "gitanalyzer.h"
 
 class CDeveloperListDataManager;
 
@@ -40,6 +41,10 @@ public:
 
   bool CheckSettings(QString &errStr);
 
+  ///////////////////////////////////////////////////////////////////////////
+  // dataGeneration
+  bool generateWorkData();
+
 signals:
   void gitRepositoryChanged(QString gitPath);
 
@@ -49,6 +54,8 @@ private:
   void Construct();
 
   bool MakeGeneralSettingsXML(QString &xmlFileText);
+  
+  AnalyzeSettings gitSettings();
 
 private:
   CDeveloperListDataManager *m_DevelopersManager;

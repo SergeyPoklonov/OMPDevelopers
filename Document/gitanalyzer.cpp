@@ -1,12 +1,17 @@
 #include "gitanalyzer.h"
 
-GitAnalyzer::GitAnalyzer(QObject *parent)
+const QString GitAnalyzer::tagSHA = "!SHA:";
+const QString GitAnalyzer::tagAuthor = "!AUT:";
+const QString GitAnalyzer::tagNotes = "!NOTE:";
+
+GitAnalyzer::GitAnalyzer(AnalyzeSettings settings, QObject *parent)
   : QObject(parent)
+  , m_Settings(settings)
 {
-  clear();
+  clearGenerationOutData();
 }
 
-void GitAnalyzer::clear()
+void GitAnalyzer::clearGenerationOutData()
 {
   m_gitProcessRunOK = true;
   m_gitProcessRunError = QProcess::UnknownError;
@@ -33,9 +38,71 @@ QString GitAnalyzer::makeGitProcessRunErrorString()
   return errStr;
 }
 
-bool GitAnalyzer::AnalyzeRepository(AnalyzeSettings settings, std::vector<CDeveloperWorkData> &workDevList, QString *errStr)
+bool GitAnalyzer::runGit(QString &output, QString *errStr)
 {
-  if( settings.RepositoryPath.isEmpty() )
+  QProcess gitProcess;
+           gitProcess.setWorkingDirectory( m_Settings.RepositoryPath );
+
+  QObject::connect(&gitProcess, &QProcess::errorOccurred, this, &GitAnalyzer::gitProcessFail);
+
+  const QString argDateFormat = "dd.MM.yyyy";
+
+  QStringList args;
+              args.append("log");
+              args.append( QString("--pretty=format:\"%1%H%n%2%an%n%3%s%n\"").arg(tagSHA).arg(tagAuthor).arg(tagNotes) );
+              args.append( QString("--since=%1").arg( m_Settings.DateFrom.toString(argDateFormat) ) );
+              args.append( QString("--until=%1").arg( m_Settings.DateTo.toString(argDateFormat) ) );
+
+  gitProcess.start("git", args);
+
+  const bool runOK = gitProcess.waitForFinished();
+
+  if( !runOK || !m_gitProcessRunOK )
+  {
+    if( errStr )
+      *errStr = makeGitProcessRunErrorString();
+
+    return false;
+  }
+
+  QByteArray byteOutput = gitProcess.readAllStandardOutput();
+
+  output = QString::fromUtf8(byteOutput);
+
+  return true;
+}
+
+size_t GitAnalyzer::GetRevisionsCount()
+{
+  clearGenerationOutData();
+
+  QString gitOutput;
+
+  if( !runGit( gitOutput ) )
+    return 0;
+  
+  size_t revCount = 0;
+  
+  int findInd = 0;
+  
+  do
+  {
+    findInd = gitOutput.indexOf(tagSHA, findInd);
+    
+    if( findInd != -1 )
+    {
+      revCount++;
+      findInd += tagSHA.size();
+    }
+  }
+  while( findInd != -1 && findInd < gitOutput.size() );
+    
+  return revCount;
+}
+
+bool GitAnalyzer::AnalyzeRepository(std::vector<CDeveloperWorkData> &workDevList, QString *errStr)
+{
+  if( m_Settings.RepositoryPath.isEmpty() )
   {
     if( errStr )
       *errStr = "Не задан пусть к репозиторию Git";
@@ -43,38 +110,12 @@ bool GitAnalyzer::AnalyzeRepository(AnalyzeSettings settings, std::vector<CDevel
     return false;
   }
   
-  clear();
-  
-  QProcess gitProcess;
-  gitProcess.setWorkingDirectory( settings.RepositoryPath );
-  
-  QObject::connect(&gitProcess, &QProcess::errorOccurred, this, &GitAnalyzer::gitProcessFail);
-  
-  {
-    QStringList args;
-    args.append("log");
-    args.append("--pretty=format:\"SHA:%H Author:%an%nNotes:%s%n\"");
-    args.append("--since=30.03.2016");
-    args.append("--until=01.04.2016");
-    gitProcess.start("git", args);
-  }
-  const bool runOK = gitProcess.waitForFinished();
-  
-  if( !runOK || !m_gitProcessRunOK )
-  {
-    if( errStr )
-      *errStr = makeGitProcessRunErrorString();
-    
-    return false;
-  }
-  
-  /*if( runOK )
-  {
-    QByteArray byteOutput = gitProcess.readAllStandardOutput();
+  clearGenerationOutData();
 
-    QString str = QString::fromUtf8(byteOutput);
-    QMessageBox::information(this, "Utf8",str);
-  }*/
-  
+  QString gitOutput;
+
+  if( !runGit(gitOutput, errStr) )
+    return false;
+    
   return true;
 }
