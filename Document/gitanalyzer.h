@@ -27,7 +27,7 @@ public:
   size_t GetRevisionsCount();
 
 private:
-  void clearGenerationOutData();
+  void clearGenerationData();
   
   QString makeGitProcessRunErrorString();
 
@@ -42,6 +42,7 @@ private:
   bool m_gitProcessRunOK;
   QProcess::ProcessError m_gitProcessRunError;
 
+  static const QString tagRev;
   static const QString tagSHA;
   static const QString tagAuthor;
   static const QString tagNotes;

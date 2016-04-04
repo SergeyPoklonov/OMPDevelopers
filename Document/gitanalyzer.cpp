@@ -1,5 +1,6 @@
 #include "gitanalyzer.h"
 
+const QString GitAnalyzer::tagRev = "!R!V";
 const QString GitAnalyzer::tagSHA = "!SHA:";
 const QString GitAnalyzer::tagAuthor = "!AUT:";
 const QString GitAnalyzer::tagNotes = "!NOTE:";
@@ -8,10 +9,10 @@ GitAnalyzer::GitAnalyzer(AnalyzeSettings settings, QObject *parent)
   : QObject(parent)
   , m_Settings(settings)
 {
-  clearGenerationOutData();
+  clearGenerationData();
 }
 
-void GitAnalyzer::clearGenerationOutData()
+void GitAnalyzer::clearGenerationData()
 {
   m_gitProcessRunOK = true;
   m_gitProcessRunError = QProcess::UnknownError;
@@ -49,7 +50,7 @@ bool GitAnalyzer::runGit(QString &output, QString *errStr)
 
   QStringList args;
               args.append("log");
-              args.append( QString("--pretty=format:\"%1%H%n%2%an%n%3%s%n\"").arg(tagSHA).arg(tagAuthor).arg(tagNotes) );
+              args.append( QString("--pretty=format:\"%1%n%2%H%n%3%an%n%4%s%n\"").arg(tagRev).arg(tagSHA).arg(tagAuthor).arg(tagNotes) );
               args.append( QString("--since=%1").arg( m_Settings.DateFrom.toString(argDateFormat) ) );
               args.append( QString("--until=%1").arg( m_Settings.DateTo.toString(argDateFormat) ) );
 
@@ -74,7 +75,7 @@ bool GitAnalyzer::runGit(QString &output, QString *errStr)
 
 size_t GitAnalyzer::GetRevisionsCount()
 {
-  clearGenerationOutData();
+  clearGenerationData();
 
   QString gitOutput;
 
@@ -87,12 +88,12 @@ size_t GitAnalyzer::GetRevisionsCount()
   
   do
   {
-    findInd = gitOutput.indexOf(tagSHA, findInd);
+    findInd = gitOutput.indexOf(tagRev, findInd);
     
     if( findInd != -1 )
     {
       revCount++;
-      findInd += tagSHA.size();
+      findInd += tagRev.size();
     }
   }
   while( findInd != -1 && findInd < gitOutput.size() );
@@ -110,12 +111,23 @@ bool GitAnalyzer::AnalyzeRepository(std::vector<CDeveloperWorkData> &workDevList
     return false;
   }
   
-  clearGenerationOutData();
+  clearGenerationData();
 
   QString gitOutput;
 
   if( !runGit(gitOutput, errStr) )
     return false;
+  
+  int seekInd = 0;
+  
+  /*do
+  {
+    QString revBodyStr;
+    PickNextRevisionBody(seekInd, gitOutput, revBodyStr);
+    
+    seekInd
+    
+  }while();*/
     
   return true;
 }
