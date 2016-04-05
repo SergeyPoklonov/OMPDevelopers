@@ -6,6 +6,7 @@
 
 QT       += core gui
 QT       += xml
+QT       += network
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -26,7 +27,8 @@ SOURCES += main.cpp\
     Document/developerworkdata.cpp \
     Document/developerdata.cpp \
     Document/gitanalyzer.cpp \
-    WizardUI/generationpage.cpp
+    WizardUI/generationpage.cpp \
+    Document/redmineanalyzer.cpp
 
 HEADERS  += \
     Document/developerdatamanager.h \
@@ -42,7 +44,8 @@ HEADERS  += \
     Document/developerworkdata.h \
     Document/developerdata.h \
     Document/gitanalyzer.h \
-    WizardUI/generationpage.h
+    WizardUI/generationpage.h \
+    Document/redmineanalyzer.h
 
 FORMS    += \
     WizardUI/generalsettingspage.ui \

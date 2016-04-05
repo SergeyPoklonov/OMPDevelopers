@@ -11,9 +11,8 @@ class GitAnalyzer : public QObject
   Q_OBJECT
   
 public:
-  class AnalyzeSettings
+  struct AnalyzeSettings
   {
-  public:
     QString RepositoryPath;
     QDate DateFrom;
     QDate DateTo;

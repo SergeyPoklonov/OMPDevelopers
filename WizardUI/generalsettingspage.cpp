@@ -22,6 +22,9 @@ GeneralSettingsPage::~GeneralSettingsPage()
 
 bool GeneralSettingsPage::validatePage()
 {
+  getDocument().setRedmineAuthKey( ui->authKeyEdit->text() );
+  getDocument().setRedmineURL( ui->redmineURLEdit->text() );
+  
   QString errStr;
   if( !getDocument().AreGeneralSettingsVaild(&errStr) )
   {

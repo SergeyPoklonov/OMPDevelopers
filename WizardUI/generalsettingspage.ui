@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>412</width>
-    <height>332</height>
+    <height>453</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -28,7 +28,7 @@
   <property name="subTitle">
    <string/>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_2">
+  <layout class="QVBoxLayout" name="verticalLayout_4">
    <item>
     <layout class="QGridLayout" name="developersLayout">
      <item row="1" column="1">
@@ -132,6 +132,35 @@
         </widget>
        </item>
       </layout>
+     </item>
+     <item>
+      <widget class="QGroupBox" name="groupBox">
+       <property name="title">
+        <string>Redmine</string>
+       </property>
+       <layout class="QVBoxLayout" name="verticalLayout_2">
+        <item>
+         <widget class="QLabel" name="label_3">
+          <property name="text">
+           <string>Server URL:</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLineEdit" name="redmineURLEdit"/>
+        </item>
+        <item>
+         <widget class="QLabel" name="label_4">
+          <property name="text">
+           <string>Authentication key:</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLineEdit" name="authKeyEdit"/>
+        </item>
+       </layout>
+      </widget>
      </item>
      <item>
       <spacer name="verticalSpacer_2">

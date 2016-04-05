@@ -5,6 +5,7 @@
 #include <QObject>
 #include "developerworkdata.h"
 #include "gitanalyzer.h"
+#include "redmineanalyzer.h"
 
 class CDeveloperListDataManager;
 
@@ -21,6 +22,12 @@ public:
   
   void SetGitPath(QString gitPath);
   QString GetGitPath() const;
+  
+  QString getRedmineURL() const;
+  void setRedmineURL(const QString &RedmineURL);
+  
+  QString getRedmineAuthKey() const;
+  void setRedmineAuthKey(const QString &RedmineAuthKey);
   
   bool AreGeneralSettingsVaild(QString *errStr = nullptr);
 
@@ -44,7 +51,7 @@ public:
   ///////////////////////////////////////////////////////////////////////////
   // dataGeneration
   bool generateWorkData();
-
+  
 signals:
   void gitRepositoryChanged(QString gitPath);
   
@@ -61,17 +68,22 @@ private:
   bool MakeGeneralSettingsXML(QString &xmlFileText);
   
   GitAnalyzer::AnalyzeSettings gitSettings();
+  RedmineAnalyzer::AnalyzeSettings redmineSettings();
 
 private:
   CDeveloperListDataManager *m_DevelopersManager;
 
-  std::vector< CDeveloperWorkData > m_DevelopersWorkDataList;
-  std::vector< CDeveloperWorkData > m_GenerationResult;
   QDate m_DateFrom;
   QDate m_DateTo;
   unsigned m_WorkingDaysQty;
   
   QString m_GitRepositoryPath;
+  
+  QString m_RedmineURL;
+  QString m_RedmineAuthKey;
+  
+  std::vector< CDeveloperWorkData > m_DevelopersWorkDataList;
+  std::vector< CDeveloperWorkData > m_GenerationResult;
 };
 
 #endif // DOCUMENTDATAMANAGER_H

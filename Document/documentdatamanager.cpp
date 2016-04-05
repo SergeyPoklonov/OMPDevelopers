@@ -41,6 +41,36 @@ QString DocumentDataManager::getGeneralSettingsFilePath() const
   return filePath;
 }
 
+bool DocumentDataManager::MakeGeneralSettingsXML(QString &xmlFileText)
+{
+  QDomDocument doc("OMPDevSettings");
+  QDomElement root = doc.createElement("SettingsRoot");
+
+  doc.appendChild(root);
+
+  // developers
+  m_DevelopersManager->WriteToXML( root );
+  
+  // git
+  QDomElement gitElement = doc.createElement("Git");
+  
+  root.appendChild( gitElement );
+  
+  gitElement.setAttribute( "RepoPath", m_GitRepositoryPath );
+  
+  // redmine
+  QDomElement redmineElement = doc.createElement("Redmine");
+  
+  root.appendChild( redmineElement );
+  
+  redmineElement.setAttribute( "URL", m_RedmineURL );
+  redmineElement.setAttribute( "Key", m_RedmineAuthKey );
+
+  xmlFileText = doc.toString();
+
+  return true;
+}
+
 bool DocumentDataManager::LoadGeneralSettings()
 {
   QString filePath = getGeneralSettingsFilePath();
@@ -69,6 +99,11 @@ bool DocumentDataManager::LoadGeneralSettings()
   m_GitRepositoryPath = gitElement.attribute( "RepoPath" );
   
   emit gitRepositoryChanged(m_GitRepositoryPath);
+  
+  QDomElement redmineElement = root.firstChildElement( "Redmine" );
+  
+  m_RedmineURL = redmineElement.attribute("URL");
+  m_RedmineAuthKey = redmineElement.attribute("Key");
 
   return true;
 }
@@ -76,6 +111,18 @@ bool DocumentDataManager::LoadGeneralSettings()
 void DocumentDataManager::ClearWorkingDevelopers()
 {
   m_DevelopersWorkDataList.clear();
+}
+
+RedmineAnalyzer::AnalyzeSettings DocumentDataManager::redmineSettings()
+{
+  RedmineAnalyzer::AnalyzeSettings settings;
+  
+  settings.AuthKey = m_RedmineAuthKey;
+  settings.Url = m_RedmineURL;
+  settings.DateFrom = m_DateFrom;
+  settings.DateTo = m_DateTo;
+  
+  return settings;
 }
 
 GitAnalyzer::AnalyzeSettings DocumentDataManager::gitSettings()
@@ -86,6 +133,26 @@ GitAnalyzer::AnalyzeSettings DocumentDataManager::gitSettings()
   gitSettings.DateTo = m_DateTo;  
                   
   return gitSettings;
+}
+
+QString DocumentDataManager::getRedmineAuthKey() const
+{
+  return m_RedmineAuthKey;
+}
+
+void DocumentDataManager::setRedmineAuthKey(const QString &RedmineAuthKey)
+{
+  m_RedmineAuthKey = RedmineAuthKey;
+}
+
+QString DocumentDataManager::getRedmineURL() const
+{
+  return m_RedmineURL;
+}
+
+void DocumentDataManager::setRedmineURL(const QString &RedmineURL)
+{
+  m_RedmineURL = RedmineURL;
 }
 
 bool DocumentDataManager::generateWorkData()
@@ -104,7 +171,7 @@ bool DocumentDataManager::generateWorkData()
     
   if( !gitAnalyzer.AnalyzeRepository( tempWorkersData, &errStr ) )
   {
-    emit generationErrorOccured( errStr );
+    emit generationErrorOccured( QString("ОШИБКА:%1").arg(errStr) );
     return false;
   }
   
@@ -200,6 +267,22 @@ bool DocumentDataManager::AreGeneralSettingsVaild(QString *errStr)
     return false;
   }
   
+  if( m_RedmineURL.isEmpty() )
+  {
+    if( errStr )
+      *errStr = "Не введен redmine URL.";
+    
+    return false;
+  }
+  
+  if( m_RedmineAuthKey.isEmpty() )
+  {
+    if( errStr )
+      *errStr = "Не введен redmine authentication key.";
+    
+    return false;
+  }
+  
   return true;
 }
 
@@ -219,28 +302,6 @@ bool DocumentDataManager::SaveGeneralSettings()
   QTextStream outStream( &settingsFile );
 
   outStream << xmlText;
-
-  return true;
-}
-
-bool DocumentDataManager::MakeGeneralSettingsXML(QString &xmlFileText)
-{
-  QDomDocument doc("OMPDevSettings");
-  QDomElement root = doc.createElement("SettingsRoot");
-
-  doc.appendChild(root);
-
-  // developers
-  m_DevelopersManager->WriteToXML( root );
-  
-  // git
-  QDomElement gitElement = doc.createElement("Git");
-  
-  root.appendChild( gitElement );
-  
-  gitElement.setAttribute( "RepoPath", m_GitRepositoryPath );
-
-  xmlFileText = doc.toString();
 
   return true;
 }

@@ -18,7 +18,16 @@ void GenerationPage::initializePage()
 {
   QWizardPage::initializePage();
   
-  getDocument().generateWorkData();
+  const bool generationOK = getDocument().generateWorkData();
+  
+  if( generationOK )
+  {
+    ui->logEdit->appendPlainText("Сбор и анализ данных успешно завершен.");
+  }
+  else
+  {
+    ui->logEdit->appendPlainText("Сбор и анализ данных прерван из-за возникших ошибок.");
+  }
 }
 
 bool GenerationPage::initialize( DocumentDataManager *doc )
