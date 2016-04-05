@@ -47,6 +47,11 @@ public:
 
 signals:
   void gitRepositoryChanged(QString gitPath);
+  
+  void generationStepsNumUpdated( int stepsNum );
+  void generationStepsDone( int stepsNum );
+  void generationMessage( QString msgText );
+  void generationErrorOccured( QString errStr );
 
 public slots:
 
@@ -55,12 +60,13 @@ private:
 
   bool MakeGeneralSettingsXML(QString &xmlFileText);
   
-  AnalyzeSettings gitSettings();
+  GitAnalyzer::AnalyzeSettings gitSettings();
 
 private:
   CDeveloperListDataManager *m_DevelopersManager;
 
   std::vector< CDeveloperWorkData > m_DevelopersWorkDataList;
+  std::vector< CDeveloperWorkData > m_GenerationResult;
   QDate m_DateFrom;
   QDate m_DateTo;
   unsigned m_WorkingDaysQty;

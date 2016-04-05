@@ -66,6 +66,7 @@ void CRevisionData::clear()
   m_SHA.clear();
   m_DeveloperName.clear();
   m_HoursSpent = 0.0;
+  m_RedmineLinked = false;
 }
 
 CRevisionData::CRevisionData()
@@ -98,7 +99,22 @@ double CRevisionData::HoursSpent() const
     return m_HoursSpent;
 }
 
+void CRevisionData::addHoursSpent(double h)
+{
+  m_HoursSpent += h;
+}
+
 void CRevisionData::setHoursSpent(double HoursSpent)
 {
     m_HoursSpent = HoursSpent;
+}
+
+bool CRevisionData::RedmineLinked() const
+{
+    return m_RedmineLinked;
+}
+
+void CRevisionData::setRedmineLinked(bool RedmineLinked)
+{
+    m_RedmineLinked = RedmineLinked;
 }

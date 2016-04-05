@@ -6,17 +6,18 @@
 #include <QDate>
 #include <QProcess>
 
-class AnalyzeSettings
-{
-public:
-  QString RepositoryPath;
-  QDate DateFrom;
-  QDate DateTo;
-};
-
 class GitAnalyzer : public QObject
 {
   Q_OBJECT
+  
+public:
+  class AnalyzeSettings
+  {
+  public:
+    QString RepositoryPath;
+    QDate DateFrom;
+    QDate DateTo;
+  };
   
 public:
   explicit GitAnalyzer(AnalyzeSettings settings, QObject *parent = 0);
@@ -32,6 +33,9 @@ private:
   QString makeGitProcessRunErrorString();
 
   bool runGit(QString &output, QString *errStr = nullptr);
+  
+  bool ParseRevisionBody(const QString &revBodyStr, CRevisionData &revData);
+  void AddRevisionToDeveloper( std::vector<CDeveloperWorkData> &workDevList, const CRevisionData &revData );
   
 private slots:
   void gitProcessFail(QProcess::ProcessError error);

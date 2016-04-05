@@ -1,6 +1,7 @@
 #include "gitanalyzer.h"
+#include "apputils.h"
 
-const QString GitAnalyzer::tagRev = "!R!V";
+const QString GitAnalyzer::tagRev = "!R!v";
 const QString GitAnalyzer::tagSHA = "!SHA:";
 const QString GitAnalyzer::tagAuthor = "!AUT:";
 const QString GitAnalyzer::tagNotes = "!NOTE:";
@@ -50,7 +51,7 @@ bool GitAnalyzer::runGit(QString &output, QString *errStr)
 
   QStringList args;
               args.append("log");
-              args.append( QString("--pretty=format:\"%1%n%2%H%n%3%an%n%4%s%n\"").arg(tagRev).arg(tagSHA).arg(tagAuthor).arg(tagNotes) );
+              args.append( QString("--pretty=format:\%1%2%H%3%an%4%s").arg(tagRev).arg(tagSHA).arg(tagAuthor).arg(tagNotes) );
               args.append( QString("--since=%1").arg( m_Settings.DateFrom.toString(argDateFormat) ) );
               args.append( QString("--until=%1").arg( m_Settings.DateTo.toString(argDateFormat) ) );
 
@@ -101,6 +102,66 @@ size_t GitAnalyzer::GetRevisionsCount()
   return revCount;
 }
 
+bool GitAnalyzer::ParseRevisionBody(const QString &revBodyStr, CRevisionData &revData)
+{
+  const int shaInd = revBodyStr.indexOf(tagSHA);
+  const int authInd = revBodyStr.indexOf(tagAuthor,shaInd);
+  const int notesInd = revBodyStr.indexOf(tagNotes,authInd);
+  
+  if( shaInd == -1 || authInd == -1 || notesInd == -1 )
+  {
+    Q_ASSERT( false ); // bad revision body
+    return false;
+  }
+  
+  const int shaBodyInd = shaInd + tagSHA.size();
+  const int authBodyInd = authInd + tagAuthor.size();
+  const int notesBodyInd = notesInd + tagNotes.size();
+  
+  QString shaStr = revBodyStr.mid(shaBodyInd, authInd - (shaBodyInd));
+  QString authStr = revBodyStr.mid(authBodyInd, notesInd - (authBodyInd));
+  QString notesStr = revBodyStr.right( revBodyStr.size() - notesBodyInd );
+  
+  revData.setDeveloperName( authStr );
+  revData.setSHA( shaStr );
+  
+  QRegExp taskTagRE;
+          taskTagRE.setPattern("#(\\d)+(\\D|$)");
+          
+  const int taskTagPos = notesStr.indexOf( taskTagRE );
+  revData.setRedmineLinked( taskTagPos != -1 );
+  
+  QRegExp hrsTagRE;
+          hrsTagRE.setPattern("@\\d*[\\.,]*\\d*");
+          
+  notesStr.contains( hrsTagRE );
+  
+  QStringList hrsTagsList = hrsTagRE.capturedTexts();
+  
+  for( QString hrsTagStr : hrsTagsList )
+  {
+    QString hrsStr = hrsTagStr.right( hrsStr.size() - 1 );
+            
+    hrsStr.replace(',', '.');
+    const double hrsVal = hrsStr.toDouble();
+    revData.addHoursSpent( hrsVal );
+  }
+  
+  return true;
+}
+
+void GitAnalyzer::AddRevisionToDeveloper( std::vector<CDeveloperWorkData> &workDevList, const CRevisionData &revData )
+{
+  for(CDeveloperWorkData &devData : workDevList)
+  {
+    if( devData.getName().compare( revData.DeveloperName(), Qt::CaseInsensitive ) == 0 )
+    {
+      devData.addRevision( revData );
+      break;
+    }
+  }
+}
+
 bool GitAnalyzer::AnalyzeRepository(std::vector<CDeveloperWorkData> &workDevList, QString *errStr)
 {
   if( m_Settings.RepositoryPath.isEmpty() )
@@ -118,16 +179,16 @@ bool GitAnalyzer::AnalyzeRepository(std::vector<CDeveloperWorkData> &workDevList
   if( !runGit(gitOutput, errStr) )
     return false;
   
-  int seekInd = 0;
+  QStringList revisionsStrList = gitOutput.split(tagRev, QString::SkipEmptyParts);
   
-  /*do
+  for( const QString &revBodyStr : revisionsStrList )
   {
-    QString revBodyStr;
-    PickNextRevisionBody(seekInd, gitOutput, revBodyStr);
-    
-    seekInd
-    
-  }while();*/
+    CRevisionData revData;
+    if( ParseRevisionBody(revBodyStr, revData) )
+    {
+      AddRevisionToDeveloper( workDevList, revData );
+    }
+  }
     
   return true;
 }

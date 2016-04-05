@@ -6,17 +6,17 @@
 namespace utils
 {
   // is_valid_index
-  bool is_valid_index(size_t arraySize, size_t ind)
+  inline bool is_valid_index(size_t arraySize, size_t ind)
   {
     return ind < arraySize;
   }
 
-  bool is_valid_index(size_t arraySize, long ind)
+  inline bool is_valid_index(size_t arraySize, long ind)
   {
     return ind >= 0 && is_valid_index(arraySize, (size_t) ind);
   }
 
-  bool is_valid_index(size_t arraySize, int ind)
+  inline bool is_valid_index(size_t arraySize, int ind)
   {
     return ind >= 0 && is_valid_index(arraySize, (size_t) ind);
   }
@@ -41,12 +41,12 @@ namespace utils
 
 
   // is_first_index
-  bool is_first_index(size_t arraySize, size_t ind)
+  inline bool is_first_index(size_t arraySize, size_t ind)
   {
     return !ind && is_valid_index(arraySize, ind);
   }
 
-  bool is_first_index(size_t arraySize, long ind)
+  inline bool is_first_index(size_t arraySize, long ind)
   {
     return ind >= 0 && is_first_index(arraySize, (size_t)ind);
   }
@@ -64,12 +64,12 @@ namespace utils
   }
 
   // is_last_index
-  bool is_last_index(size_t arraySize, size_t ind)
+  inline bool is_last_index(size_t arraySize, size_t ind)
   {
     return is_valid_index(arraySize, ind) && ((ind + 1) == arraySize);
   }
 
-  bool is_last_index(size_t arraySize, long ind)
+  inline bool is_last_index(size_t arraySize, long ind)
   {
     return ind >= 0 && is_last_index(arraySize, (size_t)ind);
   }

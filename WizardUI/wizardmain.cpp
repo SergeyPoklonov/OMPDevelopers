@@ -2,6 +2,7 @@
 #include "ui_wizardmain.h"
 #include "generalsettingspage.h"
 #include "localsettingspage.h"
+#include "generationpage.h"
 
 #include <Document/documentdatamanager.h>
 
@@ -41,6 +42,13 @@ bool WizardMain::Initialize()
     return false;
 
   setPage((int)PAGEID::LOCAL_SETTINGS, localSettingsPage);
+  
+  GenerationPage *generationPage = new GenerationPage( this );
+
+  if( !generationPage->initialize( m_Document ) )
+    return false;
+
+  setPage((int)PAGEID::GENERATION, generationPage);
 
   return true;
 }

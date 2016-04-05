@@ -78,45 +78,44 @@ void DocumentDataManager::ClearWorkingDevelopers()
   m_DevelopersWorkDataList.clear();
 }
 
-AnalyzeSettings DocumentDataManager::gitSettings()
+GitAnalyzer::AnalyzeSettings DocumentDataManager::gitSettings()
 {
-  AnalyzeSettings gitSettings;
-                  gitSettings.RepositoryPath = m_GitRepositoryPath;
-                  gitSettings.DateFrom = m_DateFrom;
-                  gitSettings.DateTo = m_DateTo;  
+  GitAnalyzer::AnalyzeSettings gitSettings;
+  gitSettings.RepositoryPath = m_GitRepositoryPath;
+  gitSettings.DateFrom = m_DateFrom;
+  gitSettings.DateTo = m_DateTo;  
                   
   return gitSettings;
 }
 
 bool DocumentDataManager::generateWorkData()
 {
+  emit generationStepsNumUpdated( 3 );
+  
+  std::vector< CDeveloperWorkData > tempWorkersData = m_DevelopersWorkDataList;
+  
+  int stepNum = 0;
+  
+  // git
+  emit generationMessage( "Анализ репозитория git..." );
+  
   GitAnalyzer gitAnalyzer( gitSettings() );
-  
-  // 1. Определяем кол-во итераций при генерации
-  int iterationCnt = 0;
-  
-  // git
-  iterationCnt += gitAnalyzer.GetRevisionsCount();
-  
-  // redmine
-  1;
-  
-  // workers
-  //iterationCnt += m_DevelopersWorkDataList.size();
-  
-  // 2. Генерируем данные
-  
-  // git
   QString errStr;
     
-  if( !gitAnalyzer.AnalyzeRepository( m_DevelopersWorkDataList, &errStr ) )
+  if( !gitAnalyzer.AnalyzeRepository( tempWorkersData, &errStr ) )
   {
-    1;
+    emit generationErrorOccured( errStr );
+    return false;
   }
+  
+  emit generationMessage( "Анализ репозитория git завершен." );
+  emit generationStepsDone( ++stepNum );
   
   // redmine
   
   // workers
+  
+  m_GenerationResult = tempWorkersData;
   
   return true;
 }

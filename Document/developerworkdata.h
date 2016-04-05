@@ -21,11 +21,16 @@ public:
   
   double HoursSpent() const;
   void setHoursSpent(double HoursSpent);
+  void addHoursSpent(double h);
+  
+  bool RedmineLinked() const;
+  void setRedmineLinked(bool RedmineLinked);
   
 private:
   QString m_SHA;
   QString m_DeveloperName;
   double  m_HoursSpent;
+  bool    m_RedmineLinked;
 };
 
 ///////////////////////////////////////////////////////////////////////

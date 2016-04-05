@@ -21,7 +21,8 @@ public:
   enum class PAGEID
   {
     GENERAL_SETTINGS = 1,
-    LOCAL_SETTINGS = 2
+    LOCAL_SETTINGS = 2,
+    GENERATION = 3
   };
 
 public:

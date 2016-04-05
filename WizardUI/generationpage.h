@@ -20,6 +20,8 @@ public:
   
   virtual bool initialize( DocumentDataManager *doc ) override;
   
+  virtual void initializePage() override;
+  
 private:
   Ui::GenerationPage *ui;
 };
