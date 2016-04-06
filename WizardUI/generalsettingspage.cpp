@@ -63,6 +63,9 @@ bool GeneralSettingsPage::initialize( DocumentDataManager *doc )
   
   QObject::connect(&getDocument(), &DocumentDataManager::gitRepositoryChanged, this, &GeneralSettingsPage::gitRepositoryChange);
   
+  ui->redmineURLEdit->setText( getDocument().getRedmineURL() );
+  ui->authKeyEdit->setText( getDocument().getRedmineAuthKey() );
+  
   developersListSelectionChange();
   gitRepositoryChange( getDocument().GetGitPath() );
 

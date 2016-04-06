@@ -53,3 +53,5 @@ FORMS    += \
     WizardUI/developereditor.ui \
     WizardUI/localsettingspage.ui \
     WizardUI/generationpage.ui
+
+DISTFILES +=

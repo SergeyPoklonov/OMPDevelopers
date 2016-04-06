@@ -1,6 +1,7 @@
 #include "developerdatamanager.h"
 #include "documentdatamanager.h"
 #include "gitanalyzer.h"
+#include "redmineanalyzer.h"
 
 #include <QCoreApplication>
 #include <QDomDocument>
@@ -179,6 +180,18 @@ bool DocumentDataManager::generateWorkData()
   emit generationStepsDone( ++stepNum );
   
   // redmine
+  emit generationMessage( "Анализ redmine..." );
+  
+  RedmineAnalyzer redmineAnalyzer( redmineSettings() );
+  
+  if( !redmineAnalyzer.AnalyzeServer( tempWorkersData, &errStr ) )
+  {
+    emit generationErrorOccured( QString("ОШИБКА:%1").arg(errStr) );
+    return false;
+  }
+  
+  emit generationMessage( "Анализ redmine завершен." );
+  emit generationStepsDone( ++stepNum );
   
   // workers
   

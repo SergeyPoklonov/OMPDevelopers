@@ -5,7 +5,7 @@
 
 #include <QDate>
 #include <QObject>
-#include <QNetworkReply> 
+#include <QJsonDocument>
 
 class QNetworkReply;
 
@@ -33,7 +33,8 @@ signals:
 public slots:
   
 private:
-  bool ReadDataChunk( QDate curDate, int recordOffset, int recordsLimit, int &recordsRead );
+  bool ReadDataChunk( QDate curDate, int recordOffset, int recordsLimit, QJsonDocument &jsonData );
+  bool ParseData( QJsonDocument &jsonDoc, std::vector<CDeveloperWorkData> &workDevList, int &recordsRemain );
   
 private:
   AnalyzeSettings m_Settings;
