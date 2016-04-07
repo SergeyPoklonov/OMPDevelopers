@@ -24,6 +24,7 @@ bool GeneralSettingsPage::validatePage()
 {
   getDocument().setRedmineAuthKey( ui->authKeyEdit->text() );
   getDocument().setRedmineURL( ui->redmineURLEdit->text() );
+  getDocument().SetGitWeb( ui->gitWebEdit->text() );
   
   QString errStr;
   if( !getDocument().AreGeneralSettingsVaild(&errStr) )
@@ -68,6 +69,8 @@ bool GeneralSettingsPage::initialize( DocumentDataManager *doc )
   
   developersListSelectionChange();
   gitRepositoryChange( getDocument().GetGitPath() );
+  
+  ui->gitWebEdit->setText( getDocument().GetGitWeb() );
 
   return true;
 }

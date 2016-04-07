@@ -48,6 +48,16 @@ void DocumentDataManager::clear()
   m_GenerationStepNum = 0;
 }
 
+void DocumentDataManager::SetGitWeb(QString url)
+{
+  m_GitWebURL = url;
+}
+
+QString DocumentDataManager::GetGitWeb() const
+{
+  return m_GitWebURL; 
+}
+
 void DocumentDataManager::SetGitPath(QString gitPath)
 {
   m_GitRepositoryPath = gitPath;
@@ -97,6 +107,7 @@ bool DocumentDataManager::MakeGeneralSettingsXML(QString &xmlFileText)
   root.appendChild( gitElement );
   
   gitElement.setAttribute( "RepoPath", m_GitRepositoryPath );
+  gitElement.setAttribute( "GitWeb", m_GitWebURL );
   
   // redmine
   QDomElement redmineElement = doc.createElement("Redmine");
@@ -139,6 +150,7 @@ bool DocumentDataManager::LoadGeneralSettings()
   QDomElement gitElement = root.firstChildElement( "Git" );
   
   m_GitRepositoryPath = gitElement.attribute( "RepoPath" );
+  m_GitWebURL = gitElement.attribute("GitWeb");
   
   emit gitRepositoryChanged(m_GitRepositoryPath);
   

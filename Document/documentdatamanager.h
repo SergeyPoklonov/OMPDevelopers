@@ -25,6 +25,9 @@ public:
   void SetGitPath(QString gitPath);
   QString GetGitPath() const;
   
+  void SetGitWeb(QString url);
+  QString GetGitWeb() const;
+  
   QString getRedmineURL() const;
   void setRedmineURL(const QString &RedmineURL);
   
