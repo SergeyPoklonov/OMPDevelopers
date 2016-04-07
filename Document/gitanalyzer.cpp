@@ -162,6 +162,11 @@ void GitAnalyzer::AddRevisionToDeveloper( std::vector<CDeveloperWorkData> &workD
   }
 }
 
+int GitAnalyzer::GetAnalyzeStepsCount()
+{
+  return GetRevisionsCount() + 1;
+}
+
 bool GitAnalyzer::AnalyzeRepository(std::vector<CDeveloperWorkData> &workDevList, QString *errStr)
 {
   if( m_Settings.RepositoryPath.isEmpty() )
@@ -179,6 +184,8 @@ bool GitAnalyzer::AnalyzeRepository(std::vector<CDeveloperWorkData> &workDevList
   if( !runGit(gitOutput, errStr) )
     return false;
   
+  emit analyzeStepDone();
+  
   QStringList revisionsStrList = gitOutput.split(tagRev, QString::SkipEmptyParts);
   
   for( const QString &revBodyStr : revisionsStrList )
@@ -188,6 +195,8 @@ bool GitAnalyzer::AnalyzeRepository(std::vector<CDeveloperWorkData> &workDevList
     {
       AddRevisionToDeveloper( workDevList, revData );
     }
+    
+    emit analyzeStepDone();
   }
     
   return true;

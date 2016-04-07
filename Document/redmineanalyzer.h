@@ -27,8 +27,10 @@ public:
   
 public:
   bool AnalyzeServer(std::vector<CDeveloperWorkData> &workDevList, QString *errStr = nullptr);
+  int  GetAnalyzeStepsCount();
   
 signals:
+  void analyzeStepDone();
   
 public slots:
   

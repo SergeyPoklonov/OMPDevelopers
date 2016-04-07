@@ -21,6 +21,31 @@ CDeveloperListDataManager& DocumentDataManager::getDevelopersManager()
 void DocumentDataManager::Construct()
 {
   m_DevelopersManager = new CDeveloperListDataManager( this );
+  m_GenerationDone = false;
+  m_WorkingDaysQty = 0;
+  m_LargeRevisionHrsMin = 3;
+}
+
+void DocumentDataManager::clear()
+{
+  m_DevelopersManager->clear();
+
+  m_DateFrom = m_DateTo = QDate::currentDate();
+  m_WorkingDaysQty = 0;
+  m_LargeRevisionHrsMin = 3;
+  
+  m_GitRepositoryPath.clear();
+  m_GitWebURL.clear();
+  
+  m_RedmineURL.clear();
+  m_RedmineAuthKey.clear();
+  
+  m_DevelopersWorkDataList.clear();
+  
+  m_GenerationDone = false;
+  m_GenerationResultData.clear();
+  
+  m_GenerationStepNum = 0;
 }
 
 void DocumentDataManager::SetGitPath(QString gitPath)
@@ -33,6 +58,20 @@ void DocumentDataManager::SetGitPath(QString gitPath)
 QString DocumentDataManager::GetGitPath() const
 {
   return m_GitRepositoryPath;
+}
+
+QString DocumentDataManager::getOutputHTMLDefaultFilePath() const
+{
+  QString fileName = QString("OMPDevelopersStatistic_%1_%2").arg( m_DateFrom.toString("yyyy") ).arg( m_DateFrom.toString("MM") );
+  if( m_DateFrom.month() != m_DateTo.month() )
+    fileName += m_DateTo.toString("MM");
+  fileName += ".html";
+  
+  QString dirParth = QCoreApplication::instance()->applicationDirPath();
+  
+  QString filePath = QString("%1/%2").arg( dirParth ).arg( fileName );
+  
+  return filePath;
 }
 
 QString DocumentDataManager::getGeneralSettingsFilePath() const
@@ -74,6 +113,8 @@ bool DocumentDataManager::MakeGeneralSettingsXML(QString &xmlFileText)
 
 bool DocumentDataManager::LoadGeneralSettings()
 {
+  clear();
+  
   QString filePath = getGeneralSettingsFilePath();
 
   QFile settingsFile( filePath );
@@ -156,18 +197,97 @@ void DocumentDataManager::setRedmineURL(const QString &RedmineURL)
   m_RedmineURL = RedmineURL;
 }
 
+void DocumentDataManager::childGenerationStepDone()
+{
+  emit generationStepsDone( ++m_GenerationStepNum );
+}
+
+bool DocumentDataManager::creatHTMLDataFile(QString filePath)
+{
+  QString htmlText;
+  
+  htmlText += "<!DOCTYPE HTML>\n";
+  htmlText += "<html>\n";
+  htmlText += "<head>\n";
+  htmlText += "<meta charset=""utf-8"">\n";
+  htmlText += QString("<title>Статистика по разработчикам %1-%2</title>\n").arg(m_DateFrom.toString("dd.MM.yyyy")).arg(m_DateTo.toString("dd.MM.yyyy"));
+  htmlText += "</head>\n";
+  htmlText += "<body>\n";
+  htmlText += QString("<p>Период: %1 - %2</p>\n").arg(m_DateFrom.toString("dd.MM.yyyy")).arg(m_DateTo.toString("dd.MM.yyyy"));
+  htmlText += QString("<p>Всего рабочего времени: %1</p>\n").arg( m_WorkingDaysQty * WorkHrsInDay );
+  
+  std::sort(m_GenerationResultData.begin(), m_GenerationResultData.end(), [](const CDeveloperWorkData &f, const CDeveloperWorkData &s)
+  {
+    return f.getName() < s.getName();
+  });
+  
+  for( const CDeveloperWorkData &devData : m_GenerationResultData )
+  {
+    if( devData.getWageRate() != 1.0 )
+      htmlText += QString("<h3>%1 (%2)</h3>\n").arg( devData.getName() ).arg( devData.getWageRate() );
+    else
+      htmlText += QString("<h3>%1</h3>\n").arg( devData.getName() );
+    
+    const double redmineTotalHrs = devData.redmineTotalHrs();
+    const double redmineDevelopHrs = devData.redmineDevelopHrs();
+    const double redmineDevelopPrc = redmineTotalHrs != 0.0 ? (100 * redmineDevelopHrs / redmineTotalHrs) : 0.0;
+    
+    htmlText += QString("<p>Всего по Redmine,ч: %1</p>\n").arg( redmineTotalHrs );
+    htmlText += QString("<p>Разработка по Redmine,ч: %1</p>\n").arg( redmineDevelopHrs );
+    htmlText += QString("<p>Разработка по Redmine,%: %1</p>\n").arg( redmineDevelopPrc );
+    htmlText += QString("<p>Прочая разработка,ч: %1</p>\n").arg( devData.developOtherHrs() );
+    htmlText += QString("<p>Всего ревизий: %1</p>\n").arg( devData.revisionsCount() );
+    
+    
+    std::vector<CRevisionData> largeRevisions = devData.revisionsList( m_LargeRevisionHrsMin );
+        
+    if( largeRevisions.size() )
+    {
+      htmlText += "<table border=1>\n";
+      htmlText += QString("<caption>Большие ревизии (>%1)</caption>\n").arg( m_LargeRevisionHrsMin );
+      htmlText += "<tr>\n";
+      htmlText += "<th>Трудоемкость</th>\n";
+      htmlText += "<th>Ссылка</th>\n";
+      htmlText += "<th>По Redmine</th>\n";
+      htmlText += "</tr>\n";
+      
+      std::sort(largeRevisions.begin(), largeRevisions.end(), [](const CRevisionData &f, const CRevisionData &s)
+      {
+        return f.HoursSpent() < s.HoursSpent();
+      });
+      
+      for( const CRevisionData &revData : largeRevisions )
+      {
+        /*htmlText += QString("<tr><td>%1</td><td> <a href=""http://omp05/git/commit/?r=omp.git&h=aced3c0ba45a104d6661bcef4e551e73c4f6c570"">aced3c0ba45a104d6661bcef4e551e73c4f6c570</a> </td><td>Yes</td> </tr>")
+            .arg( revData.HoursSpent() );*/
+      }
+    }
+  }
+  
+  return true;
+}
+
 bool DocumentDataManager::generateWorkData()
 {
-  emit generationStepsNumUpdated( 3 );
+  m_GenerationDone = false;
+  
+  GitAnalyzer gitAnalyzer( gitSettings() );
+  RedmineAnalyzer redmineAnalyzer( redmineSettings() );
+  
+  int totalStepsNum = gitAnalyzer.GetAnalyzeStepsCount() + redmineAnalyzer.GetAnalyzeStepsCount();
+  
+  emit generationStepsNumUpdated( totalStepsNum );
+  
+  m_GenerationStepNum = 0;
+  
+  QObject::connect(&gitAnalyzer, &GitAnalyzer::analyzeStepDone, this, &DocumentDataManager::childGenerationStepDone);
+  QObject::connect(&redmineAnalyzer, &RedmineAnalyzer::analyzeStepDone, this, &DocumentDataManager::childGenerationStepDone);
   
   std::vector< CDeveloperWorkData > tempWorkersData = m_DevelopersWorkDataList;
   
-  int stepNum = 0;
-  
   // git
   emit generationMessage( "Анализ репозитория git..." );
-  
-  GitAnalyzer gitAnalyzer( gitSettings() );
+ 
   QString errStr;
     
   if( !gitAnalyzer.AnalyzeRepository( tempWorkersData, &errStr ) )
@@ -177,12 +297,9 @@ bool DocumentDataManager::generateWorkData()
   }
   
   emit generationMessage( "Анализ репозитория git завершен." );
-  emit generationStepsDone( ++stepNum );
   
   // redmine
   emit generationMessage( "Анализ redmine..." );
-  
-  RedmineAnalyzer redmineAnalyzer( redmineSettings() );
   
   if( !redmineAnalyzer.AnalyzeServer( tempWorkersData, &errStr ) )
   {
@@ -191,11 +308,9 @@ bool DocumentDataManager::generateWorkData()
   }
   
   emit generationMessage( "Анализ redmine завершен." );
-  emit generationStepsDone( ++stepNum );
   
-  // workers
-  
-  m_GenerationResult = tempWorkersData;
+  m_GenerationDone = true;
+  m_GenerationResultData = tempWorkersData;
   
   return true;
 }

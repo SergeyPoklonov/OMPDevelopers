@@ -24,7 +24,13 @@ public:
 public:
   
   bool AnalyzeRepository(std::vector<CDeveloperWorkData> &workDevList, QString *errStr = nullptr);
+  
+  int  GetAnalyzeStepsCount();
+  
   size_t GetRevisionsCount();
+  
+signals:
+  void analyzeStepDone();
 
 private:
   void clearGenerationData();

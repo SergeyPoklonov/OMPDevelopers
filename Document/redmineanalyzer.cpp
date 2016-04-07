@@ -44,9 +44,35 @@ bool RedmineAnalyzer::ParseData( QJsonDocument &jsonDoc, std::vector<CDeveloperW
       continue;
     
     CDeveloperWorkData &devData = *findedDevIt;
+    
+    QJsonObject issueObject = entryObject.take("issue").toObject();
+    const int issueID = issueObject.take("id").toInt();
+    
+    const double hoursSpent = entryObject.take("hours").toDouble();
+    
+    QString shaStr;
+    const QString gitRevTag("commit:omp_git|");
+    const int shaLen = 40;
+    QString commentStr = entryObject.take("comments").toString();
+    const int revTagInd = commentStr.indexOf(gitRevTag);
+    if( revTagInd != -1 )
+      shaStr = commentStr.mid(revTagInd + gitRevTag.size(), shaLen);
+    
+    CRedmineTimeData redmineTimeData;
+                     redmineTimeData.setDeveloperName( authorStr );
+                     redmineTimeData.setHoursSpent(hoursSpent);
+                     redmineTimeData.setIssueID( issueID );
+                     redmineTimeData.setRevision( shaStr );
+                     
+    devData.addRedmineTime( redmineTimeData );
   }
   
   return true;
+}
+
+int RedmineAnalyzer::GetAnalyzeStepsCount()
+{
+  return m_Settings.DateFrom.daysTo( m_Settings.DateTo );
 }
 
 bool RedmineAnalyzer::AnalyzeServer(std::vector<CDeveloperWorkData> &workDevList, QString *errStr)
@@ -67,7 +93,7 @@ bool RedmineAnalyzer::AnalyzeServer(std::vector<CDeveloperWorkData> &workDevList
     return false;
   }
   
-  for(QDate curDate = m_Settings.DateFrom; curDate <= m_Settings.DateTo; curDate.addDays(1))
+  for(QDate curDate = m_Settings.DateFrom; curDate <= m_Settings.DateTo; curDate = curDate.addDays(1))
   {
     const int recordsLimit = 100;
     int recordOffset = 0;
@@ -96,6 +122,8 @@ bool RedmineAnalyzer::AnalyzeServer(std::vector<CDeveloperWorkData> &workDevList
       recordOffset += recordsLimit;
     }
     while( recordsRemain > 0 );
+    
+    emit analyzeStepDone();
   }
   
   return true;

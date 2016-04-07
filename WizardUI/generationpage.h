@@ -22,6 +22,10 @@ public:
   
   virtual void initializePage() override;
   
+public slots:
+  void createAndSaveHTML();
+  void startGeneration();
+  
 private:
   Ui::GenerationPage *ui;
 };
