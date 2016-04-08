@@ -49,6 +49,12 @@ bool WizardMain::Initialize()
     return false;
 
   setPage((int)PAGEID::GENERATION, generationPage);
+  
+  QList<QWizard::WizardButton> btnLayout;
+  btnLayout <<  QWizard::Stretch << QWizard::BackButton << QWizard::NextButton << QWizard::FinishButton << QWizard::CancelButton;
+  setButtonLayout( btnLayout );
+  
+  setOptions(QWizard::NoCancelButtonOnLastPage);
 
   return true;
 }

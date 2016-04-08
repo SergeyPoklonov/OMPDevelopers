@@ -75,6 +75,18 @@ void CDeveloperWorkData::setHolidaysDays(unsigned d)
   m_HolidaysDays = d;
 }
 
+std::vector<CRevisionData> CDeveloperWorkData::nonRedmineRevisionsList(bool includeZeroTime) const
+{
+  std::vector<CRevisionData> retList;
+  for( const CRevisionData &rev : m_RevisionsList )
+  {
+    if( !rev.RedmineLinked() && (includeZeroTime || rev.HoursSpent()> 0.0) )
+      retList.push_back( rev );
+  }
+  
+  return retList;
+}
+
 std::vector<CRevisionData> CDeveloperWorkData::revisionsList( double minTime ) const
 {
   std::vector<CRevisionData> retList;

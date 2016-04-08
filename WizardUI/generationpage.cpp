@@ -2,6 +2,7 @@
 #include "Document/documentdatamanager.h"
 #include "ui_generationpage.h"
 #include <QFileDialog>
+#include <QMessageBox>
 #include <QString>
 #include <QTimer> 
 
@@ -23,6 +24,11 @@ void GenerationPage::createAndSaveHTML()
   
   if( fileToSaveFilePath.isEmpty() )
     return;
+  
+  if( !getDocument().creatHTMLDataFile( fileToSaveFilePath ) )
+  {
+    QMessageBox::warning(this, "Сохранение данных в html", "Ошибка при сохранении данных.");
+  }
 }
 
 void GenerationPage::startGeneration()
@@ -39,13 +45,27 @@ void GenerationPage::startGeneration()
   {
     ui->logEdit->appendPlainText("Сбор и анализ данных прерван из-за возникших ошибок.");
   }
+  
+  m_GenerationDone = true;
+  
+  emit completeChanged();
+}
+
+bool GenerationPage::isComplete() const
+{
+  return m_GenerationDone;
 }
 
 void GenerationPage::initializePage()
 {
   QWizardPage::initializePage();
   
+  ui->progressBar->setValue(0);
   ui->generateHTMLButton->setEnabled( false );
+  
+  m_GenerationDone = false;
+  
+  emit completeChanged();
   
   QTimer::singleShot(200, this, &GenerationPage::startGeneration);
 }
@@ -54,7 +74,7 @@ bool GenerationPage::initialize( DocumentDataManager *doc )
 {
   if( !CWizardPageDocumentSupport::initialize( doc ) )
     return false;
-  
+   
   QObject::connect(&getDocument(), &DocumentDataManager::generationStepsNumUpdated, ui->progressBar, &QProgressBar::setMaximum);
   QObject::connect(&getDocument(), &DocumentDataManager::generationStepsDone, ui->progressBar, &QProgressBar::setValue);
   QObject::connect(&getDocument(), &DocumentDataManager::generationMessage, ui->logEdit, &QPlainTextEdit::appendPlainText);

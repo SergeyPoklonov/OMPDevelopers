@@ -22,12 +22,16 @@ public:
   
   virtual void initializePage() override;
   
+  virtual bool isComplete() const override;
+  
 public slots:
   void createAndSaveHTML();
   void startGeneration();
   
 private:
   Ui::GenerationPage *ui;
+  
+  bool m_GenerationDone;
 };
 
 #endif // GENERATIONPAGE_H

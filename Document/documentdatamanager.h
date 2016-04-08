@@ -50,6 +50,9 @@ public:
   void SetDateFrom(QDate d);
   void SetDateTo(QDate d);
   void SetWorkingDaysQty(unsigned d);
+  
+  double GetMinRevHrs() const;
+  void   SetMinRevHrs( double hrs );
 
   bool CheckSettings(QString &errStr);
 
@@ -79,9 +82,12 @@ private:
   
   GitAnalyzer::AnalyzeSettings gitSettings();
   RedmineAnalyzer::AnalyzeSettings redmineSettings();
+  
+  QString makeGitHTMLRevisionURL(const QString &sha);
 
 private:
   static const int WorkHrsInDay = 8;
+  static const int DefaultLargeRevHrsMin = 4;
   
   CDeveloperListDataManager *m_DevelopersManager;
 

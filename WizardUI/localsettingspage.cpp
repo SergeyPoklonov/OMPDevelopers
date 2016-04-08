@@ -37,7 +37,7 @@ bool LocalSettingsPage::validatePage()
   saveDevelopersToDocument();
 
   saveWorkPeriodToDocument();
-
+  
   QString str;
   if( !getDocument().CheckSettings(str) )
   {
@@ -71,6 +71,7 @@ void LocalSettingsPage::saveWorkPeriodToDocument()
   getDocument().SetDateFrom( ui->dateFrom->date() );
   getDocument().SetDateTo( ui->dateTo->date() );
   getDocument().SetWorkingDaysQty( ui->workingDays->value() );
+  getDocument().SetMinRevHrs( ui->minRevHrsSpinBox->value() );
 }
 
 void LocalSettingsPage::saveDevelopersToDocument()
@@ -135,6 +136,9 @@ void LocalSettingsPage::initializePage()
   QWizardPage::initializePage();
 
   intializeDevelopersList();
+  
+  ui->minRevHrsSpinBox->setSuffix(" ч");
+  ui->minRevHrsSpinBox->setValue( getDocument().GetMinRevHrs() );
 }
 
 bool LocalSettingsPage::initialize( DocumentDataManager *doc )

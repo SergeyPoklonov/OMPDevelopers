@@ -7,17 +7,17 @@
     <x>0</x>
     <y>0</y>
     <width>528</width>
-    <height>568</height>
+    <height>714</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
     <width>528</width>
-    <height>568</height>
+    <height>714</height>
    </size>
   </property>
   <property name="windowTitle">
-   <string>WizardMain</string>
+   <string>Статистика по разработчикам OMP</string>
   </property>
  </widget>
  <layoutdefault spacing="6" margin="11"/>

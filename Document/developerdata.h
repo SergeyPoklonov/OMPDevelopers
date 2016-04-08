@@ -17,7 +17,7 @@ public:
     void clear();
 
     QString getName() const { return m_Name; }
-    double  getWageRate() const { return m_WageRate; }
+    double  getWageRate() const { return m_WageRate > 0 ? m_WageRate : 1.0; }
 
 
     void setName( QString name ) { m_Name = name; }

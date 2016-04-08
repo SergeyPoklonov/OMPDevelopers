@@ -140,7 +140,7 @@ bool GitAnalyzer::ParseRevisionBody(const QString &revBodyStr, CRevisionData &re
   
   for( QString hrsTagStr : hrsTagsList )
   {
-    QString hrsStr = hrsTagStr.right( hrsStr.size() - 1 );
+    QString hrsStr = hrsTagStr.right( hrsTagStr.size() - 1 );
             
     hrsStr.replace(',', '.');
     const double hrsVal = hrsStr.toDouble();
@@ -164,7 +164,7 @@ void GitAnalyzer::AddRevisionToDeveloper( std::vector<CDeveloperWorkData> &workD
 
 int GitAnalyzer::GetAnalyzeStepsCount()
 {
-  return GetRevisionsCount() + 1;
+  return 2;
 }
 
 bool GitAnalyzer::AnalyzeRepository(std::vector<CDeveloperWorkData> &workDevList, QString *errStr)
@@ -195,9 +195,9 @@ bool GitAnalyzer::AnalyzeRepository(std::vector<CDeveloperWorkData> &workDevList
     {
       AddRevisionToDeveloper( workDevList, revData );
     }
-    
-    emit analyzeStepDone();
   }
+  
+  emit analyzeStepDone();
     
   return true;
 }
