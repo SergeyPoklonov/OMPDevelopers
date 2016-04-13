@@ -31,7 +31,6 @@ private slots:
   void developerDelClick();
   
   void gitRepositoryChoose();
-  void gitRepositoryChange(QString gitRepository);
 
   void developersListSelectionChange();
 
@@ -39,6 +38,7 @@ private slots:
 
 private:
   int getDevListCurSelIndex();
+  void setGitRepositoryString(QString gitRepository);
 
 private:
   Ui::GeneralSettingsPage *ui;

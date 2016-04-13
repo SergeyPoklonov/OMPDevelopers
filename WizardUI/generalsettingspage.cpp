@@ -22,12 +22,12 @@ GeneralSettingsPage::~GeneralSettingsPage()
 
 bool GeneralSettingsPage::validatePage()
 {
-  getDocument().setRedmineAuthKey( ui->authKeyEdit->text() );
-  getDocument().setRedmineURL( ui->redmineURLEdit->text() );
-  getDocument().SetGitWeb( ui->gitWebEdit->text() );
+  getDocument().generalSettings().setRedmineAuthKey( ui->authKeyEdit->text() );
+  getDocument().generalSettings().setRedmineURL( ui->redmineURLEdit->text() );
+  getDocument().generalSettings().setGitWeb( ui->gitWebEdit->text() );
   
   QString errStr;
-  if( !getDocument().AreGeneralSettingsVaild(&errStr) )
+  if( !getDocument().generalSettings().isVaild(&errStr) )
   {
     QMessageBox::warning(this, "Продолжение работы", errStr);
     return false;
@@ -48,7 +48,7 @@ bool GeneralSettingsPage::initialize( DocumentDataManager *doc )
   if( !CWizardPageDocumentSupport::initialize( doc ) )
     return false;
 
-  ui->developrsList->setModel( &(getDocument().getDevelopersManager()) );
+  ui->developrsList->setModel( &(getDocument().generalSettings().getDevelopersManager()) );
 
   QObject::connect(ui->developrsList->selectionModel(), &QItemSelectionModel::selectionChanged, this, &GeneralSettingsPage::developersListSelectionChange);
   
@@ -62,30 +62,31 @@ bool GeneralSettingsPage::initialize( DocumentDataManager *doc )
   
   QObject::connect(ui->repositoryChooseButton, &QPushButton::clicked, this, &GeneralSettingsPage::gitRepositoryChoose);
   
-  QObject::connect(&getDocument(), &DocumentDataManager::gitRepositoryChanged, this, &GeneralSettingsPage::gitRepositoryChange);
-  
-  ui->redmineURLEdit->setText( getDocument().getRedmineURL() );
-  ui->authKeyEdit->setText( getDocument().getRedmineAuthKey() );
+  ui->redmineURLEdit->setText( getDocument().generalSettings().getRedmineURL() );
+  ui->authKeyEdit->setText( getDocument().generalSettings().getRedmineAuthKey() );
   
   developersListSelectionChange();
-  gitRepositoryChange( getDocument().GetGitPath() );
+  setGitRepositoryString( getDocument().generalSettings().getGitPath() );
   
-  ui->gitWebEdit->setText( getDocument().GetGitWeb() );
+  ui->gitWebEdit->setText( getDocument().generalSettings().getGitWeb() );
 
   return true;
 }
 
-void GeneralSettingsPage::gitRepositoryChange(QString gitRepository)
+void GeneralSettingsPage::setGitRepositoryString(QString gitRepository)
 {
   ui->repositoryEdit->setText( gitRepository );
 }
 
 void GeneralSettingsPage::gitRepositoryChoose()
 { 
-  const QString gitDir = QFileDialog::getExistingDirectory(this, "Расположение репозитория Git", getDocument().GetGitPath() );
+  const QString gitDir = QFileDialog::getExistingDirectory(this, "Расположение репозитория Git", getDocument().generalSettings().getGitPath() );
   
   if( !gitDir.isEmpty() )
-    getDocument().SetGitPath( gitDir );
+  {
+    getDocument().generalSettings().setGitPath( gitDir );
+    setGitRepositoryString( getDocument().generalSettings().getGitPath() );
+  }
 }
 
 void GeneralSettingsPage::developerAddClick()
@@ -120,7 +121,7 @@ void GeneralSettingsPage::developerDelClick()
 
     QString errStr;
 
-    if( !getDocument().getDevelopersManager().DeleteData( curSelInd, &errStr ) )
+    if( !getDocument().generalSettings().getDevelopersManager().DeleteData( curSelInd, &errStr ) )
     {
       QMessageBox::warning(this, "Удаление разработчика", QString("Невозможно удалить разработчика: %1.").arg( errStr ) );
       return;
@@ -136,7 +137,7 @@ void GeneralSettingsPage::developerEditClick()
 
   if( selInd >= 0 )
   {
-    CDeveloperData devData = getDocument().getDevelopersManager().GetDataByInd( selInd );
+    CDeveloperData devData = getDocument().generalSettings().getDevelopersManager().GetDataByInd( selInd );
 
     DeveloperEditor editor(devData, this);
 
@@ -166,16 +167,7 @@ void GeneralSettingsPage::developerDataEditorDone( DeveloperEditor *editor )
 
     bool devCreatedOK = false;
 
-    devCreatedOK = getDocument().getDevelopersManager().AddData( devData, &errStr );
-
-    /*if( curSelInd < 0 )
-    {
-      devCreatedOK = getDocument().getDevelopersManager().AddData( devData, &errStr );
-    }
-    else
-    {
-      devCreatedOK = getDocument().getDevelopersManager().InsertData( devData, curSelInd, &errStr );
-    }*/
+    devCreatedOK = getDocument().generalSettings().getDevelopersManager().AddData( devData, &errStr );
 
     if( !devCreatedOK )
     {
@@ -202,7 +194,7 @@ void GeneralSettingsPage::developerDataEditorDone( DeveloperEditor *editor )
 
     QString errStr;
 
-    if( !getDocument().getDevelopersManager().SetDataByInd( devData, curSelInd, &errStr ) )
+    if( !getDocument().generalSettings().getDevelopersManager().SetDataByInd( devData, curSelInd, &errStr ) )
     {
       QMessageBox::warning(editor, "Редактирование разработчика", QString("Невозможно изменить данные разработчика: %1.").arg( errStr ) );
       return;

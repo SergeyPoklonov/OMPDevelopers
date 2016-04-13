@@ -88,7 +88,7 @@ void LocalSettingsPage::saveDevelopersToDocument()
 
     QString devName = nameItem->data(Qt::DisplayRole).toString();
 
-    CDeveloperData devData = getDocument().getDevelopersManager().GetDataByName( devName );
+    CDeveloperData devData = getDocument().generalSettings().getDevelopersManager().GetDataByName( devName );
 
     Q_ASSERT( devData.isValid() );
 
@@ -105,7 +105,7 @@ void LocalSettingsPage::saveDevelopersToDocument()
 
 void LocalSettingsPage::intializeDevelopersList()
 {
-  const CDeveloperListDataManager &developersMng = getDocument().getDevelopersManager();
+  const CDeveloperListDataManager &developersMng = getDocument().generalSettings().getDevelopersManager();
 
   ui->developersList->setColumnCount( DEVLIST_COLSQTY );
   ui->developersList->setHorizontalHeaderLabels( {QString("Имя"), QString("Отпуск,дн")} );

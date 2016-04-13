@@ -4,6 +4,7 @@
 #include <QDate>
 #include <QObject>
 #include "developerworkdata.h"
+#include "generalsettingsholder.h"
 #include "gitanalyzer.h"
 #include "redmineanalyzer.h"
 
@@ -19,22 +20,8 @@ public:
 
   ///////////////////////////////////////////////////////////////////////////
   // generalSettings
-
-  CDeveloperListDataManager& getDevelopersManager();
   
-  void SetGitPath(QString gitPath);
-  QString GetGitPath() const;
-  
-  void SetGitWeb(QString url);
-  QString GetGitWeb() const;
-  
-  QString getRedmineURL() const;
-  void setRedmineURL(const QString &RedmineURL);
-  
-  QString getRedmineAuthKey() const;
-  void setRedmineAuthKey(const QString &RedmineAuthKey);
-  
-  bool AreGeneralSettingsVaild(QString *errStr = nullptr);
+  GeneralSettingsHolder& generalSettings();
 
   bool SaveGeneralSettings();
   bool LoadGeneralSettings();
@@ -65,8 +52,6 @@ public:
   QString getOutputHTMLDefaultFilePath() const;
   
 signals:
-  void gitRepositoryChanged(QString gitPath);
-  
   void generationStepsNumUpdated( int stepsNum );
   void generationStepsDone( int stepsNum );
   void generationMessage( QString msgText );
@@ -77,8 +62,6 @@ private slots:
 
 private:
   void Construct();
-
-  bool MakeGeneralSettingsXML(QString &xmlFileText);
   
   GitAnalyzer::AnalyzeSettings gitSettings();
   RedmineAnalyzer::AnalyzeSettings redmineSettings();
@@ -88,19 +71,13 @@ private:
 private:
   static const int WorkHrsInDay = 8;
   static const int DefaultLargeRevHrsMin = 4;
-  
-  CDeveloperListDataManager *m_DevelopersManager;
 
   QDate m_DateFrom;
   QDate m_DateTo;
   unsigned m_WorkingDaysQty;
   double m_LargeRevisionHrsMin;
   
-  QString m_GitRepositoryPath;
-  QString m_GitWebURL;
-  
-  QString m_RedmineURL;
-  QString m_RedmineAuthKey;
+  GeneralSettingsHolder *m_GeneralSettings;
   
   std::vector< CDeveloperWorkData > m_DevelopersWorkDataList;
   

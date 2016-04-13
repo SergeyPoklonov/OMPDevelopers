@@ -13,14 +13,14 @@ DocumentDataManager::DocumentDataManager(QObject *parent) : QObject(parent)
   Construct();
 }
 
-CDeveloperListDataManager& DocumentDataManager::getDevelopersManager()
+GeneralSettingsHolder& DocumentDataManager::generalSettings()
 {
-  return *m_DevelopersManager;
+  return *m_GeneralSettings;
 }
 
 void DocumentDataManager::Construct()
 {
-  m_DevelopersManager = new CDeveloperListDataManager( this );
+  m_GeneralSettings = new GeneralSettingsHolder( this );
   m_GenerationDone = false;
   m_WorkingDaysQty = 0;
   m_LargeRevisionHrsMin = DefaultLargeRevHrsMin;
@@ -28,17 +28,11 @@ void DocumentDataManager::Construct()
 
 void DocumentDataManager::clear()
 {
-  m_DevelopersManager->clear();
+  m_GeneralSettings->clear();
 
   m_DateFrom = m_DateTo = QDate::currentDate();
   m_WorkingDaysQty = 0;
   m_LargeRevisionHrsMin = DefaultLargeRevHrsMin;
-  
-  m_GitRepositoryPath.clear();
-  m_GitWebURL.clear();
-  
-  m_RedmineURL.clear();
-  m_RedmineAuthKey.clear();
   
   m_DevelopersWorkDataList.clear();
   
@@ -46,28 +40,6 @@ void DocumentDataManager::clear()
   m_GenerationResultData.clear();
   
   m_GenerationStepNum = 0;
-}
-
-void DocumentDataManager::SetGitWeb(QString url)
-{
-  m_GitWebURL = url;
-}
-
-QString DocumentDataManager::GetGitWeb() const
-{
-  return m_GitWebURL; 
-}
-
-void DocumentDataManager::SetGitPath(QString gitPath)
-{
-  m_GitRepositoryPath = gitPath;
-  
-  emit gitRepositoryChanged(m_GitRepositoryPath);
-}
-
-QString DocumentDataManager::GetGitPath() const
-{
-  return m_GitRepositoryPath;
 }
 
 QString DocumentDataManager::getOutputHTMLDefaultFilePath() const
@@ -91,75 +63,9 @@ QString DocumentDataManager::getGeneralSettingsFilePath() const
   return filePath;
 }
 
-bool DocumentDataManager::MakeGeneralSettingsXML(QString &xmlFileText)
-{
-  QDomDocument doc("OMPDevSettings");
-  QDomElement root = doc.createElement("SettingsRoot");
-
-  doc.appendChild(root);
-
-  // developers
-  m_DevelopersManager->WriteToXML( root );
-  
-  // git
-  QDomElement gitElement = doc.createElement("Git");
-  
-  root.appendChild( gitElement );
-  
-  gitElement.setAttribute( "RepoPath", m_GitRepositoryPath );
-  gitElement.setAttribute( "GitWeb", m_GitWebURL );
-  
-  // redmine
-  QDomElement redmineElement = doc.createElement("Redmine");
-  
-  root.appendChild( redmineElement );
-  
-  redmineElement.setAttribute( "URL", m_RedmineURL );
-  redmineElement.setAttribute( "Key", m_RedmineAuthKey );
-
-  xmlFileText = doc.toString();
-
-  return true;
-}
-
 bool DocumentDataManager::LoadGeneralSettings()
 {
-  clear();
-  
-  QString filePath = getGeneralSettingsFilePath();
-
-  QFile settingsFile( filePath );
-  if( !settingsFile.open(QIODevice::ReadOnly) )
-    return false;
-
-  QDomDocument doc("OMPDevSettings");
-
-  if( !doc.setContent(&settingsFile) )
-  {
-    settingsFile.close();
-    return false;
-  }
-
-  QDomElement root = doc.documentElement();
-
-  if( root.isNull() )
-    return false;
-
-  m_DevelopersManager->LoadFromXML( root );
-  
-  QDomElement gitElement = root.firstChildElement( "Git" );
-  
-  m_GitRepositoryPath = gitElement.attribute( "RepoPath" );
-  m_GitWebURL = gitElement.attribute("GitWeb");
-  
-  emit gitRepositoryChanged(m_GitRepositoryPath);
-  
-  QDomElement redmineElement = root.firstChildElement( "Redmine" );
-  
-  m_RedmineURL = redmineElement.attribute("URL");
-  m_RedmineAuthKey = redmineElement.attribute("Key");
-
-  return true;
+  return generalSettings().load( getGeneralSettingsFilePath() );
 }
 
 void DocumentDataManager::ClearWorkingDevelopers()
@@ -171,8 +77,8 @@ RedmineAnalyzer::AnalyzeSettings DocumentDataManager::redmineSettings()
 {
   RedmineAnalyzer::AnalyzeSettings settings;
   
-  settings.AuthKey = m_RedmineAuthKey;
-  settings.Url = m_RedmineURL;
+  settings.AuthKey = generalSettings().getRedmineAuthKey();
+  settings.Url = generalSettings().getRedmineURL();
   settings.DateFrom = m_DateFrom;
   settings.DateTo = m_DateTo;
   
@@ -182,31 +88,11 @@ RedmineAnalyzer::AnalyzeSettings DocumentDataManager::redmineSettings()
 GitAnalyzer::AnalyzeSettings DocumentDataManager::gitSettings()
 {
   GitAnalyzer::AnalyzeSettings gitSettings;
-  gitSettings.RepositoryPath = m_GitRepositoryPath;
+  gitSettings.RepositoryPath = generalSettings().getGitPath();
   gitSettings.DateFrom = m_DateFrom;
   gitSettings.DateTo = m_DateTo;  
                   
   return gitSettings;
-}
-
-QString DocumentDataManager::getRedmineAuthKey() const
-{
-  return m_RedmineAuthKey;
-}
-
-void DocumentDataManager::setRedmineAuthKey(const QString &RedmineAuthKey)
-{
-  m_RedmineAuthKey = RedmineAuthKey;
-}
-
-QString DocumentDataManager::getRedmineURL() const
-{
-  return m_RedmineURL;
-}
-
-void DocumentDataManager::setRedmineURL(const QString &RedmineURL)
-{
-  m_RedmineURL = RedmineURL;
 }
 
 void DocumentDataManager::childGenerationStepDone()
@@ -216,7 +102,7 @@ void DocumentDataManager::childGenerationStepDone()
 
 QString DocumentDataManager::makeGitHTMLRevisionURL(const QString &sha)
 {
-  QString gitUrlPrefix = m_GitWebURL;
+  QString gitUrlPrefix = generalSettings().getGitWeb();
   
   while( gitUrlPrefix.size() && gitUrlPrefix.endsWith('/') )
     gitUrlPrefix.chop(1);
@@ -479,59 +365,7 @@ void DocumentDataManager::AddWorkingDeveloper( CDeveloperData devData, unsigned 
   m_DevelopersWorkDataList.push_back( CDeveloperWorkData(devData, holidaysDays) );
 }
 
-bool DocumentDataManager::AreGeneralSettingsVaild(QString *errStr)
-{
-  if( m_DevelopersManager->Count() == 0 )
-  {
-    if( errStr )
-      *errStr = "Не задан ни один разработчик.";
-    
-    return false;
-  }
-  
-  if( m_GitRepositoryPath.isEmpty() )
-  {
-    if( errStr )
-      *errStr = "Не задан путь к репозиторю Git.";
-    
-    return false;
-  }
-  
-  if( m_RedmineURL.isEmpty() )
-  {
-    if( errStr )
-      *errStr = "Не введен redmine URL.";
-    
-    return false;
-  }
-  
-  if( m_RedmineAuthKey.isEmpty() )
-  {
-    if( errStr )
-      *errStr = "Не введен redmine authentication key.";
-    
-    return false;
-  }
-  
-  return true;
-}
-
 bool DocumentDataManager::SaveGeneralSettings()
 {
-  QString xmlText;
-
-  if( !MakeGeneralSettingsXML(xmlText) )
-    return false;
-
-  QString filePath = getGeneralSettingsFilePath();
-
-  QFile settingsFile( filePath );
-  if( !settingsFile.open(QIODevice::WriteOnly) )
-    return false;
-
-  QTextStream outStream( &settingsFile );
-
-  outStream << xmlText;
-
-  return true;
+  return generalSettings().save( getGeneralSettingsFilePath() );
 }

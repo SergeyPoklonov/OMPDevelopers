@@ -28,7 +28,8 @@ SOURCES += main.cpp\
     Document/developerdata.cpp \
     Document/gitanalyzer.cpp \
     WizardUI/generationpage.cpp \
-    Document/redmineanalyzer.cpp
+    Document/redmineanalyzer.cpp \
+    Document/generalsettingsholder.cpp
 
 HEADERS  += \
     Document/developerdatamanager.h \
@@ -45,7 +46,8 @@ HEADERS  += \
     Document/developerdata.h \
     Document/gitanalyzer.h \
     WizardUI/generationpage.h \
-    Document/redmineanalyzer.h
+    Document/redmineanalyzer.h \
+    Document/generalsettingsholder.h
 
 FORMS    += \
     WizardUI/generalsettingspage.ui \
