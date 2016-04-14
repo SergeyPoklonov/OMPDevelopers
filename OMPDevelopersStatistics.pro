@@ -16,8 +16,6 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
     Document/developerdatamanager.cpp \
-    Document/gitsettingsdatamanager.cpp \
-    Document/redminesettingsdatamanager.cpp \
     WizardUI/generalsettingspage.cpp \
     WizardUI/wizardmain.cpp \
     WizardUI/developereditor.cpp \
@@ -29,12 +27,11 @@ SOURCES += main.cpp\
     Document/gitanalyzer.cpp \
     WizardUI/generationpage.cpp \
     Document/redmineanalyzer.cpp \
-    Document/generalsettingsholder.cpp
+    Document/generalsettingsholder.cpp \
+    Document/DevStatistics/devstatisticsdocument.cpp
 
 HEADERS  += \
     Document/developerdatamanager.h \
-    Document/gitsettingsdatamanager.h \
-    Document/redminesettingsdatamanager.h \
     apputils.h \
     WizardUI/generalsettingspage.h \
     WizardUI/wizardmain.h \
@@ -47,7 +44,8 @@ HEADERS  += \
     Document/gitanalyzer.h \
     WizardUI/generationpage.h \
     Document/redmineanalyzer.h \
-    Document/generalsettingsholder.h
+    Document/generalsettingsholder.h \
+    Document/DevStatistics/devstatisticsdocument.h
 
 FORMS    += \
     WizardUI/generalsettingspage.ui \

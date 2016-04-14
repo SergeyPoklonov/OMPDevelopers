@@ -39,7 +39,7 @@ bool LocalSettingsPage::validatePage()
   saveWorkPeriodToDocument();
   
   QString str;
-  if( !getDocument().CheckSettings(str) )
+  if( !getDocument().devStatistic().checkSettings(str) )
   {
     QMessageBox::warning(this, "Настройки", str);
     return false;
@@ -68,15 +68,15 @@ void LocalSettingsPage::initializeWorkPeriodCtrls()
 
 void LocalSettingsPage::saveWorkPeriodToDocument()
 {
-  getDocument().SetDateFrom( ui->dateFrom->date() );
-  getDocument().SetDateTo( ui->dateTo->date() );
-  getDocument().SetWorkingDaysQty( ui->workingDays->value() );
-  getDocument().SetMinRevHrs( ui->minRevHrsSpinBox->value() );
+  getDocument().devStatistic().setDateFrom( ui->dateFrom->date() );
+  getDocument().devStatistic().setDateTo( ui->dateTo->date() );
+  getDocument().devStatistic().setWorkingDaysQty( ui->workingDays->value() );
+  getDocument().devStatistic().setMinRevHrs( ui->minRevHrsSpinBox->value() );
 }
 
 void LocalSettingsPage::saveDevelopersToDocument()
 {
-  getDocument().ClearWorkingDevelopers();
+  getDocument().devStatistic().clearWorkingDevelopers();
 
   const int rowsQty = ui->developersList->rowCount();
   for(int row = 0; row < rowsQty; row++)
@@ -99,7 +99,7 @@ void LocalSettingsPage::saveDevelopersToDocument()
 
     unsigned holidaysDays = hdaysItem->data(Qt::DisplayRole).toUInt();
 
-    getDocument().AddWorkingDeveloper( devData, holidaysDays );
+    getDocument().devStatistic().addWorkingDeveloper( devData, holidaysDays );
   }
 }
 
@@ -138,7 +138,7 @@ void LocalSettingsPage::initializePage()
   intializeDevelopersList();
   
   ui->minRevHrsSpinBox->setSuffix(" ч");
-  ui->minRevHrsSpinBox->setValue( getDocument().GetMinRevHrs() );
+  ui->minRevHrsSpinBox->setValue( getDocument().devStatistic().getMinRevHrs() );
 }
 
 bool LocalSettingsPage::initialize( DocumentDataManager *doc )

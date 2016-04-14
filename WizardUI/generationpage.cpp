@@ -25,7 +25,7 @@ void GenerationPage::createAndSaveHTML()
   if( fileToSaveFilePath.isEmpty() )
     return;
   
-  if( !getDocument().creatHTMLDataFile( fileToSaveFilePath ) )
+  if( !getDocument().devStatistic().creatHTMLDataFile( fileToSaveFilePath ) )
   {
     QMessageBox::warning(this, "Сохранение данных в html", "Ошибка при сохранении данных.");
   }
@@ -33,7 +33,7 @@ void GenerationPage::createAndSaveHTML()
 
 void GenerationPage::startGeneration()
 {
-  const bool generationOK = getDocument().generateWorkData();
+  const bool generationOK = getDocument().devStatistic().generateWorkData();
   
   if( generationOK )
   {
@@ -75,10 +75,10 @@ bool GenerationPage::initialize( DocumentDataManager *doc )
   if( !CWizardPageDocumentSupport::initialize( doc ) )
     return false;
    
-  QObject::connect(&getDocument(), &DocumentDataManager::generationStepsNumUpdated, ui->progressBar, &QProgressBar::setMaximum);
-  QObject::connect(&getDocument(), &DocumentDataManager::generationStepsDone, ui->progressBar, &QProgressBar::setValue);
-  QObject::connect(&getDocument(), &DocumentDataManager::generationMessage, ui->logEdit, &QPlainTextEdit::appendPlainText);
-  QObject::connect(&getDocument(), &DocumentDataManager::generationErrorOccured, ui->logEdit, &QPlainTextEdit::appendPlainText);
+  QObject::connect(&getDocument().devStatistic(), &DevStatisticsDocument::generationStepsNumUpdated, ui->progressBar, &QProgressBar::setMaximum);
+  QObject::connect(&getDocument().devStatistic(), &DevStatisticsDocument::generationStepsDone, ui->progressBar, &QProgressBar::setValue);
+  QObject::connect(&getDocument().devStatistic(), &DevStatisticsDocument::generationMessage, ui->logEdit, &QPlainTextEdit::appendPlainText);
+  QObject::connect(&getDocument().devStatistic(), &DevStatisticsDocument::generationErrorOccured, ui->logEdit, &QPlainTextEdit::appendPlainText);
   
   QObject::connect(ui->generateHTMLButton, &QPushButton::clicked, this, &GenerationPage::createAndSaveHTML);
   
