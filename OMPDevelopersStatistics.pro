@@ -28,7 +28,8 @@ SOURCES += main.cpp\
     WizardUI/generationpage.cpp \
     Document/redmineanalyzer.cpp \
     Document/generalsettingsholder.cpp \
-    Document/DevStatistics/devstatisticsdocument.cpp
+    Document/DevStatistics/devstatisticsdocument.cpp \
+    Document/htmlgenerator.cpp
 
 HEADERS  += \
     Document/developerdatamanager.h \
@@ -45,7 +46,8 @@ HEADERS  += \
     WizardUI/generationpage.h \
     Document/redmineanalyzer.h \
     Document/generalsettingsholder.h \
-    Document/DevStatistics/devstatisticsdocument.h
+    Document/DevStatistics/devstatisticsdocument.h \
+    Document/htmlgenerator.h
 
 FORMS    += \
     WizardUI/generalsettingspage.ui \
