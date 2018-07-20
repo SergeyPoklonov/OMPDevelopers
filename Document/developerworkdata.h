@@ -5,6 +5,8 @@
 
 #include <QString>
 
+#include <vector>
+
 class CRedmineTimeData
 {
 public:

@@ -2,7 +2,7 @@
 #define HTMLGENERATOR_H
 
 #include <QString>
-
+#include <vector>
 
 
 class HtmlGenerator

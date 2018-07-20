@@ -1,4 +1,5 @@
 #include "developerworkdata.h"
+#include <numeric>
 
 CDeveloperWorkData::CDeveloperWorkData()
 {

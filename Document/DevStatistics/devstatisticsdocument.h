@@ -66,6 +66,8 @@ private:
   
   bool m_GenerationDone;
   std::vector< CDeveloperWorkData > m_GenerationResultData;
+  std::map<long,QString> m_TrackersList;
+  std::map<long,long> m_IssuesToTrackers;
   
   int m_GenerationStepNum;
 };

@@ -169,7 +169,7 @@ bool DevStatisticsDocument::generateWorkData()
   // redmine
   emit generationMessage( "Анализ redmine..." );
   
-  if( !redmineAnalyzer.AnalyzeServer( tempWorkersData, &errStr ) )
+  if( !redmineAnalyzer.AnalyzeServer( tempWorkersData, m_TrackersList, m_IssuesToTrackers, &errStr ) )
   {
     emit generationErrorOccured( QString("ОШИБКА:%1").arg(errStr) );
     return false;
@@ -219,7 +219,37 @@ bool DevStatisticsDocument::creatHTMLDataFile(QString filePath)
     const double redmineDevelopPrc = redmineTotalHrs != 0.0 ? (100 * redmineDevelopHrs / redmineTotalHrs) : 0.0;
     const double developmentOtherHrs = devData.developOtherHrs();
     
-    htmlText += QString("<p>Всего по Redmine,ч: %1</p>\n").arg( redmineTotalHrs );
+    std::map<int,double> trackersTime;
+    std::vector<CRedmineTimeData> devTEList = devData.redmineTimesList();
+    
+    for( CRedmineTimeData &teData : devTEList )
+    {
+      const int trackerID = m_IssuesToTrackers[teData.IssueID()];
+      trackersTime[trackerID] += teData.HoursSpent();
+    }
+    
+    htmlText += QString("<p>Всего по Redmine,ч: %1").arg( redmineTotalHrs );
+    
+    if( redmineTotalHrs != 0.0 )
+    {
+      htmlText += QString("  Из них:");
+      
+      for( auto &trackerTime : trackersTime )
+      {
+        const double trackerHrs = trackerTime.second;
+        
+        if( m_TrackersList.find( trackerTime.first ) != m_TrackersList.end() )
+        {
+          const QString trackerName = m_TrackersList[trackerTime.first];
+          const double trackerPrc = trackerHrs / (redmineTotalHrs / 100.0);
+          
+          htmlText += QString("  [%1] %2ч %3%").arg(trackerName).arg(trackerHrs).arg(trackerPrc);
+        }
+      }
+    }
+    
+    htmlText += QString("</p>\n");
+    
     htmlText += QString("<p>Разработка по Redmine,ч: %1</p>\n").arg( redmineDevelopHrs );
     htmlText += QString("<p>Разработка по Redmine,%: %1</p>\n").arg( redmineDevelopPrc );
     htmlText += QString("<p>Прочая разработка,ч: %1</p>\n").arg( developmentOtherHrs );
