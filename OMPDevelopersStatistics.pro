@@ -29,7 +29,10 @@ SOURCES += main.cpp\
     Document/redmineanalyzer.cpp \
     Document/generalsettingsholder.cpp \
     Document/DevStatistics/devstatisticsdocument.cpp \
-    Document/htmlgenerator.cpp
+    Document/Calendar/CalendarData.cpp \
+    Document/HTMLGenerator/HTMLGenerator.cpp \
+    Document/HTMLGenerator/piechartdata.cpp \
+    WizardUI/calendarperioddialog.cpp
 
 HEADERS  += \
     Document/developerdatamanager.h \
@@ -47,13 +50,17 @@ HEADERS  += \
     Document/redmineanalyzer.h \
     Document/generalsettingsholder.h \
     Document/DevStatistics/devstatisticsdocument.h \
-    Document/htmlgenerator.h
+    Document/Calendar/CalendarData.h \
+    Document/HTMLGenerator/HTMLGenerator.h \
+    Document/HTMLGenerator/piechartdata.h \
+    WizardUI/calendarperioddialog.h
 
 FORMS    += \
     WizardUI/generalsettingspage.ui \
     WizardUI/wizardmain.ui \
     WizardUI/developereditor.ui \
     WizardUI/localsettingspage.ui \
-    WizardUI/generationpage.ui
+    WizardUI/generationpage.ui \
+    WizardUI/calendarperioddialog.ui
 
 DISTFILES +=

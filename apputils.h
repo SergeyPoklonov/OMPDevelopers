@@ -1,6 +1,7 @@
 #ifndef APPUTILS_H
 #define APPUTILS_H
 
+#include <QComboBox>
 #include <vector>
 
 namespace utils
@@ -85,7 +86,28 @@ namespace utils
   {
     return is_last_index( vec.size(), ind );
   }
+}
 
+/////////////////////////////////////////////////////////////////
+
+// ComboBox selection
+static bool selectComboItemByData(QComboBox *cb, int data)
+{
+  for(int i = 0; i < cb->count(); i++)
+  {
+    if( cb->itemData(i) == data )
+    {
+      cb->setCurrentIndex( i );
+      return true;
+    }
+  }
+  
+  return false;
+}
+
+static int getComboCurSelData(QComboBox *cb)
+{
+  return cb->itemData( cb->currentIndex() ).toInt();
 }
 
 #endif // APPUTILS_H

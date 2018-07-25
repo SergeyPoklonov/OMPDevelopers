@@ -19,7 +19,17 @@ GeneralSettingsHolder& DocumentDataManager::generalSettings()
   return *m_GeneralSettings;
 }
 
+const GeneralSettingsHolder& DocumentDataManager::generalSettings() const
+{
+  return *m_GeneralSettings;
+}
+
 DevStatisticsDocument& DocumentDataManager::devStatistic()
+{
+  return *m_DevStatisticsDoc;
+}
+
+const DevStatisticsDocument& DocumentDataManager::devStatistic() const
 {
   return *m_DevStatisticsDoc;
 }

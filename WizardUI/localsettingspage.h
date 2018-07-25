@@ -27,6 +27,7 @@ public:
 
 public slots:
   void onDeveloperDataChanged( QTableWidgetItem *item );
+  void onPeriodChanged();
 
 private:
   void intializeDevelopersList();
@@ -38,7 +39,7 @@ private:
 private:
   Ui::LocalSettingsPage *ui;
 
-  static const int DEVLIST_COLSQTY = 2;
+  static const int DEVLIST_COLSQTY = 1;
   static const int DEVLIST_COLNUM_NAME = 0;
   static const int DEVLIST_COLNUM_HDAYS = 1;
 };

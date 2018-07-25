@@ -1,0 +1,100 @@
+<!DOCTYPE OMPDevSettings>
+<SettingsRoot>
+ <DevelopersList Qty="12">
+  <Developer1 wr="1" name="AVS">
+   <calendar ExceptionDaysQty="12">
+    <ExceptDay1 note="" isWorkOn="0" dayType="3" date="2458271"/>
+    <ExceptDay2 note="" isWorkOn="0" dayType="3" date="2458272"/>
+    <ExceptDay3 note="" isWorkOn="0" dayType="3" date="2458273"/>
+    <ExceptDay4 note="" isWorkOn="0" dayType="3" date="2458274"/>
+    <ExceptDay5 note="" isWorkOn="0" dayType="3" date="2458275"/>
+    <ExceptDay6 note="" isWorkOn="0" dayType="3" date="2458276"/>
+    <ExceptDay7 note="" isWorkOn="0" dayType="3" date="2458277"/>
+    <ExceptDay8 note="" isWorkOn="0" dayType="3" date="2458278"/>
+    <ExceptDay9 note="" isWorkOn="0" dayType="3" date="2458279"/>
+    <ExceptDay10 note="" isWorkOn="0" dayType="3" date="2458280"/>
+    <ExceptDay11 note="" isWorkOn="0" dayType="3" date="2458281"/>
+    <ExceptDay12 note="" isWorkOn="0" dayType="3" date="2458282"/>
+   </calendar>
+  </Developer1>
+  <Developer2 wr="1" name="DAP">
+   <calendar ExceptionDaysQty="5">
+    <ExceptDay1 note="" isWorkOn="0" dayType="3" date="2458281"/>
+    <ExceptDay2 note="" isWorkOn="0" dayType="3" date="2458282"/>
+    <ExceptDay3 note="" isWorkOn="0" dayType="3" date="2458283"/>
+    <ExceptDay4 note="" isWorkOn="0" dayType="3" date="2458284"/>
+    <ExceptDay5 note="" isWorkOn="0" dayType="3" date="2458285"/>
+   </calendar>
+  </Developer2>
+  <Developer3 wr="1" name="DMY"/>
+  <Developer4 wr="1" name="FPA"/>
+  <Developer5 wr="1" name="GDY">
+   <calendar ExceptionDaysQty="15">
+    <ExceptDay1 note="" isWorkOn="0" dayType="3" date="2458283"/>
+    <ExceptDay2 note="" isWorkOn="0" dayType="3" date="2458284"/>
+    <ExceptDay3 note="" isWorkOn="0" dayType="3" date="2458285"/>
+    <ExceptDay4 note="" isWorkOn="0" dayType="3" date="2458286"/>
+    <ExceptDay5 note="" isWorkOn="0" dayType="3" date="2458287"/>
+    <ExceptDay6 note="" isWorkOn="0" dayType="3" date="2458288"/>
+    <ExceptDay7 note="" isWorkOn="0" dayType="3" date="2458289"/>
+    <ExceptDay8 note="" isWorkOn="0" dayType="3" date="2458290"/>
+    <ExceptDay9 note="" isWorkOn="0" dayType="3" date="2458291"/>
+    <ExceptDay10 note="" isWorkOn="0" dayType="3" date="2458292"/>
+    <ExceptDay11 note="" isWorkOn="0" dayType="3" date="2458293"/>
+    <ExceptDay12 note="" isWorkOn="0" dayType="3" date="2458294"/>
+    <ExceptDay13 note="" isWorkOn="0" dayType="3" date="2458295"/>
+    <ExceptDay14 note="" isWorkOn="0" dayType="3" date="2458296"/>
+    <ExceptDay15 note="" isWorkOn="0" dayType="3" date="2458297"/>
+   </calendar>
+  </Developer5>
+  <Developer6 wr="1" name="KOM"/>
+  <Developer7 wr="1" name="KOV"/>
+  <Developer8 wr="1" name="KSA"/>
+  <Developer9 wr="1" name="PMG">
+   <calendar ExceptionDaysQty="19">
+    <ExceptDay1 note="" isWorkOn="0" dayType="3" date="2458281"/>
+    <ExceptDay2 note="" isWorkOn="0" dayType="3" date="2458282"/>
+    <ExceptDay3 note="" isWorkOn="0" dayType="3" date="2458283"/>
+    <ExceptDay4 note="" isWorkOn="0" dayType="3" date="2458284"/>
+    <ExceptDay5 note="" isWorkOn="0" dayType="3" date="2458285"/>
+    <ExceptDay6 note="" isWorkOn="0" dayType="3" date="2458286"/>
+    <ExceptDay7 note="" isWorkOn="0" dayType="3" date="2458287"/>
+    <ExceptDay8 note="" isWorkOn="0" dayType="3" date="2458288"/>
+    <ExceptDay9 note="" isWorkOn="0" dayType="3" date="2458289"/>
+    <ExceptDay10 note="" isWorkOn="0" dayType="3" date="2458290"/>
+    <ExceptDay11 note="" isWorkOn="0" dayType="3" date="2458291"/>
+    <ExceptDay12 note="" isWorkOn="0" dayType="3" date="2458292"/>
+    <ExceptDay13 note="" isWorkOn="0" dayType="3" date="2458293"/>
+    <ExceptDay14 note="" isWorkOn="0" dayType="3" date="2458294"/>
+    <ExceptDay15 note="" isWorkOn="0" dayType="3" date="2458295"/>
+    <ExceptDay16 note="" isWorkOn="0" dayType="3" date="2458296"/>
+    <ExceptDay17 note="" isWorkOn="0" dayType="3" date="2458297"/>
+    <ExceptDay18 note="" isWorkOn="0" dayType="3" date="2458298"/>
+    <ExceptDay19 note="" isWorkOn="0" dayType="3" date="2458299"/>
+   </calendar>
+  </Developer9>
+  <Developer10 wr="1" name="PVI"/>
+  <Developer11 wr="1" name="SPS">
+   <calendar ExceptionDaysQty="15">
+    <ExceptDay1 note="" isWorkOn="0" dayType="3" date="2458292"/>
+    <ExceptDay2 note="" isWorkOn="0" dayType="3" date="2458293"/>
+    <ExceptDay3 note="" isWorkOn="0" dayType="3" date="2458294"/>
+    <ExceptDay4 note="" isWorkOn="0" dayType="3" date="2458295"/>
+    <ExceptDay5 note="" isWorkOn="0" dayType="3" date="2458296"/>
+    <ExceptDay6 note="" isWorkOn="0" dayType="3" date="2458297"/>
+    <ExceptDay7 note="" isWorkOn="0" dayType="3" date="2458298"/>
+    <ExceptDay8 note="" isWorkOn="0" dayType="3" date="2458299"/>
+    <ExceptDay9 note="" isWorkOn="0" dayType="3" date="2458300"/>
+    <ExceptDay10 note="" isWorkOn="0" dayType="3" date="2458301"/>
+    <ExceptDay11 note="" isWorkOn="0" dayType="3" date="2458302"/>
+    <ExceptDay12 note="" isWorkOn="0" dayType="3" date="2458303"/>
+    <ExceptDay13 note="" isWorkOn="0" dayType="3" date="2458304"/>
+    <ExceptDay14 note="" isWorkOn="0" dayType="3" date="2458305"/>
+    <ExceptDay15 note="" isWorkOn="0" dayType="3" date="2458306"/>
+   </calendar>
+  </Developer11>
+  <Developer12 wr="1" name="SSB"/>
+ </DevelopersList>
+ <Git GitWeb="https://omp-system.ru/git/" RepoPath="G:/PrjVC/_omp"/>
+ <Redmine Key="6070eaa59ffa3fc76f686491a4ed408ef98a2fe8" URL="http://omp05/redmine/"/>
+</SettingsRoot>

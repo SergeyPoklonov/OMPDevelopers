@@ -8,6 +8,8 @@
 #include <Document/gitanalyzer.h>
 #include <Document/redmineanalyzer.h>
 
+class DocumentDataManager;
+
 class DevStatisticsDocument : public QObject
 {
   Q_OBJECT
@@ -17,31 +19,51 @@ public:
   void clear();
   
   ///////////////////////////////////////////////////////////////////////////
-  // settings
+  // data access
   void clearWorkingDevelopers();
-  void addWorkingDeveloper( CDeveloperData devData, unsigned holidaysDays );
+  void addWorkingDeveloper( CDeveloperData devData  );
 
+  
+  QDate getDateFrom() const;
+  QDate getDateTo() const;
   void setDateFrom(QDate d);
   void setDateTo(QDate d);
-  void setWorkingDaysQty(unsigned d);
+  
+  unsigned getWorkDayLenHrs() const { return WorkHrsInDay; }
+  
+  unsigned getWorkingDaysQty() const;
   
   double getMinRevHrs() const;
   void   setMinRevHrs( double hrs );
+  
+  std::vector< CDeveloperWorkData > getDevelopersStatisticData() const;
+  
+  QString trackerName(int trackerID) const;
+  int issueToTracker(int issueID) const;
+  
+  OMPCalendarData& getCommonCalendar() { return m_CommonCalendar; }
+  const OMPCalendarData& getCommonCalendar() const { return m_CommonCalendar; }
+  
+  QString getOutputHTMLDefaultFileName() const;
 
+  ///////////////////////////////////////////////////////////////////////////
+  // data operations
   bool checkSettings(QString &errStr);
   
   bool generateWorkData();
   
   bool creatHTMLDataFile(QString filePath);
   
-  QString getOutputHTMLDefaultFileName() const;
-  
+  ///////////////////////////////////////////////////////////////////////////
+  // signals
 signals:
   void generationStepsNumUpdated( int stepsNum );
   void generationStepsDone( int stepsNum );
   void generationMessage( QString msgText );
   void generationErrorOccured( QString errStr );
   
+  ///////////////////////////////////////////////////////////////////////////
+  // slots
 public slots:
   void childGenerationStepDone();
   
@@ -49,18 +71,19 @@ private:
   GitAnalyzer::AnalyzeSettings gitSettings();
   RedmineAnalyzer::AnalyzeSettings redmineSettings();
   
-  QString makeGitHTMLRevisionURL(const QString &sha);
-  
   GeneralSettingsHolder& generalSettings();
+  DocumentDataManager& parentDocument();
   
 private:
-  static const int WorkHrsInDay = 8;
-  static const int DefaultLargeRevHrsMin = 4;
+  static const unsigned WorkHrsInDay = 8;
+  static const unsigned DefaultLargeRevHrsMin = 4;
 
   QDate m_DateFrom;
   QDate m_DateTo;
-  unsigned m_WorkingDaysQty;
+  //unsigned m_WorkingDaysQty;
   double m_LargeRevisionHrsMin;
+  
+  OMPCalendarData m_CommonCalendar;
   
   std::vector< CDeveloperWorkData > m_DevelopersWorkDataList;
   

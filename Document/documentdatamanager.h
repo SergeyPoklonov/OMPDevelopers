@@ -23,6 +23,7 @@ public:
   // generalSettings
   
   GeneralSettingsHolder& generalSettings();
+  const GeneralSettingsHolder& generalSettings() const;
 
   bool SaveGeneralSettings();
   bool LoadGeneralSettings();
@@ -33,6 +34,7 @@ public:
   // devStatistics
   
   DevStatisticsDocument& devStatistic();
+  const DevStatisticsDocument& devStatistic() const;
 
   QString getOutputHTMLDefaultFilePath() const;
   

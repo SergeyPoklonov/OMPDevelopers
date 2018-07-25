@@ -4,6 +4,8 @@
 #include <QDomDocument>
 #include <QString>
 
+#include <Document/Calendar/CalendarData.h>
+
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -19,6 +21,8 @@ public:
     QString getName() const { return m_Name; }
     double  getWageRate() const { return m_WageRate > 0 ? m_WageRate : 1.0; }
 
+    OMPCalendarData& calendar() { return m_Calendar; }
+    const OMPCalendarData& calendar() const { return m_Calendar; }
 
     void setName( QString name ) { m_Name = name; }
     void setWageRate( double wr ) { m_WageRate = wr; }
@@ -31,6 +35,7 @@ public:
 private:
     QString m_Name;
     double m_WageRate;
+    OMPCalendarData m_Calendar;
 };
 
 #endif // DEVELOPERDATA_H

@@ -91,7 +91,7 @@ void GeneralSettingsPage::gitRepositoryChoose()
 
 void GeneralSettingsPage::developerAddClick()
 {
-  DeveloperEditor editor(this);
+  DeveloperEditor editor(QDate::currentDate(),this);
 
   auto conn = QObject::connect(&editor, &DeveloperEditor::dataAccepted, this, &GeneralSettingsPage::developerDataEditorDone);
 
@@ -139,7 +139,7 @@ void GeneralSettingsPage::developerEditClick()
   {
     CDeveloperData devData = getDocument().generalSettings().getDevelopersManager().GetDataByInd( selInd );
 
-    DeveloperEditor editor(devData, this);
+    DeveloperEditor editor(devData, QDate::currentDate(), this);
 
     auto conn = QObject::connect(&editor, &DeveloperEditor::dataAccepted, this, &GeneralSettingsPage::developerDataEditorDone);
 

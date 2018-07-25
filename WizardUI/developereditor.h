@@ -2,6 +2,7 @@
 #define DEVELOPEREDITOR_H
 
 #include <QDialog>
+#include <QTextCharFormat>
 
 #include <Document/developerdatamanager.h>
 
@@ -9,13 +10,15 @@ namespace Ui {
 class DeveloperEditor;
 }
 
+struct ExceptDayData;
+
 class DeveloperEditor : public QDialog
 {
   Q_OBJECT
 
 public:
-  explicit DeveloperEditor(const CDeveloperData &initialData, QWidget *parent = 0);
-  explicit DeveloperEditor(QWidget *parent = 0);
+  explicit DeveloperEditor(const CDeveloperData &initialData, QDate initialDate, QWidget *parent = 0);
+  explicit DeveloperEditor(QDate initialDate, QWidget *parent = 0);
   ~DeveloperEditor();
 
   enum EditMode
@@ -30,9 +33,23 @@ public:
 
 public slots:
   void OnOK();
+  void onDateSelected();
+  void onExceptDayPropertiesChanged();
+  void onExceptDayTypeChanged();
+  void onSetPeriodClicked();
 
 signals:
   void dataAccepted( DeveloperEditor *editor );
+  
+private:
+  void initializeForm( QDate initialDate );
+  
+  void initializeCalendarWidget( QDate &initialDate );
+  void connectExceptDayCtrl();
+  
+  void updateCurDayStyle();
+  
+  QTextCharFormat getDayFormat(const ExceptDayData *dayData);
 
 private:
   Ui::DeveloperEditor *ui;
@@ -40,6 +57,8 @@ private:
   CDeveloperData m_DeveloperData;
 
   EditMode m_EditMode;
+  
+  bool m_SelectedDayDataUpdating;
 };
 
 #endif // DEVELOPEREDITOR_H

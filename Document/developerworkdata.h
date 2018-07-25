@@ -66,21 +66,20 @@ class CDeveloperWorkData
 {
 public:
   CDeveloperWorkData();
-  CDeveloperWorkData(CDeveloperData devData, unsigned holidaysDays);
+  CDeveloperWorkData(CDeveloperData devData);
 
 public:
   void clear();
 
   QString getName() const;
   double  getWageRate() const;
-  unsigned getHolidaysDays() const;
   
   double redmineTotalHrs() const;
   double redmineDevelopHrs() const;
   double developOtherHrs() const;
+  double totalLabourHrs() const { return redmineTotalHrs() + developOtherHrs(); }
 
   void setDeveloperData(CDeveloperData devData);
-  void setHolidaysDays(unsigned d);
   
   std::vector<CRevisionData> revisionsList() const;
   std::vector<CRevisionData> revisionsList( double minTime ) const;
@@ -88,13 +87,15 @@ public:
   size_t revisionsCount() const;
   void addRevision(const CRevisionData &revData);
   
+  OMPCalendarData& calendar() { return m_DevData.calendar(); }
+  const OMPCalendarData& calendar() const { return m_DevData.calendar(); }
+  
   std::vector<CRedmineTimeData> redmineTimesList() const;
   size_t redmineTimesCount() const;
   void addRedmineTime(const CRedmineTimeData &timeData);
 
 private:
   CDeveloperData m_DevData;
-  unsigned m_HolidaysDays;
   std::vector<CRevisionData> m_RevisionsList;
   std::vector<CRedmineTimeData> m_RedmineTimeList;
 };

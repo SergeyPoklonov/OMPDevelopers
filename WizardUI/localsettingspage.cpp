@@ -62,15 +62,13 @@ void LocalSettingsPage::initializeWorkPeriodCtrls()
 
   ui->dateFrom->setDate( begDate );
 
-  ui->workingDays->setMinimum(1);
-  ui->workingDays->setValue( begDate.daysTo(endDate) );
+  onPeriodChanged();
 }
 
 void LocalSettingsPage::saveWorkPeriodToDocument()
 {
   getDocument().devStatistic().setDateFrom( ui->dateFrom->date() );
   getDocument().devStatistic().setDateTo( ui->dateTo->date() );
-  getDocument().devStatistic().setWorkingDaysQty( ui->workingDays->value() );
   getDocument().devStatistic().setMinRevHrs( ui->minRevHrsSpinBox->value() );
 }
 
@@ -95,11 +93,11 @@ void LocalSettingsPage::saveDevelopersToDocument()
     if( !devData.isValid() )
       continue;
 
-    QTableWidgetItem *hdaysItem = ui->developersList->item(row, DEVLIST_COLNUM_HDAYS);
+    /*QTableWidgetItem *hdaysItem = ui->developersList->item(row, DEVLIST_COLNUM_HDAYS);
 
-    unsigned holidaysDays = hdaysItem->data(Qt::DisplayRole).toUInt();
+    unsigned holidaysDays = hdaysItem->data(Qt::DisplayRole).toUInt();*/
 
-    getDocument().devStatistic().addWorkingDeveloper( devData, holidaysDays );
+    getDocument().devStatistic().addWorkingDeveloper( devData );
   }
 }
 
@@ -110,7 +108,7 @@ void LocalSettingsPage::intializeDevelopersList()
   ui->developersList->setColumnCount( DEVLIST_COLSQTY );
   ui->developersList->setHorizontalHeaderLabels( {QString("Имя"), QString("Отпуск,дн")} );
 
-  ui->developersList->setRowCount( developersMng.Count() );
+  ui->developersList->setRowCount( (int)developersMng.Count() );
 
   for(size_t i = 0; i < developersMng.Count(); i++)
   {
@@ -120,15 +118,20 @@ void LocalSettingsPage::intializeDevelopersList()
                       nameItem->setFlags( Qt::ItemIsEnabled | Qt::ItemIsUserCheckable );
                       nameItem->setData(Qt::DisplayRole, devData.getName());
                       nameItem->setData(Qt::CheckStateRole, (int)Qt::Checked);
-    ui->developersList->setItem(i, DEVLIST_COLNUM_NAME, nameItem);
+    ui->developersList->setItem( (int)i, DEVLIST_COLNUM_NAME, nameItem);
 
     QTableWidgetItem *holidaysItem = new QTableWidgetItem( );
                       holidaysItem->setFlags( Qt::ItemIsEditable | Qt::ItemIsEnabled );
                       holidaysItem->setTextAlignment( Qt::AlignHCenter | Qt::AlignVCenter );
-    ui->developersList->setItem(i, DEVLIST_COLNUM_HDAYS, holidaysItem);
+    ui->developersList->setItem( (int)i, DEVLIST_COLNUM_HDAYS, holidaysItem);
   }
 
   QObject::connect(ui->developersList, &QTableWidget::itemChanged, this, &LocalSettingsPage::onDeveloperDataChanged);
+}
+
+void LocalSettingsPage::onPeriodChanged()
+{
+  ui->workingDays->setValue( getDocument().devStatistic().getCommonCalendar().getWorkDaysQty(ui->dateFrom->date(), ui->dateTo->date()) );
 }
 
 void LocalSettingsPage::initializePage()
@@ -139,6 +142,9 @@ void LocalSettingsPage::initializePage()
   
   ui->minRevHrsSpinBox->setSuffix(" ч");
   ui->minRevHrsSpinBox->setValue( getDocument().devStatistic().getMinRevHrs() );
+  
+  QObject::connect(ui->dateFrom, &QDateEdit::dateChanged, this, &LocalSettingsPage::onPeriodChanged);
+  QObject::connect(ui->dateTo, &QDateEdit::dateChanged, this, &LocalSettingsPage::onPeriodChanged);
 }
 
 bool LocalSettingsPage::initialize( DocumentDataManager *doc )

@@ -63,8 +63,6 @@ void CDeveloperListDataManager::LoadFromXML(QDomElement &parentElement)
 
   clear();
 
-  QDomDocument doc = parentElement.ownerDocument();
-
   QDomElement baseElement = parentElement.firstChildElement( "DevelopersList" );
 
   if( !baseElement.isNull() )
@@ -114,7 +112,7 @@ void CDeveloperListDataManager::SortData( std::function<bool(const CDeveloperDat
   {
     std::sort(m_DevelopersList.begin(), m_DevelopersList.end(), sortPredicate);
 
-    emit dataChanged( createIndex(0, COLNUM_NAME), createIndex(m_DevelopersList.size() - 1, COLNUM_WR) );
+    emit dataChanged( createIndex(0, COLNUM_NAME), createIndex( (int)m_DevelopersList.size() - 1, COLNUM_WR) );
   }
 }
 
@@ -149,13 +147,13 @@ bool CDeveloperListDataManager::InsertData( CDeveloperData newData, size_t ind, 
 
   if( utils::is_valid_index( m_DevelopersList, ind ) )
   {
-    beginInsertRows(QModelIndex(), ind, ind);
+    beginInsertRows(QModelIndex(), (int)ind, (int)ind);
 
     m_DevelopersList.insert( m_DevelopersList.begin() + ind, newData );
   }
   else
   {
-    beginInsertRows(QModelIndex(), m_DevelopersList.size(), m_DevelopersList.size());
+    beginInsertRows(QModelIndex(), (int)m_DevelopersList.size(), (int)m_DevelopersList.size());
 
     m_DevelopersList.push_back( newData );
   }
@@ -180,7 +178,7 @@ bool CDeveloperListDataManager::DeleteData(size_t ind, QString *errStr)
     return false;
   }
 
-  beginRemoveRows(QModelIndex(), ind, ind);
+  beginRemoveRows(QModelIndex(), (int)ind, (int)ind);
 
   m_DevelopersList.erase( m_DevelopersList.begin() + ind );
 
@@ -214,7 +212,7 @@ bool CDeveloperListDataManager::SetDataByInd( CDeveloperData newData, size_t ind
 
   m_DevelopersList[ind] = newData;
 
-  emit dataChanged( createIndex(ind, COLNUM_NAME), createIndex(ind, COLNUM_WR) );
+  emit dataChanged( createIndex( (int)ind, COLNUM_NAME), createIndex( (int)ind, COLNUM_WR) );
 
   return true;
 }
@@ -222,7 +220,7 @@ bool CDeveloperListDataManager::SetDataByInd( CDeveloperData newData, size_t ind
 int CDeveloperListDataManager::rowCount(const QModelIndex &parent) const
 {
   Q_UNUSED(parent);
-  return m_DevelopersList.size();
+  return (int)m_DevelopersList.size();
 }
 
 int CDeveloperListDataManager::columnCount(const QModelIndex &parent) const
