@@ -111,7 +111,7 @@
      <item>
       <layout class="QHBoxLayout" name="horizontalLayout_4">
        <item>
-        <widget class="QLabel" name="label_5">
+        <widget class="QCheckBox" name="minRevHrsCheck">
          <property name="text">
           <string>Показывать ревизии начиная с:</string>
          </property>

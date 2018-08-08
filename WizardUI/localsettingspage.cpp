@@ -143,8 +143,19 @@ void LocalSettingsPage::initializePage()
   ui->minRevHrsSpinBox->setSuffix(" ч");
   ui->minRevHrsSpinBox->setValue( getDocument().devStatistic().getMinRevHrs() );
   
+  QObject::connect(ui->minRevHrsCheck, &QCheckBox::toggled, this, &LocalSettingsPage::onRevisionsListEnable);
+  QObject::connect(ui->minRevHrsCheck, &QCheckBox::toggled, ui->minRevHrsSpinBox, &QSpinBox::setEnabled);
+  
+  ui->minRevHrsCheck->setChecked( getDocument().devStatistic().isRevisionListEnabled() );
+  ui->minRevHrsSpinBox->setEnabled( getDocument().devStatistic().isRevisionListEnabled() );
+  
   QObject::connect(ui->dateFrom, &QDateEdit::dateChanged, this, &LocalSettingsPage::onPeriodChanged);
   QObject::connect(ui->dateTo, &QDateEdit::dateChanged, this, &LocalSettingsPage::onPeriodChanged);
+}
+
+void LocalSettingsPage::onRevisionsListEnable(bool isEnabled)
+{
+  getDocument().devStatistic().setRevisionListEnabled( isEnabled );
 }
 
 bool LocalSettingsPage::initialize( DocumentDataManager *doc )

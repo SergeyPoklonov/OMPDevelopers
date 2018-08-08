@@ -33,6 +33,9 @@ public:
   
   unsigned getWorkingDaysQty() const;
   
+  bool isRevisionListEnabled() const;
+  void setRevisionListEnabled(bool isEnable);
+  
   double getMinRevHrs() const;
   void   setMinRevHrs( double hrs );
   
@@ -80,7 +83,8 @@ private:
 
   QDate m_DateFrom;
   QDate m_DateTo;
-  //unsigned m_WorkingDaysQty;
+  
+  bool m_RevListEnabled;
   double m_LargeRevisionHrsMin;
   
   OMPCalendarData m_CommonCalendar;

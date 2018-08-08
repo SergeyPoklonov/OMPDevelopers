@@ -140,7 +140,7 @@ QString HTMLGenerator::generateHTMLText( const DocumentDataManager &docObj )
       
       addPieChart( QString("%1: Трудозатраты по типам задач").arg(devData.getName()), pieChartData );
     }
-        
+    
     std::vector<CRevisionData> nonRMRevisions = devData.nonRedmineRevisionsList(false);
     
     if( nonRMRevisions.size() )
@@ -149,18 +149,21 @@ QString HTMLGenerator::generateHTMLText( const DocumentDataManager &docObj )
     
       m_HTMLText += "<br>";
     }
-    
-    const double largeRevHrsMin = Doc().devStatistic().getMinRevHrs();
-    
-    std::vector<CRevisionData> largeRevisions = devData.revisionsList( largeRevHrsMin );
-    
-    if( largeRevisions.size() )
+      
+    if( Doc().devStatistic().isRevisionListEnabled() )
     {
-      addRevisionsTable( QString("Большие ревизии (не менее %1 ч)\n").arg( largeRevHrsMin ), largeRevisions );
-    }
-    else
-    {
-      m_HTMLText += QString("<p>Ревизии %1 ч и больше отсутствуют.</p>\n").arg( largeRevHrsMin );
+      const double largeRevHrsMin = Doc().devStatistic().getMinRevHrs();
+      
+      std::vector<CRevisionData> largeRevisions = devData.revisionsList( largeRevHrsMin );
+      
+      if( largeRevisions.size() )
+      {
+        addRevisionsTable( QString("Большие ревизии (не менее %1 ч)\n").arg( largeRevHrsMin ), largeRevisions );
+      }
+      else
+      {
+        m_HTMLText += QString("<p>Ревизии %1 ч и больше отсутствуют.</p>\n").arg( largeRevHrsMin );
+      }
     }
     
     m_HTMLText += QString("<p>Всего ревизий: %1</p>\n").arg( devData.revisionsCount() );

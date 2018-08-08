@@ -9,6 +9,7 @@
 
 DevStatisticsDocument::DevStatisticsDocument(QObject *parent) 
   : QObject(parent)
+  , m_RevListEnabled(true)
 {
   m_GenerationDone = false;
   m_LargeRevisionHrsMin = DefaultLargeRevHrsMin;
@@ -17,6 +18,7 @@ DevStatisticsDocument::DevStatisticsDocument(QObject *parent)
 void DevStatisticsDocument::clear()
 {
   m_DateFrom = m_DateTo = QDate::currentDate();
+  m_RevListEnabled = true;
   m_LargeRevisionHrsMin = DefaultLargeRevHrsMin;
   
   m_DevelopersWorkDataList.clear();
@@ -65,6 +67,16 @@ std::vector< CDeveloperWorkData > DevStatisticsDocument::getDevelopersStatisticD
 unsigned DevStatisticsDocument::getWorkingDaysQty() const
 {
   return m_CommonCalendar.getWorkDaysQty(getDateFrom(), getDateTo());
+}
+
+bool DevStatisticsDocument::isRevisionListEnabled() const
+{
+  return m_RevListEnabled;
+}
+
+void DevStatisticsDocument::setRevisionListEnabled(bool isEnable)
+{
+  m_RevListEnabled = isEnable;
 }
 
 double DevStatisticsDocument::getMinRevHrs() const

@@ -28,6 +28,7 @@ public:
 public slots:
   void onDeveloperDataChanged( QTableWidgetItem *item );
   void onPeriodChanged();
+  void onRevisionsListEnable(bool isEnabled);
 
 private:
   void intializeDevelopersList();
