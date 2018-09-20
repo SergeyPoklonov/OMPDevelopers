@@ -28,7 +28,9 @@ public:
 public slots:
   void onDeveloperDataChanged( QTableWidgetItem *item );
   void onPeriodChanged();
-  void onRevisionsListEnable(bool isEnabled);
+  void onLargeRevisionsListEnable(bool isEnabled);
+  void onCoreRevisionsEnable(bool isEnabled);
+  void onRedmineEnable(bool isEnabled);
 
 private:
   void intializeDevelopersList();
@@ -36,6 +38,10 @@ private:
 
   void initializeWorkPeriodCtrls();
   void saveWorkPeriodToDocument();
+  
+  void initializeMinRevHrsCtrls();
+  
+  void initializeCoreRevsCtrls();
 
 private:
   Ui::LocalSettingsPage *ui;

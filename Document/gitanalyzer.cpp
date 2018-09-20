@@ -10,6 +10,8 @@ GitAnalyzer::GitAnalyzer(AnalyzeSettings settings, QObject *parent)
   : QObject(parent)
   , m_Settings(settings)
 {
+  m_Settings.CoreModulesNames = "core;uicore;OmUtils;OmUtilsUI";
+      
   clearGenerationData();
 }
 
@@ -17,6 +19,7 @@ void GitAnalyzer::clearGenerationData()
 {
   m_gitProcessRunOK = true;
   m_gitProcessRunError = QProcess::UnknownError;
+  m_CoreModulesRgxPattern.clear();
 }
 
 void GitAnalyzer::gitProcessFail(QProcess::ProcessError error)
@@ -40,7 +43,7 @@ QString GitAnalyzer::makeGitProcessRunErrorString()
   return errStr;
 }
 
-bool GitAnalyzer::runGit(QString &output, QString *errStr)
+bool GitAnalyzer::getGitLog(QString &output, QString &errStr, LogFormat logFormat)
 {
   QProcess gitProcess;
            gitProcess.setWorkingDirectory( m_Settings.RepositoryPath );
@@ -51,9 +54,25 @@ bool GitAnalyzer::runGit(QString &output, QString *errStr)
 
   QStringList args;
               args.append("log");
-              args.append( QString("--pretty=format:\%1%2%H%3%an%4%s").arg(tagRev).arg(tagSHA).arg(tagAuthor).arg(tagNotes) );
               args.append( QString("--since=%1").arg( m_Settings.DateFrom.toString(argDateFormat) ) );
               args.append( QString("--until=%1").arg( m_Settings.DateTo.toString(argDateFormat) ) );
+              
+
+  switch( logFormat )
+  {
+    case LogFormat::FULL:
+    args.append( QString("--pretty=format:\%1%2%H%3%an%4%s").arg(tagRev).arg(tagSHA).arg(tagAuthor).arg(tagNotes) );
+    args.append( QString("--name-only") );
+    break;
+              
+    case LogFormat::ONLY_REVTAGS:
+    args.append( QString("--pretty=format:\%1").arg(tagRev) );
+    break;
+    
+    default:
+    errStr = "Получен неизвестный формат для лога git.";
+    return false;
+  }
 
   gitProcess.start("git", args);
 
@@ -61,8 +80,7 @@ bool GitAnalyzer::runGit(QString &output, QString *errStr)
 
   if( !runOK || !m_gitProcessRunOK )
   {
-    if( errStr )
-      *errStr = makeGitProcessRunErrorString();
+    errStr = makeGitProcessRunErrorString();
 
     return false;
   }
@@ -74,13 +92,13 @@ bool GitAnalyzer::runGit(QString &output, QString *errStr)
   return true;
 }
 
-size_t GitAnalyzer::GetRevisionsCount()
+size_t GitAnalyzer::GetRevisionsCount(QString &errStr)
 {
   clearGenerationData();
 
   QString gitOutput;
 
-  if( !runGit( gitOutput ) )
+  if( !getGitLog( gitOutput, errStr, LogFormat::ONLY_REVTAGS ) )
     return 0;
   
   size_t revCount = 0;
@@ -112,6 +130,15 @@ bool GitAnalyzer::ParseRevisionBody(const QString &revBodyStr, CRevisionData &re
   {
     Q_ASSERT( false ); // bad revision body
     return false;
+  }
+  
+  const bool isMerge = revBodyStr.indexOf("Merge branch ",notesInd) != -1;
+  
+  if( !isMerge )
+  {
+    const bool changesCoreModules = revBodyStr.indexOf( QRegExp(coreModulesRgxPattern()), notesInd) != -1;
+    
+    revData.setChangesCore( changesCoreModules );
   }
   
   const int shaBodyInd = shaInd + tagSHA.size();
@@ -150,6 +177,22 @@ bool GitAnalyzer::ParseRevisionBody(const QString &revBodyStr, CRevisionData &re
   return true;
 }
 
+QString GitAnalyzer::coreModulesRgxPattern()
+{
+  if( !m_CoreModulesRgxPattern.count() )
+  {
+    if( m_Settings.CoreModulesNames.count() )
+    {
+      QStringList modulesNames = m_Settings.CoreModulesNames.split(';', QString::SkipEmptyParts);
+      
+      m_CoreModulesRgxPattern = modulesNames.join("/|");
+      m_CoreModulesRgxPattern += "/";
+    }
+  }
+  
+  return m_CoreModulesRgxPattern;
+}
+
 void GitAnalyzer::AddRevisionToDeveloper( std::vector<CDeveloperWorkData> &workDevList, const CRevisionData &revData )
 {
   for(CDeveloperWorkData &devData : workDevList)
@@ -164,6 +207,7 @@ void GitAnalyzer::AddRevisionToDeveloper( std::vector<CDeveloperWorkData> &workD
 
 int GitAnalyzer::GetAnalyzeStepsCount()
 {
+  size_t revCount = GetRevisionsCount( QString() );
   return 2;
 }
 
@@ -181,7 +225,7 @@ bool GitAnalyzer::AnalyzeRepository(std::vector<CDeveloperWorkData> &workDevList
 
   QString gitOutput;
 
-  if( !runGit(gitOutput, errStr) )
+  if( !getGitLog(gitOutput, errStr ? *errStr : QString(), LogFormat::FULL) )
     return false;
   
   emit analyzeStepDone();

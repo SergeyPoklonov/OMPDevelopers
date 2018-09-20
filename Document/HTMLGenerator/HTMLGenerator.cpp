@@ -39,6 +39,7 @@ QString HTMLGenerator::generateHTMLText( const DocumentDataManager &docObj )
   addHTMLLine("<h3>Трудоемкость за период</h3>");
   
   // линейки трудоемкости по разработчикам
+  if( Doc().devStatistic().isRedmineEnabled() )
   {
     std::vector<HorizontalBarData> barsData;
     for( const CDeveloperWorkData &devData : devStatList )
@@ -64,93 +65,96 @@ QString HTMLGenerator::generateHTMLText( const DocumentDataManager &docObj )
   
   for( const CDeveloperWorkData &devData : devStatList )
   {
-    const double redmineTotalHrs = devData.redmineTotalHrs();
-    const double developmentOtherHrs = devData.developOtherHrs();
-    const double holydaysHrs = devData.calendar().getExceptDaysQty(dateFrom, dateTo, ExceptDayType::HOLIDAYS, DaysExcludeMode::STDNONWORK) * Doc().devStatistic().getWorkDayLenHrs();
-    const double sickHrs = devData.calendar().getExceptDaysQty(dateFrom, dateTo, ExceptDayType::SICKLIST, DaysExcludeMode::STDNONWORK) * Doc().devStatistic().getWorkDayLenHrs();
-    const double freeTimeHrs = totalPeriodWorkLenHrs - (redmineTotalHrs + developmentOtherHrs + holydaysHrs + sickHrs);
-    
     m_HTMLText += "<hr>";
     
-    m_HTMLText += QString("<h3 id=""%1"">%1</h3>\n").arg( devData.getName() );
+    addHTMLLine( QString("<h3 id=""%1"">%1</h3>").arg( devData.getName() ) );
     
-    if( freeTimeHrs == totalPeriodWorkLenHrs )
+    if( Doc().devStatistic().isRedmineEnabled() )
     {
-      m_HTMLText += "<p>Отсутствуют какие-либо данные по разработчику за указанный период времени.</p>\n";
-      continue;
-    }
-    
-    m_HTMLText += QString("<p>Общие трудозатраты: <b>%1ч</b>.</p>\n").arg( QLocale().toString( devData.totalLabourHrs(), 'f', 1) );
-    
-    // график по типам времени
-    {
-      HTMLPieChartData pieChartData;
+      const double redmineTotalHrs = devData.redmineTotalHrs();
+      const double developmentOtherHrs = devData.developOtherHrs();
+      const double holydaysHrs = devData.calendar().getExceptDaysQty(dateFrom, dateTo, ExceptDayType::HOLIDAYS, DaysExcludeMode::STDNONWORK) * Doc().devStatistic().getWorkDayLenHrs();
+      const double sickHrs = devData.calendar().getExceptDaysQty(dateFrom, dateTo, ExceptDayType::SICKLIST, DaysExcludeMode::STDNONWORK) * Doc().devStatistic().getWorkDayLenHrs();
+      const double freeTimeHrs = totalPeriodWorkLenHrs - (redmineTotalHrs + developmentOtherHrs + holydaysHrs + sickHrs);
       
-      pieChartData.setDimensions(640,480);
-      pieChartData.setResidueSliceParams("Прочее", "Yellow");
-      pieChartData.setSliceVisibilityThresholdPrc(1);
-      
-      if( redmineTotalHrs > 0 )
-        pieChartData.addSlice("Трудоемкость по Redmine", redmineTotalHrs, "Green");
-      
-      if( developmentOtherHrs > 0 )
-        pieChartData.addSlice("Разработка без привязки к Redmine", developmentOtherHrs, "Lime");
-      
-      if( holydaysHrs > 0 )
-        pieChartData.addSlice( getExceptDayTypeName(ExceptDayType::HOLIDAYS) , holydaysHrs, "Blue");
-      
-      if( freeTimeHrs > 0 )
-        pieChartData.addSlice("Неучтенное время", freeTimeHrs, "Silver");
-      
-      if( sickHrs > 0 )
-        pieChartData.addSlice( getExceptDayTypeName(ExceptDayType::SICKLIST) , sickHrs, "Fuchsia");
-      
-      addPieChart( QString("%1: Использование рабочего времени").arg(devData.getName()), pieChartData );
-    }
-    
-    // график по типам задач в редмайн
-    if( redmineTotalHrs )
-    {
-      std::map<int,double> trackersTime;
-      std::vector<CRedmineTimeData> devTEList = devData.redmineTimesList();
-      
-      for( CRedmineTimeData &teData : devTEList )
+      if( freeTimeHrs == totalPeriodWorkLenHrs )
       {
-        const int trackerID = Doc().devStatistic().issueToTracker(teData.IssueID());
-        trackersTime[trackerID] += teData.HoursSpent();
+        m_HTMLText += "<p>Отсутствуют какие-либо данные по разработчику за указанный период времени.</p>\n";
+        continue;
       }
       
-      Q_ASSERT( trackersTime.size() );
+      m_HTMLText += QString("<p>Общие трудозатраты: <b>%1ч</b>.</p>\n").arg( QLocale().toString( devData.totalLabourHrs(), 'f', 1) );
       
-      std::map<int,QString> trackerColors = getTrackersColors();
-      
-      HTMLPieChartData pieChartData;
-      
-      pieChartData.setDimensions(640,480);
-      pieChartData.setResidueSliceParams("Прочее");
-      pieChartData.setSliceVisibilityThresholdPrc(1);
-      
-      for(auto &trackerPair : trackersTime)
+      // график по типам времени
       {
-        const double trackerHrs = trackerPair.second;
-        const QString trackerName = Doc().devStatistic().trackerName(trackerPair.first);
+        HTMLPieChartData pieChartData;
         
-        pieChartData.addSlice(trackerName, trackerHrs, trackerColors[trackerPair.first]);
+        pieChartData.setDimensions(640,480);
+        pieChartData.setResidueSliceParams("Прочее", "Yellow");
+        pieChartData.setSliceVisibilityThresholdPrc(1);
+        
+        if( redmineTotalHrs > 0 )
+          pieChartData.addSlice("Трудоемкость по Redmine", redmineTotalHrs, "Green");
+        
+        if( developmentOtherHrs > 0 )
+          pieChartData.addSlice("Разработка без привязки к Redmine", developmentOtherHrs, "Lime");
+        
+        if( holydaysHrs > 0 )
+          pieChartData.addSlice( getExceptDayTypeName(ExceptDayType::HOLIDAYS) , holydaysHrs, "Blue");
+        
+        if( freeTimeHrs > 0 )
+          pieChartData.addSlice("Неучтенное время", freeTimeHrs, "Silver");
+        
+        if( sickHrs > 0 )
+          pieChartData.addSlice( getExceptDayTypeName(ExceptDayType::SICKLIST) , sickHrs, "Fuchsia");
+        
+        addPieChart( QString("%1: Использование рабочего времени").arg(devData.getName()), pieChartData );
       }
       
-      addPieChart( QString("%1: Трудозатраты по типам задач").arg(devData.getName()), pieChartData );
-    }
-    
-    std::vector<CRevisionData> nonRMRevisions = devData.nonRedmineRevisionsList(false);
-    
-    if( nonRMRevisions.size() )
-    {
-      addRevisionsTable( QString("Ревизии без привязки к Redmine"), nonRMRevisions );
-    
-      m_HTMLText += "<br>";
+      // график по типам задач в редмайн
+      if( redmineTotalHrs )
+      {
+        std::map<int,double> trackersTime;
+        std::vector<CRedmineTimeData> devTEList = devData.redmineTimesList();
+        
+        for( CRedmineTimeData &teData : devTEList )
+        {
+          const int trackerID = Doc().devStatistic().issueToTracker(teData.IssueID());
+          trackersTime[trackerID] += teData.HoursSpent();
+        }
+        
+        Q_ASSERT( trackersTime.size() );
+        
+        std::map<int,QString> trackerColors = getTrackersColors();
+        
+        HTMLPieChartData pieChartData;
+        
+        pieChartData.setDimensions(640,480);
+        pieChartData.setResidueSliceParams("Прочее");
+        pieChartData.setSliceVisibilityThresholdPrc(1);
+        
+        for(auto &trackerPair : trackersTime)
+        {
+          const double trackerHrs = trackerPair.second;
+          const QString trackerName = Doc().devStatistic().trackerName(trackerPair.first);
+          
+          pieChartData.addSlice(trackerName, trackerHrs, trackerColors[trackerPair.first]);
+        }
+        
+        addPieChart( QString("%1: Трудозатраты по типам задач").arg(devData.getName()), pieChartData );
+      }
+      
+      std::vector<CRevisionData> nonRMRevisions = devData.nonRedmineRevisionsList(false);
+      
+      if( nonRMRevisions.size() )
+      {
+        addRevisionsTable( QString("Ревизии без привязки к Redmine"), nonRMRevisions );
+      
+        m_HTMLText += "<br>";
+      }
     }
       
-    if( Doc().devStatistic().isRevisionListEnabled() )
+    if( Doc().devStatistic().isLargeRevisionListEnabled() )
     {
       const double largeRevHrsMin = Doc().devStatistic().getMinRevHrs();
       
@@ -163,6 +167,20 @@ QString HTMLGenerator::generateHTMLText( const DocumentDataManager &docObj )
       else
       {
         m_HTMLText += QString("<p>Ревизии %1 ч и больше отсутствуют.</p>\n").arg( largeRevHrsMin );
+      }
+    }
+    
+    if( Doc().devStatistic().isCoreRevisionListEnabled() )
+    {
+      std::vector<CRevisionData> coreRevisions = devData.coreRevisionsList();
+      
+      if( coreRevisions.size() )
+      {
+        addRevisionsTable( "Ревизии меняющие базовый функционал\n", coreRevisions );
+      }
+      else
+      {
+        addHTMLLine( "<p>Ревизии меняющие базовый функционал отсутствуют.</p>" );
       }
     }
     

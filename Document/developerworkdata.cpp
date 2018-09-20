@@ -64,6 +64,18 @@ void CDeveloperWorkData::setDeveloperData(CDeveloperData devData)
   m_DevData = devData;
 }
 
+std::vector<CRevisionData> CDeveloperWorkData::coreRevisionsList() const
+{
+  std::vector<CRevisionData> retList;
+  for( const CRevisionData &rev : m_RevisionsList )
+  {
+    if( rev.isChangeCore() )
+      retList.push_back( rev );
+  }
+  
+  return retList;
+}
+
 std::vector<CRevisionData> CDeveloperWorkData::nonRedmineRevisionsList(bool includeZeroTime) const
 {
   std::vector<CRevisionData> retList;
@@ -126,6 +138,7 @@ void CRevisionData::clear()
   m_DeveloperName.clear();
   m_HoursSpent = 0.0;
   m_RedmineLinked = false;
+  m_ChangeCore = false;
 }
 
 CRevisionData::CRevisionData()
@@ -176,6 +189,16 @@ bool CRevisionData::RedmineLinked() const
 void CRevisionData::setRedmineLinked(bool RedmineLinked)
 {
     m_RedmineLinked = RedmineLinked;
+}
+
+bool CRevisionData::isChangeCore() const
+{
+  return m_ChangeCore;
+}
+
+void CRevisionData::setChangesCore(bool changes)
+{
+  m_ChangeCore = changes;
 }
 
 ///////////////////////////////////////////////////////////////////////////

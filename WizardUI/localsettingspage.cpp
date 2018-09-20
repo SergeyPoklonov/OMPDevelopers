@@ -38,6 +38,8 @@ bool LocalSettingsPage::validatePage()
 
   saveWorkPeriodToDocument();
   
+  getDocument().devStatistic().setCoreModulesNames( ui->coreRevsNamesEdit->text() );
+  
   QString str;
   if( !getDocument().devStatistic().checkSettings(str) )
   {
@@ -46,6 +48,29 @@ bool LocalSettingsPage::validatePage()
   }
 
   return QWizardPage::validatePage();
+}
+
+void LocalSettingsPage::initializeCoreRevsCtrls()
+{
+  ui->coreRevsNamesEdit->setText( getDocument().devStatistic().getCoremodulesNames() );
+  
+  QObject::connect(ui->showCoreRevsCheck, &QCheckBox::toggled, this, &LocalSettingsPage::onCoreRevisionsEnable);
+  QObject::connect(ui->showCoreRevsCheck, &QCheckBox::toggled, ui->coreRevsNamesEdit, &QLineEdit::setEnabled);
+  
+  ui->showCoreRevsCheck->setChecked( getDocument().devStatistic().isCoreRevisionListEnabled() );
+  ui->coreRevsNamesEdit->setEnabled( getDocument().devStatistic().isCoreRevisionListEnabled() );
+}
+
+void LocalSettingsPage::initializeMinRevHrsCtrls()
+{
+  ui->minRevHrsSpinBox->setSuffix(" ч");
+  ui->minRevHrsSpinBox->setValue( getDocument().devStatistic().getMinRevHrs() );
+  
+  QObject::connect(ui->minRevHrsCheck, &QCheckBox::toggled, this, &LocalSettingsPage::onLargeRevisionsListEnable);
+  QObject::connect(ui->minRevHrsCheck, &QCheckBox::toggled, ui->minRevHrsSpinBox, &QSpinBox::setEnabled);
+  
+  ui->minRevHrsCheck->setChecked( getDocument().devStatistic().isLargeRevisionListEnabled() );
+  ui->minRevHrsSpinBox->setEnabled( getDocument().devStatistic().isLargeRevisionListEnabled() );
 }
 
 void LocalSettingsPage::initializeWorkPeriodCtrls()
@@ -63,6 +88,9 @@ void LocalSettingsPage::initializeWorkPeriodCtrls()
   ui->dateFrom->setDate( begDate );
 
   onPeriodChanged();
+  
+  QObject::connect(ui->dateFrom, &QDateEdit::dateChanged, this, &LocalSettingsPage::onPeriodChanged);
+  QObject::connect(ui->dateTo, &QDateEdit::dateChanged, this, &LocalSettingsPage::onPeriodChanged);
 }
 
 void LocalSettingsPage::saveWorkPeriodToDocument()
@@ -140,30 +168,35 @@ void LocalSettingsPage::initializePage()
 
   intializeDevelopersList();
   
-  ui->minRevHrsSpinBox->setSuffix(" ч");
-  ui->minRevHrsSpinBox->setValue( getDocument().devStatistic().getMinRevHrs() );
+  initializeMinRevHrsCtrls();
   
-  QObject::connect(ui->minRevHrsCheck, &QCheckBox::toggled, this, &LocalSettingsPage::onRevisionsListEnable);
-  QObject::connect(ui->minRevHrsCheck, &QCheckBox::toggled, ui->minRevHrsSpinBox, &QSpinBox::setEnabled);
+  initializeCoreRevsCtrls();
   
-  ui->minRevHrsCheck->setChecked( getDocument().devStatistic().isRevisionListEnabled() );
-  ui->minRevHrsSpinBox->setEnabled( getDocument().devStatistic().isRevisionListEnabled() );
+  initializeWorkPeriodCtrls();
   
-  QObject::connect(ui->dateFrom, &QDateEdit::dateChanged, this, &LocalSettingsPage::onPeriodChanged);
-  QObject::connect(ui->dateTo, &QDateEdit::dateChanged, this, &LocalSettingsPage::onPeriodChanged);
+  QObject::connect(ui->redmineEnabledCheck, &QCheckBox::toggled, this, &LocalSettingsPage::onRedmineEnable);
+  ui->redmineEnabledCheck->setChecked( getDocument().devStatistic().isRedmineEnabled() );
 }
 
-void LocalSettingsPage::onRevisionsListEnable(bool isEnabled)
+void LocalSettingsPage::onRedmineEnable(bool isEnabled)
 {
-  getDocument().devStatistic().setRevisionListEnabled( isEnabled );
+  getDocument().devStatistic().setRedmineEnabled( isEnabled );
+}
+
+void LocalSettingsPage::onCoreRevisionsEnable(bool isEnable)
+{
+  getDocument().devStatistic().setCoreRevisionListEnabled( isEnable );
+}
+
+void LocalSettingsPage::onLargeRevisionsListEnable(bool isEnabled)
+{
+  getDocument().devStatistic().setLargeRevisionListEnabled( isEnabled );
 }
 
 bool LocalSettingsPage::initialize( DocumentDataManager *doc )
 {
   if( !CWizardPageDocumentSupport::initialize( doc ) )
     return false;
-
-  initializeWorkPeriodCtrls();
 
   return true;
 }

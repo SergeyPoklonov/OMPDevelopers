@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>432</width>
-    <height>433</height>
+    <width>588</width>
+    <height>638</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -109,6 +109,13 @@
       </widget>
      </item>
      <item>
+      <widget class="QCheckBox" name="redmineEnabledCheck">
+       <property name="text">
+        <string>Собирать статистику Redmine</string>
+       </property>
+      </widget>
+     </item>
+     <item>
       <layout class="QHBoxLayout" name="horizontalLayout_4">
        <item>
         <widget class="QCheckBox" name="minRevHrsCheck">
@@ -118,7 +125,25 @@
         </widget>
        </item>
        <item>
-        <widget class="QDoubleSpinBox" name="minRevHrsSpinBox"/>
+        <widget class="QDoubleSpinBox" name="minRevHrsSpinBox">
+         <property name="suffix">
+          <string>ч</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout_5">
+       <item>
+        <widget class="QCheckBox" name="showCoreRevsCheck">
+         <property name="text">
+          <string>Показывать ревизии базовых модулей:</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLineEdit" name="coreRevsNamesEdit"/>
        </item>
       </layout>
      </item>

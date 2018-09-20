@@ -7,9 +7,14 @@
 
 #include <Document/HTMLGenerator/HTMLGenerator.h>
 
+static const QString g_DefCoreModules = "core;uicore;OmUtils;OmUtilsUI";
+
 DevStatisticsDocument::DevStatisticsDocument(QObject *parent) 
   : QObject(parent)
-  , m_RevListEnabled(true)
+  , m_RedmineEnabled(true)
+  , m_LargeRevListEnabled(false)
+  , m_CoreRevListEnabled(false)
+  , m_CoreModulesNames(g_DefCoreModules)
 {
   m_GenerationDone = false;
   m_LargeRevisionHrsMin = DefaultLargeRevHrsMin;
@@ -18,7 +23,10 @@ DevStatisticsDocument::DevStatisticsDocument(QObject *parent)
 void DevStatisticsDocument::clear()
 {
   m_DateFrom = m_DateTo = QDate::currentDate();
-  m_RevListEnabled = true;
+  m_RedmineEnabled = true;
+  m_LargeRevListEnabled = false;
+  m_CoreRevListEnabled = false;
+  m_CoreModulesNames = g_DefCoreModules;
   m_LargeRevisionHrsMin = DefaultLargeRevHrsMin;
   
   m_DevelopersWorkDataList.clear();
@@ -69,14 +77,44 @@ unsigned DevStatisticsDocument::getWorkingDaysQty() const
   return m_CommonCalendar.getWorkDaysQty(getDateFrom(), getDateTo());
 }
 
-bool DevStatisticsDocument::isRevisionListEnabled() const
+bool DevStatisticsDocument::isRedmineEnabled() const
 {
-  return m_RevListEnabled;
+  return m_RedmineEnabled;
 }
 
-void DevStatisticsDocument::setRevisionListEnabled(bool isEnable)
+void DevStatisticsDocument::setRedmineEnabled(bool isEnabled)
 {
-  m_RevListEnabled = isEnable;
+  m_RedmineEnabled = isEnabled;
+}
+
+bool DevStatisticsDocument::isLargeRevisionListEnabled() const
+{
+  return m_LargeRevListEnabled;
+}
+
+void DevStatisticsDocument::setLargeRevisionListEnabled(bool isEnable)
+{
+  m_LargeRevListEnabled = isEnable;
+}
+
+bool DevStatisticsDocument::isCoreRevisionListEnabled() const
+{
+  return m_CoreRevListEnabled;
+}
+
+void DevStatisticsDocument::setCoreRevisionListEnabled(bool isEnable)
+{
+  m_CoreRevListEnabled = isEnable;
+}
+
+QString DevStatisticsDocument::getCoremodulesNames() const
+{
+  return m_CoreModulesNames;
+}
+
+void DevStatisticsDocument::setCoreModulesNames(const QString &names)
+{
+  m_CoreModulesNames = names;
 }
 
 double DevStatisticsDocument::getMinRevHrs() const
@@ -118,6 +156,12 @@ bool DevStatisticsDocument::checkSettings(QString &errStr)
   if( !getWorkingDaysQty() )
   {
     errStr = "В указанном периоде отсутствуют рабочие дни.";
+    return false;
+  }
+  
+  if( isCoreRevisionListEnabled() && !getCoremodulesNames().count() )
+  {
+    errStr = "Не введены базовые модули.";
     return false;
   }
 
@@ -165,9 +209,13 @@ bool DevStatisticsDocument::generateWorkData()
   m_GenerationDone = false;
   
   GitAnalyzer gitAnalyzer( gitSettings() );
+  
   RedmineAnalyzer redmineAnalyzer( redmineSettings() );
   
-  int totalStepsNum = gitAnalyzer.GetAnalyzeStepsCount() + redmineAnalyzer.GetAnalyzeStepsCount();
+  int totalStepsNum = gitAnalyzer.GetAnalyzeStepsCount();
+  
+  if( isRedmineEnabled() )
+    totalStepsNum += redmineAnalyzer.GetAnalyzeStepsCount();
   
   m_GenerationStepNum = 0;
   
@@ -192,15 +240,18 @@ bool DevStatisticsDocument::generateWorkData()
   emit generationMessage( "Анализ репозитория git завершен." );
   
   // redmine
-  emit generationMessage( "Анализ redmine..." );
-  
-  if( !redmineAnalyzer.AnalyzeServer( tempWorkersData, m_TrackersList, m_IssuesToTrackers, &errStr ) )
+  if( isRedmineEnabled() )
   {
-    emit generationErrorOccured( QString("ОШИБКА:%1").arg(errStr) );
-    return false;
+    emit generationMessage( "Анализ redmine..." );
+    
+    if( !redmineAnalyzer.AnalyzeServer( tempWorkersData, m_TrackersList, m_IssuesToTrackers, &errStr ) )
+    {
+      emit generationErrorOccured( QString("ОШИБКА:%1").arg(errStr) );
+      return false;
+    }
+    
+    emit generationMessage( "Анализ redmine завершен." );
   }
-  
-  emit generationMessage( "Анализ redmine завершен." );
   
   m_GenerationDone = true;
   m_GenerationResultData = tempWorkersData;

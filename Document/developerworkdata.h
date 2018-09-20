@@ -53,11 +53,15 @@ public:
   bool RedmineLinked() const;
   void setRedmineLinked(bool RedmineLinked);
   
+  bool isChangeCore() const;
+  void setChangesCore(bool changes);
+  
 private:
   QString m_SHA;
   QString m_DeveloperName;
   double  m_HoursSpent;
   bool    m_RedmineLinked;
+  bool    m_ChangeCore;
 };
 
 ///////////////////////////////////////////////////////////////////////
@@ -84,6 +88,7 @@ public:
   std::vector<CRevisionData> revisionsList() const;
   std::vector<CRevisionData> revisionsList( double minTime ) const;
   std::vector<CRevisionData> nonRedmineRevisionsList( bool includeZeroTime ) const;
+  std::vector<CRevisionData> coreRevisionsList() const;
   size_t revisionsCount() const;
   void addRevision(const CRevisionData &revData);
   

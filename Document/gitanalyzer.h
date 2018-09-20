@@ -16,6 +16,7 @@ public:
     QString RepositoryPath;
     QDate DateFrom;
     QDate DateTo;
+    QString CoreModulesNames;
   };
   
 public:
@@ -27,7 +28,7 @@ public:
   
   int  GetAnalyzeStepsCount();
   
-  size_t GetRevisionsCount();
+  size_t GetRevisionsCount(QString &errStr);
   
 signals:
   void analyzeStepDone();
@@ -36,11 +37,19 @@ private:
   void clearGenerationData();
   
   QString makeGitProcessRunErrorString();
+  
+  enum class LogFormat
+  {
+    FULL         = 1,
+    ONLY_REVTAGS = 2
+  };
 
-  bool runGit(QString &output, QString *errStr = nullptr);
+  bool getGitLog(QString &output, QString &errStr, LogFormat f);
   
   bool ParseRevisionBody(const QString &revBodyStr, CRevisionData &revData);
   void AddRevisionToDeveloper( std::vector<CDeveloperWorkData> &workDevList, const CRevisionData &revData );
+  
+  QString coreModulesRgxPattern();
   
 private slots:
   void gitProcessFail(QProcess::ProcessError error);
@@ -55,6 +64,8 @@ private:
   static const QString tagSHA;
   static const QString tagAuthor;
   static const QString tagNotes;
+  
+  QString m_CoreModulesRgxPattern;
 };
 
 #endif // GITANALYZER_H

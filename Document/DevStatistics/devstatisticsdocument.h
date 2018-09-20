@@ -33,8 +33,16 @@ public:
   
   unsigned getWorkingDaysQty() const;
   
-  bool isRevisionListEnabled() const;
-  void setRevisionListEnabled(bool isEnable);
+  bool isRedmineEnabled() const;
+  void setRedmineEnabled(bool isEnabled);
+  
+  bool isLargeRevisionListEnabled() const;
+  void setLargeRevisionListEnabled(bool isEnable);
+  
+  bool isCoreRevisionListEnabled() const;
+  void setCoreRevisionListEnabled(bool isEnable);
+  QString getCoremodulesNames() const;
+  void setCoreModulesNames(const QString &names);
   
   double getMinRevHrs() const;
   void   setMinRevHrs( double hrs );
@@ -84,8 +92,13 @@ private:
   QDate m_DateFrom;
   QDate m_DateTo;
   
-  bool m_RevListEnabled;
+  bool m_RedmineEnabled;
+  
+  bool m_LargeRevListEnabled;
   double m_LargeRevisionHrsMin;
+  
+  bool m_CoreRevListEnabled;
+  QString m_CoreModulesNames;
   
   OMPCalendarData m_CommonCalendar;
   
