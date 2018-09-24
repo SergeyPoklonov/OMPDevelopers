@@ -200,6 +200,9 @@ GitAnalyzer::AnalyzeSettings DevStatisticsDocument::gitSettings()
   gitSettings.RepositoryPath = generalSettings().getGitPath();
   gitSettings.DateFrom = m_DateFrom;
   gitSettings.DateTo = m_DateTo;  
+  
+  for(const auto &dev : m_DevelopersWorkDataList)
+    gitSettings.ConsideredAuthors.insert( dev.getName() );
                   
   return gitSettings;
 }

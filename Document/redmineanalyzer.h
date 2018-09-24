@@ -6,6 +6,7 @@
 #include <QDate>
 #include <QObject>
 #include <QJsonDocument>
+#include <set>
 
 class QNetworkReply;
 
@@ -35,21 +36,22 @@ signals:
 public slots:
   
 private:
-  bool ReadTimeEntries( std::vector<CDeveloperWorkData> &workDevList, QString *errStr );
+  bool ReadTimeEntries( std::vector<CDeveloperWorkData> &workDevList, std::set<long> &issues, QString *errStr );
   bool ReadTEDataChunk( QDate curDate, int recordOffset, int recordsLimit, QJsonDocument &jsonData );
-  bool ParseTEData( QJsonDocument &jsonDoc, std::vector<CDeveloperWorkData> &workDevList, int &recordsRemain );
+  bool ParseTEData( QJsonDocument &jsonDoc, std::vector<CDeveloperWorkData> &workDevList, std::set<long> &issues, int &recordsRemain );
   
   bool ReadTrackers( std::map<long,QString> &trackersList, QString *errStr );
   
-  bool ReadIssuesTrackers( std::map<long,long> &issuesToTrackers, QString *errStr );
-  bool ReadTotalIssues(int &qty, QString *errStr );
+  bool ReadIssuesTrackers( const std::set<long> &issues, std::map<long,long> &issuesToTrackers, QString *errStr );
   
   bool ReadJsonFromURL(QString url, QJsonDocument &jsonData);
   
+  int timeEntriesReadStepsCount() const;
+  int trackersReadStepsCount() const;
+  int issuesReadStepsCount() const;
+  
 private:
   AnalyzeSettings m_Settings;
-  
-  static const int m_IssuesStepsQty = 1000;
 };
 
 #endif // REDMINEANALYZER_H

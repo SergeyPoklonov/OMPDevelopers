@@ -61,7 +61,7 @@ bool GitAnalyzer::getGitLog(QString &output, QString &errStr, LogFormat logForma
   switch( logFormat )
   {
     case LogFormat::FULL:
-    args.append( QString("--pretty=format:\%1%2%H%3%an%4%s").arg(tagRev).arg(tagSHA).arg(tagAuthor).arg(tagNotes) );
+    args.append( QString("--pretty=format:\%1%2%H%3%an%4%b%s").arg(tagRev).arg(tagSHA).arg(tagAuthor).arg(tagNotes) );
     args.append( QString("--name-only") );
     break;
               
@@ -145,15 +145,18 @@ bool GitAnalyzer::ParseRevisionBody(const QString &revBodyStr, CRevisionData &re
   const int authBodyInd = authInd + tagAuthor.size();
   const int notesBodyInd = notesInd + tagNotes.size();
   
-  QString shaStr = revBodyStr.mid(shaBodyInd, authInd - (shaBodyInd));
-  QString authStr = revBodyStr.mid(authBodyInd, notesInd - (authBodyInd));
-  QString notesStr = revBodyStr.right( revBodyStr.size() - notesBodyInd );
+  const QString shaStr = revBodyStr.mid(shaBodyInd, authInd - (shaBodyInd));
+  const QString authStr = revBodyStr.mid(authBodyInd, notesInd - (authBodyInd)).toUpper();
+  const QString notesStr = revBodyStr.right( revBodyStr.size() - notesBodyInd );
+  
+  if( m_Settings.ConsideredAuthors.find( authStr ) == m_Settings.ConsideredAuthors.end() )
+    return false;
   
   revData.setDeveloperName( authStr );
   revData.setSHA( shaStr );
   
   QRegExp taskTagRE;
-          taskTagRE.setPattern("#(\\d)+(\\D|$)");
+          taskTagRE.setPattern("#(\\d)+(\\D|$)"); //ВНИМАНИЕ! регэксп составной, т.е. найденные элементы будут состоять из трех групп, правильное (т.е. целое) только в первой, с индексом 0!
           
   const int taskTagPos = notesStr.indexOf( taskTagRE );
   revData.setRedmineLinked( taskTagPos != -1 );
@@ -207,7 +210,6 @@ void GitAnalyzer::AddRevisionToDeveloper( std::vector<CDeveloperWorkData> &workD
 
 int GitAnalyzer::GetAnalyzeStepsCount()
 {
-  size_t revCount = GetRevisionsCount( QString() );
   return 2;
 }
 

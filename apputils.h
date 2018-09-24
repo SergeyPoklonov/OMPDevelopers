@@ -3,6 +3,9 @@
 
 #include <QComboBox>
 #include <vector>
+#include <set>
+
+#define SET2VEC(s,v)  {(v).clear();(v).resize((s).size());std::copy(std::begin(s),std::end(s),(v).begin());static_assert( sizeof( std::remove_reference<decltype(v)>::type::value_type ) >= sizeof( std::remove_reference<decltype(s)>::type::value_type ) , "Possible loose of data" );}
 
 namespace utils
 {
@@ -108,6 +111,18 @@ static bool selectComboItemByData(QComboBox *cb, int data)
 static int getComboCurSelData(QComboBox *cb)
 {
   return cb->itemData( cb->currentIndex() ).toInt();
+}
+
+static QString valuesToString(const std::vector<long> &values, QString separator)
+{
+  QStringList qsList;
+  
+  for(int i = 0; i < values.size(); i++)
+  {
+    qsList.append( QString().setNum( values[i] ) );
+  }
+  
+  return qsList.join( separator );
 }
 
 #endif // APPUTILS_H

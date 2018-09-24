@@ -5,6 +5,7 @@
 
 #include <QDate>
 #include <QProcess>
+#include <set>
 
 class GitAnalyzer : public QObject
 {
@@ -17,6 +18,7 @@ public:
     QDate DateFrom;
     QDate DateTo;
     QString CoreModulesNames;
+    std::set<QString> ConsideredAuthors;
   };
   
 public:

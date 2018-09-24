@@ -1,4 +1,5 @@
 #include "redmineanalyzer.h"
+#include "apputils.h"
 #include <QEventLoop>
 #include <QNetworkAccessManager>
 #include <QJsonDocument>
@@ -17,7 +18,7 @@ RedmineAnalyzer::RedmineAnalyzer(AnalyzeSettings settings, QObject *parent)
     m_Settings.Url.chop(1);
 }
 
-bool RedmineAnalyzer::ParseTEData( QJsonDocument &jsonDoc, std::vector<CDeveloperWorkData> &workDevList, int &recordsRemain )
+bool RedmineAnalyzer::ParseTEData( QJsonDocument &jsonDoc, std::vector<CDeveloperWorkData> &workDevList, std::set<long> &issues, int &recordsRemain )
 {
   QJsonObject docObject = jsonDoc.object();
   
@@ -66,19 +67,34 @@ bool RedmineAnalyzer::ParseTEData( QJsonDocument &jsonDoc, std::vector<CDevelope
                      redmineTimeData.setRevision( shaStr );
                      
     devData.addRedmineTime( redmineTimeData );
+    
+    issues.insert( issueID );
   }
   
   return true;
 }
 
-int RedmineAnalyzer::GetAnalyzeStepsCount()
+int RedmineAnalyzer::timeEntriesReadStepsCount() const
 {
-  return m_Settings.DateFrom.daysTo( m_Settings.DateTo )  // по шагу на каждый день
-         + 1 // вычитка trackers
-         + m_IssuesStepsQty; // вычитка issues
+  return m_Settings.DateFrom.daysTo( m_Settings.DateTo ); // по шагу на каждый день  
 }
 
-bool RedmineAnalyzer::ReadTimeEntries( std::vector<CDeveloperWorkData> &workDevList, QString *errStr )
+int RedmineAnalyzer::trackersReadStepsCount() const
+{
+  return 1;
+}
+
+int RedmineAnalyzer::issuesReadStepsCount() const
+{
+  return timeEntriesReadStepsCount(); //предполагаем что она по длительности +/- равна timeEntries
+}
+
+int RedmineAnalyzer::GetAnalyzeStepsCount()
+{
+  return timeEntriesReadStepsCount() + trackersReadStepsCount() + issuesReadStepsCount();
+}
+
+bool RedmineAnalyzer::ReadTimeEntries( std::vector<CDeveloperWorkData> &workDevList, std::set<long> &issues, QString *errStr )
 {
   for(QDate curDate = m_Settings.DateFrom; curDate <= m_Settings.DateTo; curDate = curDate.addDays(1))
   {
@@ -98,7 +114,7 @@ bool RedmineAnalyzer::ReadTimeEntries( std::vector<CDeveloperWorkData> &workDevL
         return false;
       }
       
-      if( !ParseTEData( jsonDoc, workDevList, recordsRemain ) )
+      if( !ParseTEData( jsonDoc, workDevList, issues, recordsRemain ) )
       {
         if( errStr )
           *errStr = "Ошибка при разборе данных Redmine.";
@@ -134,47 +150,60 @@ bool RedmineAnalyzer::AnalyzeServer(std::vector<CDeveloperWorkData> &workDevList
     return false;
   }
   
-  if( !ReadTimeEntries( workDevList, errStr ) )
+  std::set<long> involvedIssues;
+  
+  if( !ReadTimeEntries( workDevList, involvedIssues, errStr ) )
     return false;
   
   if( !ReadTrackers( trackersList, errStr ) )
     return false;
   
-  if( !ReadIssuesTrackers( issuesToTrackers, errStr ) )
+  if( !ReadIssuesTrackers( involvedIssues, issuesToTrackers, errStr ) )
     return false;
   
   return true;
 }
 
-bool RedmineAnalyzer::ReadIssuesTrackers( std::map<long,long> &issuesToTrackers, QString *errStr )
+bool RedmineAnalyzer::ReadIssuesTrackers( const std::set<long> &issues, std::map<long,long> &issuesToTrackers, QString *errStr )
 {
   issuesToTrackers.clear();
   
-  // определяем общее кол-во issues и рассчитываем средний размер шага
-  int totalIssuesQty = 0;
-  
-  if( !ReadTotalIssues(totalIssuesQty, errStr ) )
-    return false;
-  
-  const int recordsPerStep = totalIssuesQty / m_IssuesStepsQty;
-  
-  if( recordsPerStep > 100 )
+  if( issues.empty() )
   {
-    if( errStr )
-      *errStr = "Количество одновременно вычитываемых Redmine issues превышает 100. Обратитесь к разработчику.";
+    for(int i = 0; i < issuesReadStepsCount(); i++)
+      emit analyzeStepDone();
     
-    return false;
+    return true;
   }
   
-  for(int stepNum = 0; stepNum <= m_IssuesStepsQty; stepNum++)
+  std::vector<long> issuesList;
+  
+  SET2VEC(issues, issuesList);
+  
+  int stepsRemainsCount = issuesReadStepsCount();
+  int issuesDone = 0;
+  
+  double progressPerIssue = (double)issuesReadStepsCount() / (double)issuesList.size();
+  double curProgressSumm = 0.0;
+  int progressDone = 0;
+  
+  const int maxRecordsPerStep = 20;
+  
+  for(int stepNum = 0; (stepNum * maxRecordsPerStep) <= issuesList.size(); stepNum++)
   {
-    int recordsOffset = stepNum * recordsPerStep;
+    int issuesOffset = stepNum * maxRecordsPerStep;
     
-    QString chunckURL = QString("%1/issues.json/?key=%2;offset=%3;status_id=*;limit=%4")
+    std::vector<long> curIssuesList;
+    curIssuesList.assign(issuesList.begin() + issuesOffset, issuesList.begin() + std::min( (stepNum+1) * maxRecordsPerStep, (int)issuesList.size() ) );
+    
+    const QString isssuesStr = valuesToString(curIssuesList, ",");
+    
+    QString chunckURL = QString("%1/issues.json/?key=%2;offset=%3;status_id=*;limit=%4;issue_id=%5")
         .arg(m_Settings.Url)
         .arg(m_Settings.AuthKey)
-        .arg(recordsOffset)
-        .arg(recordsPerStep);
+        .arg( 0 )
+        .arg(maxRecordsPerStep)
+        .arg( isssuesStr );
     
     QJsonDocument jsonDoc;
     
@@ -199,35 +228,26 @@ bool RedmineAnalyzer::ReadIssuesTrackers( std::map<long,long> &issuesToTrackers,
       const int trackerID = trackerObject.take("id").toInt();
       
       issuesToTrackers[issueID] = trackerID;
+      
+      issuesDone++;
+     
+      curProgressSumm += progressPerIssue;
+      for(int i = progressDone; i < (int)curProgressSumm; i++)
+      {
+        emit analyzeStepDone();
+        stepsRemainsCount--;
+      }
+      progressDone = (int)curProgressSumm;
     }
-    
-    emit analyzeStepDone();
   }
   
-  return true;
-}
-
-bool RedmineAnalyzer::ReadTotalIssues(int &qty, QString *errStr )
-{
-  qty = 0;
+  //Q_ASSERT( issuesDone == issuesList.size() );
   
-  QString chunckURL = QString("%1/issues.json/?key=%2;offset=0;status_id=*;limit=1")
-      .arg(m_Settings.Url)
-      .arg(m_Settings.AuthKey);
-  
-  QJsonDocument jsonDoc;
-  
-  if( !ReadJsonFromURL(chunckURL, jsonDoc) )
+  while( stepsRemainsCount )
   {
-    if( errStr )
-      *errStr = "Ошибка при обращении к redmine API.";
-    
-    return false;
+    emit analyzeStepDone();
+    stepsRemainsCount--;
   }
-  
-  QJsonObject docObject = jsonDoc.object();
-  
-  qty = docObject.take("total_count").toInt();
   
   return true;
 }
