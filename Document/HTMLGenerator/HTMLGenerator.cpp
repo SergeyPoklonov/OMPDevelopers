@@ -120,7 +120,8 @@ QString HTMLGenerator::generateHTMLText( const DocumentDataManager &docObj )
         for( CRedmineTimeData &teData : devTEList )
         {
           const int trackerID = Doc().devStatistic().issueToTracker(teData.IssueID());
-          trackersTime[trackerID] += teData.HoursSpent();
+          if( teData.HoursSpent() > 0 )
+            trackersTime[trackerID] += teData.HoursSpent();
         }
         
         Q_ASSERT( trackersTime.size() );
@@ -311,15 +312,16 @@ void HTMLGenerator::addPieChart( QString chartCaption, const HTMLPieChartData &p
     return;
   
   const QString chartHTMLName = makeNameUnique("piechart");
+  const QString drawFunctionName = makeNameUnique("drawChart");
   
   m_HTMLText += QString("<div id=""%1""></div>\n").arg( chartHTMLName );
   
   m_HTMLText += "<script type=""text/javascript"" src=""https://www.gstatic.com/charts/loader.js""></script>\n";
   m_HTMLText += "<script type=""text/javascript"">\n";
   m_HTMLText += "google.charts.load('current', {'packages':['corechart']}); \n";
-  m_HTMLText += "google.charts.setOnLoadCallback(drawChart); \n";
+  m_HTMLText += QString("google.charts.setOnLoadCallback(%1); \n").arg( drawFunctionName );
   
-  m_HTMLText += "function drawChart() { \n";
+  m_HTMLText += QString("function %1() { \n").arg( drawFunctionName );
   m_HTMLText += "var data = google.visualization.arrayToDataTable([ \n";
   
   m_HTMLText += QString("['%1', '%2'] \n").arg(pieData.getSliceTypeName()).arg(pieData.getSliceMeasName());

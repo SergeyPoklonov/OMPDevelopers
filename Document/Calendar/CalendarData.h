@@ -79,6 +79,7 @@ public:
   
 private:
   void initialize2018();
+  void initialize2020();
   
   void setStdExceptionDay(QDate date, bool isWorking, ExceptDayType exceptType, QString name = "");
   

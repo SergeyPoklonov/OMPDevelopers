@@ -6,6 +6,7 @@
 OMPCalendarData::OMPCalendarData()
 {
   initialize2018();
+  initialize2020();
 }
 
 void OMPCalendarData::clear()
@@ -156,6 +157,21 @@ void OMPCalendarData::initialize2018()
   setStdExceptionDay(QDate(2018,12,25), false, ExceptDayType::STATEDAY, "Рождество");
   setStdExceptionDay(QDate(2018,12,29), true, ExceptDayType::STATEREWORK, "Отработка Новый Год");
   setStdExceptionDay(QDate(2018,12,31), false, ExceptDayType::STATEDAY, "Новый Год");
+}
+
+void OMPCalendarData::initialize2020()
+{
+  setStdExceptionDay(QDate(2018,1,1), false, ExceptDayType::STATEDAY, "Новый Год");
+  setStdExceptionDay(QDate(2018,1,2), false, ExceptDayType::STATEDAY, "Новый Год");
+  setStdExceptionDay(QDate(2018,1,4), true, ExceptDayType::STATEREWORK, "Отработка Рождество");
+  setStdExceptionDay(QDate(2018,1,6), false, ExceptDayType::STATEDAY, "Рождество");
+  setStdExceptionDay(QDate(2018,1,7), false, ExceptDayType::STATEDAY, "Рождество");
+  setStdExceptionDay(QDate(2018,4,4), true, ExceptDayType::STATEREWORK, "Отработка Радоница");
+  setStdExceptionDay(QDate(2018,4,27), false, ExceptDayType::STATEDAY, "Рождество");
+  setStdExceptionDay(QDate(2018,4,28), false, ExceptDayType::STATEDAY, "Рождество");
+  setStdExceptionDay(QDate(2018,5,1), false, ExceptDayType::STATEDAY, "1 Мая");
+  setStdExceptionDay(QDate(2018,7,3), false, ExceptDayType::STATEDAY, "День Независимости");
+  setStdExceptionDay(QDate(2018,12,25), false, ExceptDayType::STATEDAY, "Рождество");
 }
 
 void OMPCalendarData::WriteToXML(QDomElement &parentElement)
