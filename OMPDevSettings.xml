@@ -1,100 +1,368 @@
 <!DOCTYPE OMPDevSettings>
 <SettingsRoot>
- <DevelopersList Qty="12">
-  <Developer1 wr="1" name="AVS">
-   <calendar ExceptionDaysQty="12">
-    <ExceptDay1 note="" isWorkOn="0" dayType="3" date="2458271"/>
-    <ExceptDay2 note="" isWorkOn="0" dayType="3" date="2458272"/>
-    <ExceptDay3 note="" isWorkOn="0" dayType="3" date="2458273"/>
-    <ExceptDay4 note="" isWorkOn="0" dayType="3" date="2458274"/>
-    <ExceptDay5 note="" isWorkOn="0" dayType="3" date="2458275"/>
-    <ExceptDay6 note="" isWorkOn="0" dayType="3" date="2458276"/>
-    <ExceptDay7 note="" isWorkOn="0" dayType="3" date="2458277"/>
-    <ExceptDay8 note="" isWorkOn="0" dayType="3" date="2458278"/>
-    <ExceptDay9 note="" isWorkOn="0" dayType="3" date="2458279"/>
-    <ExceptDay10 note="" isWorkOn="0" dayType="3" date="2458280"/>
-    <ExceptDay11 note="" isWorkOn="0" dayType="3" date="2458281"/>
-    <ExceptDay12 note="" isWorkOn="0" dayType="3" date="2458282"/>
-   </calendar>
-  </Developer1>
-  <Developer2 wr="1" name="DAP">
-   <calendar ExceptionDaysQty="5">
-    <ExceptDay1 note="" isWorkOn="0" dayType="3" date="2458281"/>
-    <ExceptDay2 note="" isWorkOn="0" dayType="3" date="2458282"/>
-    <ExceptDay3 note="" isWorkOn="0" dayType="3" date="2458283"/>
-    <ExceptDay4 note="" isWorkOn="0" dayType="3" date="2458284"/>
-    <ExceptDay5 note="" isWorkOn="0" dayType="3" date="2458285"/>
+ <DevelopersList Qty="13">
+  <Developer1 name="ASP" wr="0.5"/>
+  <Developer2 name="AVS" wr="1">
+   <calendar ExceptionDaysQty="42">
+    <ExceptDay1 isWorkOn="0" dayType="3" note="" date="2458271"/>
+    <ExceptDay2 isWorkOn="0" dayType="3" note="" date="2458272"/>
+    <ExceptDay3 isWorkOn="0" dayType="3" note="" date="2458273"/>
+    <ExceptDay4 isWorkOn="0" dayType="3" note="" date="2458274"/>
+    <ExceptDay5 isWorkOn="0" dayType="3" note="" date="2458275"/>
+    <ExceptDay6 isWorkOn="0" dayType="3" note="" date="2458276"/>
+    <ExceptDay7 isWorkOn="0" dayType="3" note="" date="2458277"/>
+    <ExceptDay8 isWorkOn="0" dayType="3" note="" date="2458278"/>
+    <ExceptDay9 isWorkOn="0" dayType="3" note="" date="2458279"/>
+    <ExceptDay10 isWorkOn="0" dayType="3" note="" date="2458280"/>
+    <ExceptDay11 isWorkOn="0" dayType="3" note="" date="2458281"/>
+    <ExceptDay12 isWorkOn="0" dayType="3" note="" date="2458282"/>
+    <ExceptDay13 isWorkOn="0" dayType="3" note="" date="2458339"/>
+    <ExceptDay14 isWorkOn="0" dayType="3" note="" date="2458361"/>
+    <ExceptDay15 isWorkOn="0" dayType="3" note="" date="2458362"/>
+    <ExceptDay16 isWorkOn="0" dayType="3" note="" date="2458422"/>
+    <ExceptDay17 isWorkOn="0" dayType="3" note="" date="2458423"/>
+    <ExceptDay18 isWorkOn="0" dayType="3" note="" date="2458438"/>
+    <ExceptDay19 isWorkOn="0" dayType="3" note="" date="2458439"/>
+    <ExceptDay20 isWorkOn="0" dayType="3" note="" date="2458440"/>
+    <ExceptDay21 isWorkOn="0" dayType="3" note="" date="2458441"/>
+    <ExceptDay22 isWorkOn="0" dayType="3" note="" date="2458442"/>
+    <ExceptDay23 isWorkOn="0" dayType="3" note="" date="2458443"/>
+    <ExceptDay24 isWorkOn="0" dayType="3" note="" date="2458444"/>
+    <ExceptDay25 isWorkOn="0" dayType="3" note="" date="2458445"/>
+    <ExceptDay26 isWorkOn="0" dayType="3" note="" date="2458446"/>
+    <ExceptDay27 isWorkOn="0" dayType="3" note="" date="2458447"/>
+    <ExceptDay28 isWorkOn="0" dayType="3" note="" date="2458448"/>
+    <ExceptDay29 isWorkOn="0" dayType="3" note="" date="2458449"/>
+    <ExceptDay30 isWorkOn="0" dayType="3" note="" date="2458450"/>
+    <ExceptDay31 isWorkOn="0" dayType="3" note="" date="2458451"/>
+    <ExceptDay32 isWorkOn="0" dayType="3" note="" date="2458452"/>
+    <ExceptDay33 isWorkOn="0" dayType="3" note="" date="2458453"/>
+    <ExceptDay34 isWorkOn="0" dayType="3" note="" date="2458704"/>
+    <ExceptDay35 isWorkOn="0" dayType="3" note="" date="2458705"/>
+    <ExceptDay36 isWorkOn="0" dayType="3" note="" date="2458743"/>
+    <ExceptDay37 isWorkOn="0" dayType="3" note="" date="2458744"/>
+    <ExceptDay38 isWorkOn="0" dayType="3" note="" date="2458745"/>
+    <ExceptDay39 isWorkOn="0" dayType="3" note="" date="2458746"/>
+    <ExceptDay40 isWorkOn="0" dayType="3" note="" date="2458747"/>
+    <ExceptDay41 isWorkOn="0" dayType="3" note="" date="2458748"/>
+    <ExceptDay42 isWorkOn="0" dayType="3" note="" date="2458749"/>
    </calendar>
   </Developer2>
-  <Developer3 wr="1" name="DMY"/>
-  <Developer4 wr="1" name="FPA"/>
-  <Developer5 wr="1" name="GDY">
-   <calendar ExceptionDaysQty="15">
-    <ExceptDay1 note="" isWorkOn="0" dayType="3" date="2458283"/>
-    <ExceptDay2 note="" isWorkOn="0" dayType="3" date="2458284"/>
-    <ExceptDay3 note="" isWorkOn="0" dayType="3" date="2458285"/>
-    <ExceptDay4 note="" isWorkOn="0" dayType="3" date="2458286"/>
-    <ExceptDay5 note="" isWorkOn="0" dayType="3" date="2458287"/>
-    <ExceptDay6 note="" isWorkOn="0" dayType="3" date="2458288"/>
-    <ExceptDay7 note="" isWorkOn="0" dayType="3" date="2458289"/>
-    <ExceptDay8 note="" isWorkOn="0" dayType="3" date="2458290"/>
-    <ExceptDay9 note="" isWorkOn="0" dayType="3" date="2458291"/>
-    <ExceptDay10 note="" isWorkOn="0" dayType="3" date="2458292"/>
-    <ExceptDay11 note="" isWorkOn="0" dayType="3" date="2458293"/>
-    <ExceptDay12 note="" isWorkOn="0" dayType="3" date="2458294"/>
-    <ExceptDay13 note="" isWorkOn="0" dayType="3" date="2458295"/>
-    <ExceptDay14 note="" isWorkOn="0" dayType="3" date="2458296"/>
-    <ExceptDay15 note="" isWorkOn="0" dayType="3" date="2458297"/>
+  <Developer3 name="BEA" wr="0.5">
+   <calendar ExceptionDaysQty="11">
+    <ExceptDay1 isWorkOn="0" dayType="3" note="?????????" date="2458904"/>
+    <ExceptDay2 isWorkOn="0" dayType="3" note="?????????" date="2458905"/>
+    <ExceptDay3 isWorkOn="0" dayType="3" note="?????????" date="2458906"/>
+    <ExceptDay4 isWorkOn="0" dayType="3" note="?????????" date="2458907"/>
+    <ExceptDay5 isWorkOn="0" dayType="3" note="?????????" date="2458908"/>
+    <ExceptDay6 isWorkOn="0" dayType="3" note="?????????" date="2458909"/>
+    <ExceptDay7 isWorkOn="0" dayType="3" note="?????????" date="2458918"/>
+    <ExceptDay8 isWorkOn="0" dayType="3" note="?????????" date="2458926"/>
+    <ExceptDay9 isWorkOn="0" dayType="3" note="?????????" date="2458927"/>
+    <ExceptDay10 isWorkOn="0" dayType="3" note="?????????" date="2458928"/>
+    <ExceptDay11 isWorkOn="0" dayType="3" note="?????????" date="2458929"/>
+   </calendar>
+  </Developer3>
+  <Developer4 name="DAP" wr="1">
+   <calendar ExceptionDaysQty="35">
+    <ExceptDay1 isWorkOn="0" dayType="3" note="" date="2458281"/>
+    <ExceptDay2 isWorkOn="0" dayType="3" note="" date="2458282"/>
+    <ExceptDay3 isWorkOn="0" dayType="3" note="" date="2458283"/>
+    <ExceptDay4 isWorkOn="0" dayType="3" note="" date="2458284"/>
+    <ExceptDay5 isWorkOn="0" dayType="3" note="" date="2458285"/>
+    <ExceptDay6 isWorkOn="0" dayType="3" note="" date="2458486"/>
+    <ExceptDay7 isWorkOn="0" dayType="3" note="" date="2458487"/>
+    <ExceptDay8 isWorkOn="0" dayType="3" note="" date="2458488"/>
+    <ExceptDay9 isWorkOn="0" dayType="3" note="?????" date="2459073"/>
+    <ExceptDay10 isWorkOn="0" dayType="3" note="?????" date="2459074"/>
+    <ExceptDay11 isWorkOn="0" dayType="3" note="?????" date="2459075"/>
+    <ExceptDay12 isWorkOn="0" dayType="3" note="?????" date="2459076"/>
+    <ExceptDay13 isWorkOn="0" dayType="3" note="?????" date="2459077"/>
+    <ExceptDay14 isWorkOn="0" dayType="3" note="?????" date="2459078"/>
+    <ExceptDay15 isWorkOn="0" dayType="3" note="?????" date="2459079"/>
+    <ExceptDay16 isWorkOn="0" dayType="3" note="?????" date="2459080"/>
+    <ExceptDay17 isWorkOn="0" dayType="3" note="?????" date="2459081"/>
+    <ExceptDay18 isWorkOn="0" dayType="3" note="?????" date="2459082"/>
+    <ExceptDay19 isWorkOn="0" dayType="3" note="?????" date="2459083"/>
+    <ExceptDay20 isWorkOn="0" dayType="3" note="?????" date="2459084"/>
+    <ExceptDay21 isWorkOn="0" dayType="3" note="?????" date="2459085"/>
+    <ExceptDay22 isWorkOn="0" dayType="3" note="?????" date="2459086"/>
+    <ExceptDay23 isWorkOn="0" dayType="3" note="?????" date="2459087"/>
+    <ExceptDay24 isWorkOn="0" dayType="3" note="?????" date="2459088"/>
+    <ExceptDay25 isWorkOn="0" dayType="3" note="?????" date="2459089"/>
+    <ExceptDay26 isWorkOn="0" dayType="3" note="?????" date="2459090"/>
+    <ExceptDay27 isWorkOn="0" dayType="3" note="?????" date="2459091"/>
+    <ExceptDay28 isWorkOn="0" dayType="3" note="?????" date="2459092"/>
+    <ExceptDay29 isWorkOn="0" dayType="3" note="?????" date="2459093"/>
+    <ExceptDay30 isWorkOn="0" dayType="3" note="?????" date="2459094"/>
+    <ExceptDay31 isWorkOn="0" dayType="3" note="?????" date="2459095"/>
+    <ExceptDay32 isWorkOn="0" dayType="3" note="?????" date="2459096"/>
+    <ExceptDay33 isWorkOn="0" dayType="3" note="?????" date="2459097"/>
+    <ExceptDay34 isWorkOn="0" dayType="3" note="?????" date="2459098"/>
+    <ExceptDay35 isWorkOn="0" dayType="3" note="?????" date="2459099"/>
+   </calendar>
+  </Developer4>
+  <Developer5 name="DMY" wr="1">
+   <calendar ExceptionDaysQty="45">
+    <ExceptDay1 isWorkOn="0" dayType="3" note="" date="2458334"/>
+    <ExceptDay2 isWorkOn="0" dayType="3" note="" date="2458335"/>
+    <ExceptDay3 isWorkOn="0" dayType="3" note="" date="2458336"/>
+    <ExceptDay4 isWorkOn="0" dayType="3" note="" date="2458337"/>
+    <ExceptDay5 isWorkOn="0" dayType="3" note="" date="2458338"/>
+    <ExceptDay6 isWorkOn="0" dayType="3" note="" date="2458339"/>
+    <ExceptDay7 isWorkOn="0" dayType="3" note="" date="2458340"/>
+    <ExceptDay8 isWorkOn="0" dayType="3" note="" date="2458341"/>
+    <ExceptDay9 isWorkOn="0" dayType="3" note="" date="2458342"/>
+    <ExceptDay10 isWorkOn="0" dayType="3" note="" date="2458343"/>
+    <ExceptDay11 isWorkOn="0" dayType="3" note="" date="2458344"/>
+    <ExceptDay12 isWorkOn="0" dayType="3" note="" date="2458345"/>
+    <ExceptDay13 isWorkOn="0" dayType="3" note="" date="2458346"/>
+    <ExceptDay14 isWorkOn="0" dayType="3" note="" date="2458492"/>
+    <ExceptDay15 isWorkOn="0" dayType="3" note="" date="2458493"/>
+    <ExceptDay16 isWorkOn="0" dayType="3" note="" date="2458494"/>
+    <ExceptDay17 isWorkOn="0" dayType="3" note="" date="2458495"/>
+    <ExceptDay18 isWorkOn="0" dayType="3" note="" date="2458496"/>
+    <ExceptDay19 isWorkOn="0" dayType="3" note="" date="2458497"/>
+    <ExceptDay20 isWorkOn="0" dayType="3" note="" date="2458498"/>
+    <ExceptDay21 isWorkOn="0" dayType="3" note="" date="2458499"/>
+    <ExceptDay22 isWorkOn="0" dayType="3" note="" date="2458500"/>
+    <ExceptDay23 isWorkOn="0" dayType="3" note="" date="2458501"/>
+    <ExceptDay24 isWorkOn="0" dayType="3" note="" date="2458502"/>
+    <ExceptDay25 isWorkOn="0" dayType="3" note="" date="2458503"/>
+    <ExceptDay26 isWorkOn="0" dayType="3" note="" date="2458504"/>
+    <ExceptDay27 isWorkOn="0" dayType="3" note="" date="2458505"/>
+    <ExceptDay28 isWorkOn="0" dayType="3" note="" date="2458723"/>
+    <ExceptDay29 isWorkOn="0" dayType="3" note="" date="2458724"/>
+    <ExceptDay30 isWorkOn="0" dayType="3" note="" date="2458725"/>
+    <ExceptDay31 isWorkOn="0" dayType="3" note="" date="2458726"/>
+    <ExceptDay32 isWorkOn="0" dayType="3" note="" date="2458855"/>
+    <ExceptDay33 isWorkOn="0" dayType="3" note="" date="2458856"/>
+    <ExceptDay34 isWorkOn="0" dayType="3" note="" date="2459067"/>
+    <ExceptDay35 isWorkOn="0" dayType="3" note="" date="2459068"/>
+    <ExceptDay36 isWorkOn="0" dayType="3" note="" date="2459069"/>
+    <ExceptDay37 isWorkOn="0" dayType="3" note="" date="2459070"/>
+    <ExceptDay38 isWorkOn="0" dayType="3" note="" date="2459071"/>
+    <ExceptDay39 isWorkOn="0" dayType="3" note="" date="2459072"/>
+    <ExceptDay40 isWorkOn="0" dayType="3" note="" date="2459073"/>
+    <ExceptDay41 isWorkOn="0" dayType="3" note="" date="2459074"/>
+    <ExceptDay42 isWorkOn="0" dayType="3" note="" date="2459075"/>
+    <ExceptDay43 isWorkOn="0" dayType="3" note="" date="2459076"/>
+    <ExceptDay44 isWorkOn="0" dayType="3" note="" date="2459077"/>
+    <ExceptDay45 isWorkOn="0" dayType="3" note="" date="2459078"/>
    </calendar>
   </Developer5>
-  <Developer6 wr="1" name="KOM"/>
-  <Developer7 wr="1" name="KOV"/>
-  <Developer8 wr="1" name="KSA"/>
-  <Developer9 wr="1" name="PMG">
-   <calendar ExceptionDaysQty="19">
-    <ExceptDay1 note="" isWorkOn="0" dayType="3" date="2458281"/>
-    <ExceptDay2 note="" isWorkOn="0" dayType="3" date="2458282"/>
-    <ExceptDay3 note="" isWorkOn="0" dayType="3" date="2458283"/>
-    <ExceptDay4 note="" isWorkOn="0" dayType="3" date="2458284"/>
-    <ExceptDay5 note="" isWorkOn="0" dayType="3" date="2458285"/>
-    <ExceptDay6 note="" isWorkOn="0" dayType="3" date="2458286"/>
-    <ExceptDay7 note="" isWorkOn="0" dayType="3" date="2458287"/>
-    <ExceptDay8 note="" isWorkOn="0" dayType="3" date="2458288"/>
-    <ExceptDay9 note="" isWorkOn="0" dayType="3" date="2458289"/>
-    <ExceptDay10 note="" isWorkOn="0" dayType="3" date="2458290"/>
-    <ExceptDay11 note="" isWorkOn="0" dayType="3" date="2458291"/>
-    <ExceptDay12 note="" isWorkOn="0" dayType="3" date="2458292"/>
-    <ExceptDay13 note="" isWorkOn="0" dayType="3" date="2458293"/>
-    <ExceptDay14 note="" isWorkOn="0" dayType="3" date="2458294"/>
-    <ExceptDay15 note="" isWorkOn="0" dayType="3" date="2458295"/>
-    <ExceptDay16 note="" isWorkOn="0" dayType="3" date="2458296"/>
-    <ExceptDay17 note="" isWorkOn="0" dayType="3" date="2458297"/>
-    <ExceptDay18 note="" isWorkOn="0" dayType="3" date="2458298"/>
-    <ExceptDay19 note="" isWorkOn="0" dayType="3" date="2458299"/>
+  <Developer6 name="FPA" wr="1">
+   <calendar ExceptionDaysQty="26">
+    <ExceptDay1 isWorkOn="0" dayType="3" note="" date="2458708"/>
+    <ExceptDay2 isWorkOn="0" dayType="3" note="" date="2458709"/>
+    <ExceptDay3 isWorkOn="0" dayType="3" note="" date="2458710"/>
+    <ExceptDay4 isWorkOn="0" dayType="3" note="" date="2458711"/>
+    <ExceptDay5 isWorkOn="0" dayType="3" note="" date="2458712"/>
+    <ExceptDay6 isWorkOn="0" dayType="3" note="" date="2458713"/>
+    <ExceptDay7 isWorkOn="0" dayType="3" note="" date="2458714"/>
+    <ExceptDay8 isWorkOn="0" dayType="3" note="" date="2458715"/>
+    <ExceptDay9 isWorkOn="0" dayType="3" note="" date="2458716"/>
+    <ExceptDay10 isWorkOn="0" dayType="3" note="" date="2458717"/>
+    <ExceptDay11 isWorkOn="0" dayType="3" note="" date="2458718"/>
+    <ExceptDay12 isWorkOn="0" dayType="3" note="" date="2458719"/>
+    <ExceptDay13 isWorkOn="0" dayType="3" note="" date="2458720"/>
+    <ExceptDay14 isWorkOn="0" dayType="3" note="" date="2458721"/>
+    <ExceptDay15 isWorkOn="0" dayType="3" note="??????" date="2458988"/>
+    <ExceptDay16 isWorkOn="0" dayType="3" note="??????" date="2458989"/>
+    <ExceptDay17 isWorkOn="0" dayType="3" note="??????" date="2458990"/>
+    <ExceptDay18 isWorkOn="0" dayType="3" note="??????" date="2458991"/>
+    <ExceptDay19 isWorkOn="0" dayType="3" note="??????" date="2458992"/>
+    <ExceptDay20 isWorkOn="0" dayType="3" note="??????" date="2458993"/>
+    <ExceptDay21 isWorkOn="0" dayType="3" note="??????" date="2458994"/>
+    <ExceptDay22 isWorkOn="0" dayType="3" note="??????" date="2458995"/>
+    <ExceptDay23 isWorkOn="0" dayType="3" note="??????" date="2458996"/>
+    <ExceptDay24 isWorkOn="0" dayType="3" note="??????" date="2458997"/>
+    <ExceptDay25 isWorkOn="0" dayType="3" note="??????" date="2458998"/>
+    <ExceptDay26 isWorkOn="0" dayType="3" note="??????" date="2458999"/>
+   </calendar>
+  </Developer6>
+  <Developer7 name="GDY" wr="1">
+   <calendar ExceptionDaysQty="46">
+    <ExceptDay1 isWorkOn="0" dayType="3" note="" date="2458283"/>
+    <ExceptDay2 isWorkOn="0" dayType="3" note="" date="2458284"/>
+    <ExceptDay3 isWorkOn="0" dayType="3" note="" date="2458285"/>
+    <ExceptDay4 isWorkOn="0" dayType="3" note="" date="2458286"/>
+    <ExceptDay5 isWorkOn="0" dayType="3" note="" date="2458287"/>
+    <ExceptDay6 isWorkOn="0" dayType="3" note="" date="2458288"/>
+    <ExceptDay7 isWorkOn="0" dayType="3" note="" date="2458289"/>
+    <ExceptDay8 isWorkOn="0" dayType="3" note="" date="2458290"/>
+    <ExceptDay9 isWorkOn="0" dayType="3" note="" date="2458291"/>
+    <ExceptDay10 isWorkOn="0" dayType="3" note="" date="2458292"/>
+    <ExceptDay11 isWorkOn="0" dayType="3" note="" date="2458293"/>
+    <ExceptDay12 isWorkOn="0" dayType="3" note="" date="2458294"/>
+    <ExceptDay13 isWorkOn="0" dayType="3" note="" date="2458295"/>
+    <ExceptDay14 isWorkOn="0" dayType="3" note="" date="2458296"/>
+    <ExceptDay15 isWorkOn="0" dayType="3" note="" date="2458297"/>
+    <ExceptDay16 isWorkOn="0" dayType="3" note="" date="2458358"/>
+    <ExceptDay17 isWorkOn="0" dayType="3" note="" date="2458359"/>
+    <ExceptDay18 isWorkOn="0" dayType="3" note="" date="2458360"/>
+    <ExceptDay19 isWorkOn="0" dayType="3" note="" date="2458361"/>
+    <ExceptDay20 isWorkOn="0" dayType="3" note="" date="2458362"/>
+    <ExceptDay21 isWorkOn="0" dayType="3" note="" date="2458363"/>
+    <ExceptDay22 isWorkOn="0" dayType="3" note="" date="2458364"/>
+    <ExceptDay23 isWorkOn="0" dayType="3" note="" date="2458365"/>
+    <ExceptDay24 isWorkOn="0" dayType="3" note="" date="2458366"/>
+    <ExceptDay25 isWorkOn="0" dayType="3" note="" date="2458367"/>
+    <ExceptDay26 isWorkOn="0" dayType="3" note="" date="2458368"/>
+    <ExceptDay27 isWorkOn="0" dayType="3" note="" date="2458369"/>
+    <ExceptDay28 isWorkOn="0" dayType="3" note="" date="2458694"/>
+    <ExceptDay29 isWorkOn="0" dayType="3" note="" date="2458695"/>
+    <ExceptDay30 isWorkOn="0" dayType="3" note="" date="2458696"/>
+    <ExceptDay31 isWorkOn="0" dayType="3" note="" date="2458697"/>
+    <ExceptDay32 isWorkOn="0" dayType="3" note="" date="2458698"/>
+    <ExceptDay33 isWorkOn="0" dayType="3" note="" date="2458699"/>
+    <ExceptDay34 isWorkOn="0" dayType="3" note="" date="2458700"/>
+    <ExceptDay35 isWorkOn="0" dayType="3" note="" date="2458701"/>
+    <ExceptDay36 isWorkOn="0" dayType="3" note="" date="2458702"/>
+    <ExceptDay37 isWorkOn="0" dayType="3" note="" date="2458703"/>
+    <ExceptDay38 isWorkOn="0" dayType="3" note="" date="2458704"/>
+    <ExceptDay39 isWorkOn="0" dayType="3" note="" date="2458705"/>
+    <ExceptDay40 isWorkOn="0" dayType="3" note="" date="2458706"/>
+    <ExceptDay41 isWorkOn="0" dayType="3" note="" date="2458707"/>
+    <ExceptDay42 isWorkOn="0" dayType="3" note="" date="2458708"/>
+    <ExceptDay43 isWorkOn="0" dayType="3" note="" date="2458709"/>
+    <ExceptDay44 isWorkOn="0" dayType="3" note="" date="2458710"/>
+    <ExceptDay45 isWorkOn="0" dayType="3" note="" date="2458711"/>
+    <ExceptDay46 isWorkOn="0" dayType="3" note="" date="2458712"/>
+   </calendar>
+  </Developer7>
+  <Developer8 name="KSA" wr="1">
+   <calendar ExceptionDaysQty="15">
+    <ExceptDay1 isWorkOn="0" dayType="3" note="" date="2458344"/>
+    <ExceptDay2 isWorkOn="0" dayType="3" note="" date="2458345"/>
+    <ExceptDay3 isWorkOn="0" dayType="3" note="" date="2458346"/>
+    <ExceptDay4 isWorkOn="0" dayType="3" note="" date="2458347"/>
+    <ExceptDay5 isWorkOn="0" dayType="3" note="" date="2458348"/>
+    <ExceptDay6 isWorkOn="0" dayType="3" note="" date="2458349"/>
+    <ExceptDay7 isWorkOn="0" dayType="3" note="" date="2458350"/>
+    <ExceptDay8 isWorkOn="0" dayType="3" note="" date="2458351"/>
+    <ExceptDay9 isWorkOn="0" dayType="3" note="" date="2458352"/>
+    <ExceptDay10 isWorkOn="0" dayType="3" note="" date="2458353"/>
+    <ExceptDay11 isWorkOn="0" dayType="3" note="" date="2458354"/>
+    <ExceptDay12 isWorkOn="0" dayType="3" note="" date="2458355"/>
+    <ExceptDay13 isWorkOn="0" dayType="3" note="" date="2458757"/>
+    <ExceptDay14 isWorkOn="0" dayType="3" note="" date="2458758"/>
+    <ExceptDay15 isWorkOn="0" dayType="3" note="" date="2458759"/>
+   </calendar>
+  </Developer8>
+  <Developer9 name="PMG" wr="1">
+   <calendar ExceptionDaysQty="20">
+    <ExceptDay1 isWorkOn="0" dayType="3" note="" date="2458281"/>
+    <ExceptDay2 isWorkOn="0" dayType="3" note="" date="2458282"/>
+    <ExceptDay3 isWorkOn="0" dayType="3" note="" date="2458283"/>
+    <ExceptDay4 isWorkOn="0" dayType="3" note="" date="2458284"/>
+    <ExceptDay5 isWorkOn="0" dayType="3" note="" date="2458285"/>
+    <ExceptDay6 isWorkOn="0" dayType="3" note="" date="2458286"/>
+    <ExceptDay7 isWorkOn="0" dayType="3" note="" date="2458287"/>
+    <ExceptDay8 isWorkOn="0" dayType="3" note="" date="2458288"/>
+    <ExceptDay9 isWorkOn="0" dayType="3" note="" date="2458289"/>
+    <ExceptDay10 isWorkOn="0" dayType="3" note="" date="2458290"/>
+    <ExceptDay11 isWorkOn="0" dayType="3" note="" date="2458291"/>
+    <ExceptDay12 isWorkOn="0" dayType="3" note="" date="2458292"/>
+    <ExceptDay13 isWorkOn="0" dayType="3" note="" date="2458293"/>
+    <ExceptDay14 isWorkOn="0" dayType="3" note="" date="2458294"/>
+    <ExceptDay15 isWorkOn="0" dayType="3" note="" date="2458295"/>
+    <ExceptDay16 isWorkOn="0" dayType="3" note="" date="2458296"/>
+    <ExceptDay17 isWorkOn="0" dayType="3" note="" date="2458297"/>
+    <ExceptDay18 isWorkOn="0" dayType="3" note="" date="2458298"/>
+    <ExceptDay19 isWorkOn="0" dayType="3" note="" date="2458299"/>
+    <ExceptDay20 isWorkOn="0" dayType="3" note="" date="2458470"/>
    </calendar>
   </Developer9>
-  <Developer10 wr="1" name="PVI"/>
-  <Developer11 wr="1" name="SPS">
-   <calendar ExceptionDaysQty="15">
-    <ExceptDay1 note="" isWorkOn="0" dayType="3" date="2458292"/>
-    <ExceptDay2 note="" isWorkOn="0" dayType="3" date="2458293"/>
-    <ExceptDay3 note="" isWorkOn="0" dayType="3" date="2458294"/>
-    <ExceptDay4 note="" isWorkOn="0" dayType="3" date="2458295"/>
-    <ExceptDay5 note="" isWorkOn="0" dayType="3" date="2458296"/>
-    <ExceptDay6 note="" isWorkOn="0" dayType="3" date="2458297"/>
-    <ExceptDay7 note="" isWorkOn="0" dayType="3" date="2458298"/>
-    <ExceptDay8 note="" isWorkOn="0" dayType="3" date="2458299"/>
-    <ExceptDay9 note="" isWorkOn="0" dayType="3" date="2458300"/>
-    <ExceptDay10 note="" isWorkOn="0" dayType="3" date="2458301"/>
-    <ExceptDay11 note="" isWorkOn="0" dayType="3" date="2458302"/>
-    <ExceptDay12 note="" isWorkOn="0" dayType="3" date="2458303"/>
-    <ExceptDay13 note="" isWorkOn="0" dayType="3" date="2458304"/>
-    <ExceptDay14 note="" isWorkOn="0" dayType="3" date="2458305"/>
-    <ExceptDay15 note="" isWorkOn="0" dayType="3" date="2458306"/>
+  <Developer10 name="PVI" wr="1">
+   <calendar ExceptionDaysQty="16">
+    <ExceptDay1 isWorkOn="0" dayType="3" note="" date="2458422"/>
+    <ExceptDay2 isWorkOn="0" dayType="3" note="" date="2458446"/>
+    <ExceptDay3 isWorkOn="0" dayType="3" note="" date="2458736"/>
+    <ExceptDay4 isWorkOn="0" dayType="3" note="" date="2458737"/>
+    <ExceptDay5 isWorkOn="0" dayType="3" note="" date="2458738"/>
+    <ExceptDay6 isWorkOn="0" dayType="3" note="" date="2458739"/>
+    <ExceptDay7 isWorkOn="0" dayType="3" note="" date="2458740"/>
+    <ExceptDay8 isWorkOn="0" dayType="3" note="" date="2458741"/>
+    <ExceptDay9 isWorkOn="0" dayType="3" note="" date="2458742"/>
+    <ExceptDay10 isWorkOn="0" dayType="3" note="" date="2458743"/>
+    <ExceptDay11 isWorkOn="0" dayType="3" note="" date="2458744"/>
+    <ExceptDay12 isWorkOn="0" dayType="3" note="" date="2458745"/>
+    <ExceptDay13 isWorkOn="0" dayType="3" note="" date="2458746"/>
+    <ExceptDay14 isWorkOn="0" dayType="3" note="" date="2458747"/>
+    <ExceptDay15 isWorkOn="0" dayType="3" note="" date="2458748"/>
+    <ExceptDay16 isWorkOn="0" dayType="3" note="" date="2458749"/>
+   </calendar>
+  </Developer10>
+  <Developer11 name="SAV" wr="1">
+   <calendar ExceptionDaysQty="12">
+    <ExceptDay1 isWorkOn="0" dayType="3" note="" date="2459051"/>
+    <ExceptDay2 isWorkOn="0" dayType="3" note="" date="2459052"/>
+    <ExceptDay3 isWorkOn="0" dayType="3" note="" date="2459053"/>
+    <ExceptDay4 isWorkOn="0" dayType="3" note="" date="2459054"/>
+    <ExceptDay5 isWorkOn="0" dayType="3" note="" date="2459055"/>
+    <ExceptDay6 isWorkOn="0" dayType="3" note="" date="2459056"/>
+    <ExceptDay7 isWorkOn="0" dayType="3" note="" date="2459057"/>
+    <ExceptDay8 isWorkOn="0" dayType="3" note="" date="2459058"/>
+    <ExceptDay9 isWorkOn="0" dayType="3" note="" date="2459059"/>
+    <ExceptDay10 isWorkOn="0" dayType="3" note="" date="2459060"/>
+    <ExceptDay11 isWorkOn="0" dayType="3" note="" date="2459061"/>
+    <ExceptDay12 isWorkOn="0" dayType="3" note="" date="2459062"/>
    </calendar>
   </Developer11>
-  <Developer12 wr="1" name="SSB"/>
+  <Developer12 name="SPS" wr="1">
+   <calendar ExceptionDaysQty="47">
+    <ExceptDay1 isWorkOn="0" dayType="3" note="" date="2458292"/>
+    <ExceptDay2 isWorkOn="0" dayType="3" note="" date="2458293"/>
+    <ExceptDay3 isWorkOn="0" dayType="3" note="" date="2458294"/>
+    <ExceptDay4 isWorkOn="0" dayType="3" note="" date="2458295"/>
+    <ExceptDay5 isWorkOn="0" dayType="3" note="" date="2458296"/>
+    <ExceptDay6 isWorkOn="0" dayType="3" note="" date="2458297"/>
+    <ExceptDay7 isWorkOn="0" dayType="3" note="" date="2458298"/>
+    <ExceptDay8 isWorkOn="0" dayType="3" note="" date="2458299"/>
+    <ExceptDay9 isWorkOn="0" dayType="3" note="" date="2458300"/>
+    <ExceptDay10 isWorkOn="0" dayType="3" note="" date="2458301"/>
+    <ExceptDay11 isWorkOn="0" dayType="3" note="" date="2458302"/>
+    <ExceptDay12 isWorkOn="0" dayType="3" note="" date="2458303"/>
+    <ExceptDay13 isWorkOn="0" dayType="3" note="" date="2458304"/>
+    <ExceptDay14 isWorkOn="0" dayType="3" note="" date="2458305"/>
+    <ExceptDay15 isWorkOn="0" dayType="3" note="" date="2458306"/>
+    <ExceptDay16 isWorkOn="0" dayType="3" note="??????" date="2458705"/>
+    <ExceptDay17 isWorkOn="0" dayType="3" note="??????" date="2458706"/>
+    <ExceptDay18 isWorkOn="0" dayType="3" note="??????" date="2458707"/>
+    <ExceptDay19 isWorkOn="0" dayType="3" note="??????" date="2458708"/>
+    <ExceptDay20 isWorkOn="0" dayType="3" note="??????" date="2458709"/>
+    <ExceptDay21 isWorkOn="0" dayType="3" note="??????" date="2458710"/>
+    <ExceptDay22 isWorkOn="0" dayType="3" note="??????" date="2458711"/>
+    <ExceptDay23 isWorkOn="0" dayType="3" note="??????" date="2458712"/>
+    <ExceptDay24 isWorkOn="0" dayType="3" note="??????" date="2458713"/>
+    <ExceptDay25 isWorkOn="0" dayType="3" note="??????" date="2458714"/>
+    <ExceptDay26 isWorkOn="0" dayType="3" note="??????" date="2458715"/>
+    <ExceptDay27 isWorkOn="0" dayType="3" note="??????" date="2458716"/>
+    <ExceptDay28 isWorkOn="0" dayType="3" note="??????" date="2458717"/>
+    <ExceptDay29 isWorkOn="0" dayType="3" note="??????" date="2458718"/>
+    <ExceptDay30 isWorkOn="0" dayType="3" note="??????" date="2458719"/>
+    <ExceptDay31 isWorkOn="0" dayType="3" note="??????" date="2458720"/>
+    <ExceptDay32 isWorkOn="0" dayType="3" note="??????" date="2458721"/>
+    <ExceptDay33 isWorkOn="0" dayType="3" note="??????" date="2458722"/>
+    <ExceptDay34 isWorkOn="0" dayType="3" note="" date="2459051"/>
+    <ExceptDay35 isWorkOn="0" dayType="3" note="" date="2459052"/>
+    <ExceptDay36 isWorkOn="0" dayType="3" note="" date="2459053"/>
+    <ExceptDay37 isWorkOn="0" dayType="3" note="" date="2459054"/>
+    <ExceptDay38 isWorkOn="0" dayType="3" note="" date="2459055"/>
+    <ExceptDay39 isWorkOn="0" dayType="3" note="" date="2459056"/>
+    <ExceptDay40 isWorkOn="0" dayType="3" note="" date="2459057"/>
+    <ExceptDay41 isWorkOn="0" dayType="3" note="" date="2459058"/>
+    <ExceptDay42 isWorkOn="0" dayType="3" note="" date="2459059"/>
+    <ExceptDay43 isWorkOn="0" dayType="3" note="" date="2459060"/>
+    <ExceptDay44 isWorkOn="0" dayType="3" note="" date="2459061"/>
+    <ExceptDay45 isWorkOn="0" dayType="3" note="" date="2459062"/>
+    <ExceptDay46 isWorkOn="0" dayType="3" note="" date="2459063"/>
+    <ExceptDay47 isWorkOn="0" dayType="3" note="" date="2459064"/>
+   </calendar>
+  </Developer12>
+  <Developer13 name="SSB" wr="1"/>
  </DevelopersList>
  <Git GitWeb="https://omp-system.ru/git/" RepoPath="G:/PrjVC/_omp"/>
- <Redmine Key="6070eaa59ffa3fc76f686491a4ed408ef98a2fe8" URL="http://omp05/redmine/"/>
+ <Redmine URL="http://omp05/redmine/" Key="6070eaa59ffa3fc76f686491a4ed408ef98a2fe8"/>
 </SettingsRoot>

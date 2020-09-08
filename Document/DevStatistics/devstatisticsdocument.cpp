@@ -284,6 +284,26 @@ bool DevStatisticsDocument::creatHTMLDataFile(QString filePath)
   return true;
 }
 
+bool DevStatisticsDocument::creatHTMLDataFiles(QString dirPath)
+{
+  auto htmlFileNamesAndTexts = HTMLGenerator().generateHTMLFilesTexts(parentDocument());
+
+  for(auto& fileNameAndText : htmlFileNamesAndTexts)
+  {
+    QFile fileToSave(dirPath + "\\" + fileNameAndText.first);
+
+    if( !fileToSave.open(QIODevice::WriteOnly | QIODevice::Text) )
+      return false;
+
+    QTextStream out(&fileToSave);
+                out.setCodec( QLatin1String("UTF-8").data() );
+
+    out << fileNameAndText.second;
+  }
+
+  return true;
+}
+
 QString DevStatisticsDocument::getOutputHTMLDefaultFileName() const
 {
   QString fileName = QString("OMPDevelopersStatistic_%1_%2").arg( m_DateFrom.toString("yyyy") ).arg( m_DateFrom.toString("MM") );

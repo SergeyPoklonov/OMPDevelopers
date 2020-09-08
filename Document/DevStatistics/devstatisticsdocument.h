@@ -64,6 +64,8 @@ public:
   bool generateWorkData();
   
   bool creatHTMLDataFile(QString filePath);
+
+  bool creatHTMLDataFiles(QString dirPath);
   
   ///////////////////////////////////////////////////////////////////////////
   // signals

@@ -194,6 +194,211 @@ QString HTMLGenerator::generateHTMLText( const DocumentDataManager &docObj )
   return m_HTMLText;
 }
 
+QVector<QPair<QString, QString>> HTMLGenerator::generateHTMLFilesTexts( const DocumentDataManager &docObj)
+{
+    QVector<QPair<QString, QString>> result;
+    m_UniqueSuffix = 1;
+    m_pDoc = &docObj;
+
+    const QDate dateFrom = Doc().devStatistic().getDateFrom();
+    const QDate dateTo = Doc().devStatistic().getDateTo();
+
+    m_HTMLText += "<!DOCTYPE HTML>\n";
+    m_HTMLText += "<html>\n";
+    m_HTMLText += "<head>\n";
+    m_HTMLText += "<meta charset=""utf-8"">\n";
+    m_HTMLText += QString("<title>Статистика по разработчикам %1-%2</title>\n").arg(dateFrom.toString("dd.MM.yyyy")).arg(dateTo.toString("dd.MM.yyyy"));
+    m_HTMLText += "</head>\n";
+    m_HTMLText += "<body>\n";
+    m_HTMLText += QString("<h2>Период: %1 - %2</h2>\n").arg(dateFrom.toString("dd.MM.yyyy")).arg(dateTo.toString("dd.MM.yyyy"));
+
+    const unsigned workDaysQty = Doc().devStatistic().getWorkingDaysQty();
+    const unsigned workDayLen = Doc().devStatistic().getWorkDayLenHrs();
+
+    const unsigned totalPeriodWorkLenHrs = workDaysQty * workDayLen;
+
+    m_HTMLText += QString("<p>Всего рабочего времени: %1дн <b>(%2ч)</b></p>\n").arg(workDaysQty).arg( totalPeriodWorkLenHrs );
+
+    std::vector< CDeveloperWorkData > devStatList = Doc().devStatistic().getDevelopersStatisticData();
+
+    std::sort(devStatList.begin(), devStatList.end(), [](const CDeveloperWorkData &f, const CDeveloperWorkData &s)
+    {
+      return f.getName() < s.getName();
+    });
+
+    addHTMLLine("<h3>Трудоемкость за период</h3>");
+
+    // линейки трудоемкости по разработчикам
+    if( Doc().devStatistic().isRedmineEnabled() )
+    {
+      std::vector<HorizontalBarData> barsData;
+      for( const CDeveloperWorkData &devData : devStatList )
+      {
+        HorizontalBarData bar;
+                          bar.name = QString( "<a href=""%1.html"">%1</a>" ).arg(devData.getName());
+                          bar.addNameTags = false;
+                          bar.barLenPrc = devData.totalLabourHrs() / (totalPeriodWorkLenHrs / 100.0);
+                          bar.inbarStr = QString("%1ч").arg( QLocale().toString( devData.totalLabourHrs(), 'f', 1) );
+
+        if( bar.barLenPrc < 33.3 )
+          bar.color = "red";
+        else if( bar.barLenPrc < 66.6 )
+          bar.color = "gold";
+        else
+          bar.color = "SpringGreen";
+
+        barsData.push_back( bar );
+      }
+
+      addHorizontalBars( barsData, "black" );
+    }
+
+    m_HTMLText += "</body>\n";
+    m_HTMLText += "</html>\n";
+
+    result.push_back({"main.html", m_HTMLText});
+
+    for( const CDeveloperWorkData &devData : devStatList )
+    {
+      m_HTMLText.clear();
+      m_HTMLText += "<!DOCTYPE HTML>\n";
+      m_HTMLText += "<html>\n";
+      m_HTMLText += "<head>\n";
+      m_HTMLText += "<meta charset=""utf-8"">\n";
+      m_HTMLText += QString("<title>Статистика по разработчику %1</title>\n").arg(devData.getName());
+      m_HTMLText += "</head>\n";
+      m_HTMLText += "<body>\n";
+
+      addHTMLLine( QString("<h3 id=""%1"">%1</h3>").arg( devData.getName() ) );
+      addHTMLLine( QString("<a href=""main.html""><h2>На главную</h2></a>") );
+
+      if( Doc().devStatistic().isRedmineEnabled() )
+      {
+        const double redmineTotalHrs = devData.redmineTotalHrs();
+        const double developmentOtherHrs = devData.developOtherHrs();
+        const double holydaysHrs = devData.calendar().getExceptDaysQty(dateFrom, dateTo, ExceptDayType::HOLIDAYS, DaysExcludeMode::STDNONWORK) * Doc().devStatistic().getWorkDayLenHrs();
+        const double sickHrs = devData.calendar().getExceptDaysQty(dateFrom, dateTo, ExceptDayType::SICKLIST, DaysExcludeMode::STDNONWORK) * Doc().devStatistic().getWorkDayLenHrs();
+        const double freeTimeHrs = totalPeriodWorkLenHrs - (redmineTotalHrs + developmentOtherHrs + holydaysHrs + sickHrs);
+
+        if( freeTimeHrs == totalPeriodWorkLenHrs )
+        {
+          m_HTMLText += "<p>Отсутствуют какие-либо данные по разработчику за указанный период времени.</p>\n";
+          continue;
+        }
+
+        m_HTMLText += QString("<p>Общие трудозатраты: <b>%1ч</b>.</p>\n").arg( QLocale().toString( devData.totalLabourHrs(), 'f', 1) );
+
+        // график по типам времени
+        {
+          HTMLPieChartData pieChartData;
+
+          pieChartData.setDimensions(640,480);
+          pieChartData.setResidueSliceParams("Прочее", "Yellow");
+          pieChartData.setSliceVisibilityThresholdPrc(1);
+
+          if( redmineTotalHrs > 0 )
+            pieChartData.addSlice("Трудоемкость по Redmine", redmineTotalHrs, "Green");
+
+          if( developmentOtherHrs > 0 )
+            pieChartData.addSlice("Разработка без привязки к Redmine", developmentOtherHrs, "Lime");
+
+          if( holydaysHrs > 0 )
+            pieChartData.addSlice( getExceptDayTypeName(ExceptDayType::HOLIDAYS) , holydaysHrs, "Blue");
+
+          if( freeTimeHrs > 0 )
+            pieChartData.addSlice("Неучтенное время", freeTimeHrs, "Silver");
+
+          if( sickHrs > 0 )
+            pieChartData.addSlice( getExceptDayTypeName(ExceptDayType::SICKLIST) , sickHrs, "Fuchsia");
+
+          addPieChart( QString("%1: Использование рабочего времени").arg(devData.getName()), pieChartData );
+        }
+
+        // график по типам задач в редмайн
+        if( redmineTotalHrs )
+        {
+          std::map<int,double> trackersTime;
+          std::vector<CRedmineTimeData> devTEList = devData.redmineTimesList();
+
+          for( CRedmineTimeData &teData : devTEList )
+          {
+            const int trackerID = Doc().devStatistic().issueToTracker(teData.IssueID());
+            if( teData.HoursSpent() > 0 )
+              trackersTime[trackerID] += teData.HoursSpent();
+          }
+
+          Q_ASSERT( trackersTime.size() );
+
+          std::map<int,QString> trackerColors = getTrackersColors();
+
+          HTMLPieChartData pieChartData;
+
+          pieChartData.setDimensions(640,480);
+          pieChartData.setResidueSliceParams("Прочее");
+          pieChartData.setSliceVisibilityThresholdPrc(1);
+
+          for(auto &trackerPair : trackersTime)
+          {
+            const double trackerHrs = trackerPair.second;
+            const QString trackerName = Doc().devStatistic().trackerName(trackerPair.first);
+
+            pieChartData.addSlice(trackerName, trackerHrs, trackerColors[trackerPair.first]);
+          }
+
+          addPieChart( QString("%1: Трудозатраты по типам задач").arg(devData.getName()), pieChartData );
+        }
+
+        std::vector<CRevisionData> nonRMRevisions = devData.nonRedmineRevisionsList(false);
+
+        if( nonRMRevisions.size() )
+        {
+          addRevisionsTable( QString("Ревизии без привязки к Redmine"), nonRMRevisions );
+
+          m_HTMLText += "<br>";
+        }
+      }
+
+      if( Doc().devStatistic().isLargeRevisionListEnabled() )
+      {
+        const double largeRevHrsMin = Doc().devStatistic().getMinRevHrs();
+
+        std::vector<CRevisionData> largeRevisions = devData.revisionsList( largeRevHrsMin );
+
+        if( largeRevisions.size() )
+        {
+          addRevisionsTable( QString("Большие ревизии (не менее %1 ч)\n").arg( largeRevHrsMin ), largeRevisions );
+        }
+        else
+        {
+          m_HTMLText += QString("<p>Ревизии %1 ч и больше отсутствуют.</p>\n").arg( largeRevHrsMin );
+        }
+      }
+
+      if( Doc().devStatistic().isCoreRevisionListEnabled() )
+      {
+        std::vector<CRevisionData> coreRevisions = devData.coreRevisionsList();
+
+        if( coreRevisions.size() )
+        {
+          addRevisionsTable( "Ревизии меняющие базовый функционал\n", coreRevisions );
+        }
+        else
+        {
+          addHTMLLine( "<p>Ревизии меняющие базовый функционал отсутствуют.</p>" );
+        }
+      }
+
+      m_HTMLText += QString("<p>Всего ревизий: %1</p>\n").arg( devData.revisionsCount() );
+
+      m_HTMLText += "</body>\n";
+      m_HTMLText += "</html>\n";
+
+      result.push_back({QString("%1.html").arg(devData.getName()), m_HTMLText});
+    }
+
+    return result;
+}
+
 #define T_ERROR       1
 #define T_DEVELOP     2
 #define T_SUPPDEVELOP 3

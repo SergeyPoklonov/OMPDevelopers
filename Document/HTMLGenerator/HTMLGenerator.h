@@ -15,6 +15,7 @@ public:
   HTMLGenerator() {}
   
   QString generateHTMLText( const DocumentDataManager &docObj );
+  QVector<QPair<QString, QString>> generateHTMLFilesTexts( const DocumentDataManager &docObj );
   
 private:
   struct HorizontalBarData
