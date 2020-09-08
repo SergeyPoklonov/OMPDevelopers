@@ -226,8 +226,9 @@ bool GitAnalyzer::AnalyzeRepository(std::vector<CDeveloperWorkData> &workDevList
   clearGenerationData();
 
   QString gitOutput;
+  QString dummyStr;
 
-  if( !getGitLog(gitOutput, errStr ? *errStr : QString(), LogFormat::FULL) )
+  if( !getGitLog(gitOutput, errStr ? *errStr : dummyStr, LogFormat::FULL) )
     return false;
   
   emit analyzeStepDone();
