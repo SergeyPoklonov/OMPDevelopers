@@ -9,6 +9,8 @@
 #include <QNetworkRequest>
 #include <QNetworkReply>
 #include <memory>
+#include <QSqlError>
+#include <QSqlQuery>
 
 RedmineAnalyzer::RedmineAnalyzer(AnalyzeSettings settings, QObject *parent) 
   : QObject(parent)
@@ -132,23 +134,13 @@ bool RedmineAnalyzer::ReadTimeEntries( std::vector<CDeveloperWorkData> &workDevL
   return true;
 }
 
-bool RedmineAnalyzer::AnalyzeServer(std::vector<CDeveloperWorkData> &workDevList, std::map<long,QString> &trackersList, std::map<long,long> &issuesToTrackers, QString *errStr)
+bool RedmineAnalyzer::AnalyzeServer(std::vector<CDeveloperWorkData> &workDevList, std::map<long,QString> &trackersList, std::map<long,CRedmineIssueData> &issues, QString *errStr)
 {
-  if( m_Settings.AuthKey.isEmpty() )
-  {
-    if( errStr )
-      *errStr = "Не задан redmine authentication key.";
-    
+  if( !CheckSettings( errStr ) )
     return false;
-  }
-  
-  if( m_Settings.Url.isEmpty() )
-  {
-    if( errStr )
-      *errStr = "Не задан redmine server URL.";
-    
+
+  if( !EstablishDBConnection( errStr ) )
     return false;
-  }
   
   std::set<long> involvedIssues;
   
@@ -158,15 +150,138 @@ bool RedmineAnalyzer::AnalyzeServer(std::vector<CDeveloperWorkData> &workDevList
   if( !ReadTrackers( trackersList, errStr ) )
     return false;
   
-  if( !ReadIssuesTrackers( involvedIssues, issuesToTrackers, errStr ) )
+  std::set<long> overdueIssues;
+  if( !ReadOverdueIssues( overdueIssues, errStr ) )
     return false;
+
+  involvedIssues.insert( overdueIssues.begin(), overdueIssues.end() );
+
+  if( !ReadIssues( involvedIssues, issues, errStr ) )
+    return false;
+
+  CloseDBConnection();
   
   return true;
 }
 
-bool RedmineAnalyzer::ReadIssuesTrackers( const std::set<long> &issues, std::map<long,long> &issuesToTrackers, QString *errStr )
+void RedmineAnalyzer::CloseDBConnection()
 {
-  issuesToTrackers.clear();
+  if( m_RMDB.isOpen() )
+    m_RMDB.close();
+}
+
+bool RedmineAnalyzer::EstablishDBConnection( QString *errStr )
+{
+  if( m_RMDB.isOpen() )
+    return true;
+
+  m_RMDB = QSqlDatabase::addDatabase("QMYSQL", "OMPRM");
+  m_RMDB.setHostName("192.168.222.48");
+  m_RMDB.setPort(3306);
+  m_RMDB.setDatabaseName("redmine");
+  m_RMDB.setUserName("changes");
+  m_RMDB.setPassword("changes");
+
+  if( !m_RMDB.open() )
+  {
+    QSqlError err = m_RMDB.lastError();
+
+    QString dstr = err.driverText();
+    QString bstr = err.databaseText();
+
+    if( errStr )
+      *errStr = QString("Не удается подключиться к БД Redmine: %s").arg( dstr.length() ? dstr : bstr );
+
+    return false;
+  }
+
+  return true;
+}
+
+bool RedmineAnalyzer::CheckSettings( QString *errStr )
+{
+    if( m_Settings.AuthKey.isEmpty() )
+    {
+      if( errStr )
+        *errStr = "Не задан redmine authentication key.";
+
+      return false;
+    }
+
+    if( m_Settings.Url.isEmpty() )
+    {
+      if( errStr )
+        *errStr = "Не задан redmine server URL.";
+
+      return false;
+    }
+
+    return true;
+}
+
+bool RedmineAnalyzer::ReadOverdueIssues( std::set<long> &issuesIds, QString *errStr  )
+{
+  Q_UNUSED(errStr);
+
+  QString sqlStr = QString("SELECT cv.customized_id\
+                           FROM issues i, custom_values cv\
+                           WHERE\
+                           i.status_id IN(%1) AND\
+                           i.id = cv.customized_id AND\
+                           cv.custom_field_id = %2 AND\
+                           CHAR_LENGTH(cv.value) > 0 AND\
+                           CONVERT(cv.value,DATE) < DATE(\"%3\")")
+      .arg( valuesToString(CRedmineIssueData::openStates(), ",") )
+      .arg( CRedmineIssueData::cvDEADLINE )
+      .arg( QDate::currentDate().toString("yyyy-MM-dd") );
+
+  QSqlQuery query(sqlStr,m_RMDB);
+
+  while( query.next() )
+  {
+    issuesIds.insert( query.value(0).toInt() );
+  }
+
+  return true;
+}
+
+bool RedmineAnalyzer::ReadIssuesCloseDate( std::map<long,CRedmineIssueData> &issuesData, QString *errStr )
+{
+  Q_UNUSED(errStr);
+
+  std::set<long> issuesCodes;
+  MAP2SET1(issuesData,issuesCodes);
+
+  QString sqlStr = QString("SELECT j.journalized_id, CONVERT(MAX(j.created_on),DATE)\
+                           FROM journals j, journal_details jd\
+                           WHERE\
+                           jd.prop_key = 'status_id' AND\
+                           jd.journal_id = j.id AND\
+                           j.journalized_type = 'Issue' AND\
+                           CONVERT(jd.old_value,UNSIGNED) IN(%1) AND\
+                           CONVERT(jd.value,UNSIGNED) not IN(%1) AND\
+                           j.journalized_id IN (%2)\
+                           GROUP BY j.journalized_id")
+      .arg( valuesToString(CRedmineIssueData::openStates(), ",") )
+      .arg( valuesToString(issuesCodes, ",") );
+
+  QSqlQuery query(sqlStr, m_RMDB);
+
+  while( query.next() )
+  {
+    const int issueID = query.value(0).toInt();
+    const QString dateStr = query.value(1).toString();
+    const QDate closeDate = QDate::fromString( dateStr, "yyyy-MM-dd");
+
+    issuesData[issueID].setCloseDate(closeDate);
+  }
+
+  return true;
+}
+
+bool RedmineAnalyzer::ReadIssues( const std::set<long> &issues, std::map<long,CRedmineIssueData> &issuesData, QString *errStr )
+{
+  issuesData.clear();
   
   if( issues.empty() )
   {
@@ -189,7 +304,7 @@ bool RedmineAnalyzer::ReadIssuesTrackers( const std::set<long> &issues, std::map
   
   const int maxRecordsPerStep = 20;
   
-  for(int stepNum = 0; (stepNum * maxRecordsPerStep) <= issuesList.size(); stepNum++)
+  for(int stepNum = 0; (stepNum * maxRecordsPerStep) <= (long)issuesList.size(); stepNum++)
   {
     int issuesOffset = stepNum * maxRecordsPerStep;
     
@@ -221,13 +336,43 @@ bool RedmineAnalyzer::ReadIssuesTrackers( const std::set<long> &issues, std::map
     
     for(int i = 0; i < issuesJsonArray.size(); i++)
     {
+      CRedmineIssueData issueData;
+
       QJsonObject issueObject = issuesJsonArray.at(i).toObject();
-      const int issueID = issueObject.take("id").toInt();
+      issueData.setID( issueObject.take("id").toInt() );
       
       QJsonObject trackerObject = issueObject.take("tracker").toObject();
-      const int trackerID = trackerObject.take("id").toInt();
+      issueData.setTracker( trackerObject.take("id").toInt() );
+
+      QJsonObject statusObject = issueObject.take("status").toObject();
+      issueData.setState( statusObject.take("id").toInt() );
+
+      QJsonObject performerObject = issueObject.take("assigned_to").toObject();
+      issueData.setPerformerID( performerObject.take("id").toInt() );
+
+      QVariant nameVar = issueObject.take("subject").toVariant();
+      issueData.setName( nameVar.toString() );
+
+      QJsonArray customFieldsArray = issueObject.take("custom_fields").toArray();
+      for(int cfInd = 0; cfInd < customFieldsArray.size(); cfInd++)
+      {
+        QJsonObject fieldObject = customFieldsArray.at(cfInd).toObject();
+
+        const int fieldID = fieldObject.take("id").toInt();
+
+        if( fieldID == CRedmineIssueData::cvPlan )
+        {
+          issueData.setIsInPlan( fieldObject.take("value").toString().length() > 0 );
+        }
+
+        if( fieldID == CRedmineIssueData::cvDEADLINE )
+        {
+          const QDate dlDate = QDate::fromString(fieldObject.take("value").toString(), "yyyy-MM-dd");
+          issueData.setDeadLine( dlDate );
+        }
+      }
       
-      issuesToTrackers[issueID] = trackerID;
+      issuesData[issueData.ID()] = issueData;
       
       issuesDone++;
      
@@ -241,7 +386,8 @@ bool RedmineAnalyzer::ReadIssuesTrackers( const std::set<long> &issues, std::map
     }
   }
   
-  //Q_ASSERT( issuesDone == issuesList.size() );
+  if( !ReadIssuesCloseDate( issuesData, errStr ) )
+    return false;
   
   while( stepsRemainsCount )
   {

@@ -20,27 +20,21 @@ GenerationPage::~GenerationPage()
 
 void GenerationPage::createAndSaveHTML()
 {
-  //QString fileToSaveFilePath = QFileDialog::getSaveFileName(this, "Укажите файл для сохранения", getDocument().getOutputHTMLDefaultFilePath(), "HyperText document (*.html)");
-
-//  if( fileToSaveFilePath.isEmpty() )
-//    return;
-
-//  if( !getDocument().devStatistic().creatHTMLDataFile( fileToSaveFilePath ) )
-//  {
-//    QMessageBox::warning(this, "Сохранение данных в html", "Ошибка при сохранении данных.");
-//  }
-
   QString dirToSaveFilePath = QFileDialog::getExistingDirectory(this, "Укажите директорию для сохранения", getDocument().getOutputHTMLDefaultFilePath());
 
   if( dirToSaveFilePath.isEmpty() )
     return;
+
+  QString dirPath = dirToSaveFilePath;
+  dirPath.append( QDir::separator() ).append( getDocument().getSaveSubDirName() );
+
+  if( !QDir().exists( dirPath ) )
+    QDir().mkdir( dirPath );
   
-  if( !getDocument().devStatistic().creatHTMLDataFiles( dirToSaveFilePath ) )
+  if( !getDocument().devStatistic().creatHTMLDataFiles( dirPath ) )
   {
     QMessageBox::warning(this, "Сохранение данных в html", "Ошибка при сохранении данных.");
   }
-
-
 }
 
 void GenerationPage::startGeneration()

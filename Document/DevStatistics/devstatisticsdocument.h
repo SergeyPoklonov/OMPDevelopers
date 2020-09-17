@@ -48,6 +48,8 @@ public:
   void   setMinRevHrs( double hrs );
   
   std::vector< CDeveloperWorkData > getDevelopersStatisticData() const;
+
+  std::map<long,CRedmineIssueData> getIssues() const;
   
   QString trackerName(int trackerID) const;
   int issueToTracker(int issueID) const;
@@ -55,7 +57,7 @@ public:
   OMPCalendarData& getCommonCalendar() { return m_CommonCalendar; }
   const OMPCalendarData& getCommonCalendar() const { return m_CommonCalendar; }
   
-  QString getOutputHTMLDefaultFileName() const;
+  QString getOutputHTMLDefaultFileName(bool withExtension) const;
 
   ///////////////////////////////////////////////////////////////////////////
   // data operations
@@ -63,8 +65,6 @@ public:
   
   bool generateWorkData();
   
-  bool creatHTMLDataFile(QString filePath);
-
   bool creatHTMLDataFiles(QString dirPath);
   
   ///////////////////////////////////////////////////////////////////////////
@@ -109,7 +109,7 @@ private:
   bool m_GenerationDone;
   std::vector< CDeveloperWorkData > m_GenerationResultData;
   std::map<long,QString> m_TrackersList;
-  std::map<long,long> m_IssuesToTrackers;
+  std::map<long,CRedmineIssueData> m_Issues;
   
   int m_GenerationStepNum;
 };

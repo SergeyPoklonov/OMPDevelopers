@@ -36,6 +36,7 @@ public:
   DevStatisticsDocument& devStatistic();
   const DevStatisticsDocument& devStatistic() const;
 
+  QString getSaveSubDirName() const;
   QString getOutputHTMLDefaultFilePath() const;
   
 signals:

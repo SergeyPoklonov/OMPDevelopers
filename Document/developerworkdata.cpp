@@ -1,6 +1,126 @@
 #include "developerworkdata.h"
 #include <numeric>
 
+CRedmineIssueData::CRedmineIssueData()
+{
+    clear();
+}
+
+void CRedmineIssueData::clear()
+{
+    m_ID = 0;
+    m_State = 0;
+    m_IsInPlan = false;
+    m_Tracker = 0;
+    m_PerformerID = 0;
+    m_DeadLine = QDate();
+    m_CloseDate = QDate();
+    m_Name.clear();
+}
+
+long CRedmineIssueData::ID() const
+{
+    return m_ID;
+}
+
+void CRedmineIssueData::setID(long id)
+{
+    m_ID = id;
+}
+
+long CRedmineIssueData::PerformerID() const
+{
+    return m_PerformerID;
+}
+
+void CRedmineIssueData::setPerformerID(long id)
+{
+    m_PerformerID = id;
+}
+
+long CRedmineIssueData::State() const
+{
+    return m_State;
+}
+
+void CRedmineIssueData::setState(long state)
+{
+    m_State = state;
+}
+
+long CRedmineIssueData::Tracker() const
+{
+    return m_Tracker;
+}
+
+void CRedmineIssueData::setTracker(long tracker)
+{
+    m_Tracker = tracker;
+}
+
+bool CRedmineIssueData::IsInPlan() const
+{
+    return m_IsInPlan;
+}
+
+void CRedmineIssueData::setIsInPlan(bool b)
+{
+    m_IsInPlan = b;
+}
+
+QDate CRedmineIssueData::DeadLine() const
+{
+    return m_DeadLine;
+}
+
+void CRedmineIssueData::setDeadLine(QDate d)
+{
+    m_DeadLine = d;
+}
+
+std::set<long> CRedmineIssueData::openStates()
+{
+    return { 1,2,7,13 };
+}
+
+bool CRedmineIssueData::isClosed() const
+{
+    std::set<long> states = openStates();
+    return states.find( State() ) == states.end();
+}
+
+QDate CRedmineIssueData::CloseDate() const
+{
+    return m_CloseDate;
+}
+
+void CRedmineIssueData::setCloseDate(QDate d)
+{
+    m_CloseDate = d;
+}
+
+QString CRedmineIssueData::Name() const
+{
+  return m_Name;
+}
+
+void CRedmineIssueData::setName(QString str)
+{
+  m_Name = str;
+}
+
+bool CRedmineIssueData::isOverdued( QDate onDate ) const
+{
+  if( !DeadLine().isValid() )
+    return false;
+
+  QDate deadlineCheckDate = isClosed() && CloseDate().isValid() ? CloseDate() : onDate;
+
+  return DeadLine() < deadlineCheckDate;
+}
+
+////////////////////////////////////////////////////////////////////////////////////////
+
 CDeveloperWorkData::CDeveloperWorkData()
 {
   clear();
@@ -27,6 +147,64 @@ QString CDeveloperWorkData::getName() const
 double CDeveloperWorkData::getWageRate() const
 {
   return m_DevData.getWageRate();
+}
+
+std::vector<CRedmineIssueData> CDeveloperWorkData::getOverdueIssues( std::map<long,CRedmineIssueData> &issuesData ) const
+{
+  std::vector<CRedmineIssueData> retIssuesList;
+  std::set<long> addedIssues;
+
+  for( const CRedmineTimeData &te : m_RedmineTimeList )
+  {
+    CRedmineIssueData issue = issuesData[te.IssueID()];
+
+    if( addedIssues.find(issue.ID()) != addedIssues.end() )
+      continue;
+
+    if( issue.isOverdued( QDate::currentDate() ) )
+    {
+      retIssuesList.push_back(issue);
+      addedIssues.insert( issue.ID() );
+    }
+  }
+
+  return retIssuesList;
+}
+
+double CDeveloperWorkData::spentOnPlanHrs(std::map<long,CRedmineIssueData> &issuesData) const
+{
+  return std::accumulate(m_RedmineTimeList.begin(), m_RedmineTimeList.end(), 0.0, [&issuesData](double val, const CRedmineTimeData &te)->double
+  {
+    std::vector<long> tasks{ te.IssueID() };
+    for(long tID : tasks)
+    {
+      if( tID > 0 && issuesData[tID].IsInPlan() )
+      {
+        val += te.HoursSpent();
+        break;
+      }
+    }
+
+    return val;
+  });
+}
+
+double CDeveloperWorkData::spentNonPlanHrs(std::map<long,CRedmineIssueData> &issuesData) const
+{
+  return std::accumulate(m_RedmineTimeList.begin(), m_RedmineTimeList.end(), 0.0, [&issuesData](double val, const CRedmineTimeData &te)->double
+  {
+    std::vector<long> tasks{ te.IssueID() };
+    for(long tID : tasks)
+    {
+      if( tID > 0 && !issuesData[tID].IsInPlan() )
+      {
+        val += te.HoursSpent();
+        break;
+      }
+    }
+
+    return val;
+  });
 }
 
 double CDeveloperWorkData::developOtherHrs() const
@@ -137,7 +315,7 @@ void CRevisionData::clear()
   m_SHA.clear();
   m_DeveloperName.clear();
   m_HoursSpent = 0.0;
-  m_RedmineLinked = false;
+  m_RedmineTasksIds.clear();
   m_ChangeCore = false;
 }
 
@@ -183,12 +361,20 @@ void CRevisionData::setHoursSpent(double HoursSpent)
 
 bool CRevisionData::RedmineLinked() const
 {
-    return m_RedmineLinked;
+    return m_RedmineTasksIds.size() > 0;
 }
 
-void CRevisionData::setRedmineLinked(bool RedmineLinked)
+std::vector<long> CRevisionData::RedmineTasksIds() const
 {
-    m_RedmineLinked = RedmineLinked;
+  std::vector<long> vec;
+  std::copy(m_RedmineTasksIds.begin(),m_RedmineTasksIds.end(),std::back_inserter(vec));
+  return vec;
+}
+
+void CRevisionData::setRedmineLinked(const std::vector<long> &tasksIds)
+{
+  m_RedmineTasksIds.clear();
+  m_RedmineTasksIds.insert(tasksIds.begin(), tasksIds.end());
 }
 
 bool CRevisionData::isChangeCore() const

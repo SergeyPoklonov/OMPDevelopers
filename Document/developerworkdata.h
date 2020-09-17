@@ -6,6 +6,7 @@
 #include <QString>
 
 #include <vector>
+#include <set>
 
 class CRedmineTimeData
 {
@@ -33,6 +34,59 @@ private:
   QString m_DeveloperName;
 };
 
+class CRedmineIssueData
+{
+public:
+    CRedmineIssueData();
+
+    void clear();
+
+    long ID() const;
+    void setID(long id);
+
+    long State() const;
+    void setState(long state);
+
+    QDate CloseDate() const;
+    void setCloseDate(QDate d);
+
+    long Tracker() const;
+    void setTracker(long tracker);
+
+    long PerformerID() const;
+    void setPerformerID(long id);
+
+    bool IsInPlan() const;
+    void setIsInPlan(bool b);
+
+    QDate DeadLine() const;
+    void setDeadLine(QDate d);
+
+    bool isClosed() const;
+    bool isOverdued( QDate onDate ) const;
+
+    QString Name() const;
+    void setName(QString str);
+
+    enum customValues
+    {
+       cvDEADLINE  = 9,
+       cvPlan      = 40
+    };
+
+    static std::set<long> openStates();
+
+private:
+    long m_ID;
+    long m_State;
+    long m_Tracker;
+    long m_PerformerID;
+    bool m_IsInPlan;
+    QDate m_DeadLine;
+    QDate m_CloseDate;
+    QString m_Name;
+};
+
 class CRevisionData
 {
 public:
@@ -51,7 +105,8 @@ public:
   void addHoursSpent(double h);
   
   bool RedmineLinked() const;
-  void setRedmineLinked(bool RedmineLinked);
+  void setRedmineLinked(const std::vector<long> &tasksIds);
+  std::vector<long> RedmineTasksIds() const;
   
   bool isChangeCore() const;
   void setChangesCore(bool changes);
@@ -60,7 +115,7 @@ private:
   QString m_SHA;
   QString m_DeveloperName;
   double  m_HoursSpent;
-  bool    m_RedmineLinked;
+  std::set<long> m_RedmineTasksIds;
   bool    m_ChangeCore;
 };
 
@@ -82,6 +137,11 @@ public:
   double redmineDevelopHrs() const;
   double developOtherHrs() const;
   double totalLabourHrs() const { return redmineTotalHrs() + developOtherHrs(); }
+
+  double spentOnPlanHrs( std::map<long,CRedmineIssueData> &issuesData ) const;
+  double spentNonPlanHrs( std::map<long,CRedmineIssueData> &issuesData ) const;
+
+  std::vector<CRedmineIssueData> getOverdueIssues( std::map<long,CRedmineIssueData> &issuesData ) const;
 
   void setDeveloperData(CDeveloperData devData);
   

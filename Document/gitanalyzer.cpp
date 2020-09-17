@@ -158,8 +158,27 @@ bool GitAnalyzer::ParseRevisionBody(const QString &revBodyStr, CRevisionData &re
   QRegExp taskTagRE;
           taskTagRE.setPattern("#(\\d)+(\\D|$)"); //ВНИМАНИЕ! регэксп составной, т.е. найденные элементы будут состоять из трех групп, правильное (т.е. целое) только в первой, с индексом 0!
           
-  const int taskTagPos = notesStr.indexOf( taskTagRE );
-  revData.setRedmineLinked( taskTagPos != -1 );
+  std::vector<long> rmTasksIds;
+  int taskTagPos = 0;
+  do
+  {
+    taskTagPos = notesStr.indexOf( taskTagRE, taskTagPos );
+
+    if( taskTagPos != -1 )
+    {
+      QString taskTag = taskTagRE.cap();
+      taskTag.remove(0,1);
+      const int taskId = taskTag.toInt();
+
+      if( taskId > 0 )
+        rmTasksIds.push_back( taskId );
+
+      taskTagPos += taskTagRE.matchedLength();
+    }
+  }
+  while( taskTagPos != -1 );
+
+  revData.setRedmineLinked( rmTasksIds );
   
   QRegExp hrsTagRE;
           hrsTagRE.setPattern("@\\d*[\\.,]*\\d*");

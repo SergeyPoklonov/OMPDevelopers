@@ -5,7 +5,40 @@
 #include <vector>
 #include <set>
 
+class pair1st_getter
+{
+public:
+  template< typename _K, typename _T >
+  inline const _K& operator()( const std::pair< _K, _T > &it )
+  {
+    return it.first;
+  }
+
+  template< typename _K, typename _T >
+  inline _K& operator()( std::pair< _K, _T > &it )
+  {
+    return it.first;
+  }
+};
+
+class pair2nd_getter
+{
+public:
+  template< typename _K, typename _T >
+  inline const _T& operator()( const std::pair< _K, _T > &it )
+  {
+    return it.second;
+  }
+
+  template< typename _K, typename _T >
+  inline _T& operator()( std::pair< _K, _T > &it )
+  {
+    return it.second;
+  }
+};
+
 #define SET2VEC(s,v)  {(v).clear();(v).resize((s).size());std::copy(std::begin(s),std::end(s),(v).begin());static_assert( sizeof( std::remove_reference<decltype(v)>::type::value_type ) >= sizeof( std::remove_reference<decltype(s)>::type::value_type ) , "Possible loose of data" );}
+#define MAP2SET1(m,s) {(s).clear();std::transform((m).begin(),(m).end(),std::inserter((s),std::begin(s)),pair1st_getter());static_assert( sizeof( std::remove_reference<decltype(s)>::type::value_type ) >= sizeof( std::remove_reference<decltype(m)>::type::key_type ) , "Possible loose of data" );}
 
 namespace utils
 {
@@ -123,6 +156,13 @@ static QString valuesToString(const std::vector<long> &values, QString separator
   }
   
   return qsList.join( separator );
+}
+
+static QString valuesToString(const std::set<long> &values, QString separator)
+{
+  std::vector<long> vec;
+  SET2VEC(values, vec);
+  return valuesToString(vec, separator);
 }
 
 #endif // APPUTILS_H

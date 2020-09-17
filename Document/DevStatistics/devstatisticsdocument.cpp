@@ -67,6 +67,11 @@ void DevStatisticsDocument::setDateTo(QDate d)
   m_DateTo = d;
 }
 
+std::map<long,CRedmineIssueData> DevStatisticsDocument::getIssues() const
+{
+  return m_Issues;
+}
+
 std::vector< CDeveloperWorkData > DevStatisticsDocument::getDevelopersStatisticData() const
 {
   return m_GenerationResultData;
@@ -247,7 +252,7 @@ bool DevStatisticsDocument::generateWorkData()
   {
     emit generationMessage( "Анализ redmine..." );
     
-    if( !redmineAnalyzer.AnalyzeServer( tempWorkersData, m_TrackersList, m_IssuesToTrackers, &errStr ) )
+    if( !redmineAnalyzer.AnalyzeServer( tempWorkersData, m_TrackersList, m_Issues, &errStr ) )
     {
       emit generationErrorOccured( QString("ОШИБКА:%1").arg(errStr) );
       return false;
@@ -265,23 +270,6 @@ bool DevStatisticsDocument::generateWorkData()
 void DevStatisticsDocument::childGenerationStepDone()
 {
   emit generationStepsDone( ++m_GenerationStepNum );
-}
-
-bool DevStatisticsDocument::creatHTMLDataFile(QString filePath)
-{
-  QString htmlText = HTMLGenerator().generateHTMLText( parentDocument() );
-  
-  QFile fileToSave(filePath);
-  
-  if( !fileToSave.open(QIODevice::WriteOnly | QIODevice::Text) )
-    return false;
-
-  QTextStream out(&fileToSave);
-              out.setCodec( QLatin1String("UTF-8").data() );
-              
-  out << htmlText;
-  
-  return true;
 }
 
 bool DevStatisticsDocument::creatHTMLDataFiles(QString dirPath)
@@ -304,12 +292,14 @@ bool DevStatisticsDocument::creatHTMLDataFiles(QString dirPath)
   return true;
 }
 
-QString DevStatisticsDocument::getOutputHTMLDefaultFileName() const
+QString DevStatisticsDocument::getOutputHTMLDefaultFileName(bool withExtension) const
 {
   QString fileName = QString("OMPDevelopersStatistic_%1_%2").arg( m_DateFrom.toString("yyyy") ).arg( m_DateFrom.toString("MM") );
   if( m_DateFrom.month() != m_DateTo.month() )
     fileName += m_DateTo.toString("MM");
-  fileName += ".html";
+
+  if( withExtension )
+    fileName += ".html";
   
   return fileName;
 }
@@ -322,6 +312,6 @@ QString DevStatisticsDocument::trackerName(int trackerID) const
 
 int DevStatisticsDocument::issueToTracker(int issueID) const
 {
-  auto findedItr = m_IssuesToTrackers.find(issueID);
-  return findedItr != m_IssuesToTrackers.end() ? findedItr->second : 0;  
+  auto findedItr = m_Issues.find(issueID);
+  return findedItr != m_Issues.end() ? findedItr->second.Tracker() : 0;
 }

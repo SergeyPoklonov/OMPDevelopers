@@ -14,7 +14,6 @@ class HTMLGenerator
 public:
   HTMLGenerator() {}
   
-  QString generateHTMLText( const DocumentDataManager &docObj );
   QVector<QPair<QString, QString>> generateHTMLFilesTexts( const DocumentDataManager &docObj );
   
 private:
@@ -31,12 +30,17 @@ private:
   
 private:
   void addRevisionsTable( QString tableCaption, const std::vector<CRevisionData> &revsList );
+
+  void addOverdueIssuesTable( const std::vector<CRedmineIssueData> &issuesList );
   
   void addPieChart( QString chartCaption, const HTMLPieChartData &pieData );
+
+  void addPlanNonPlanPieChart( QString chartCaption, std::vector< CDeveloperWorkData >&srcDevList );
   
   void addHorizontalBars( std::vector<HorizontalBarData> &barsData, QString inbarTextColor = "white", QString barBackColor = "silver" );
   
   QString makeGitHTMLRevisionURL(const QString &sha);
+  QString makeRedmineIssueURL(const CRedmineIssueData &issue);
   
   const DocumentDataManager& Doc() const;
   

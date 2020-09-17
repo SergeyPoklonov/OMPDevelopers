@@ -40,9 +40,14 @@ void DocumentDataManager::clear()
   m_DevStatisticsDoc->clear();
 }
 
+QString DocumentDataManager::getSaveSubDirName() const
+{
+  return m_DevStatisticsDoc->getOutputHTMLDefaultFileName(false);
+}
+
 QString DocumentDataManager::getOutputHTMLDefaultFilePath() const
 {
-  const QString fileName = m_DevStatisticsDoc->getOutputHTMLDefaultFileName();
+  const QString fileName = m_DevStatisticsDoc->getOutputHTMLDefaultFileName(true);
   
   const QString dirParth = QCoreApplication::instance()->applicationDirPath();
   
