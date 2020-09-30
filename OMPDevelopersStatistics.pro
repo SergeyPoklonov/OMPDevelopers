@@ -16,6 +16,7 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp\
+    Document/HTMLGenerator/tabledata.cpp \
     Document/developerdatamanager.cpp \
     WizardUI/generalsettingspage.cpp \
     WizardUI/wizardmain.cpp \
@@ -36,6 +37,7 @@ SOURCES += main.cpp\
     WizardUI/calendarperioddialog.cpp
 
 HEADERS  += \
+    Document/HTMLGenerator/tabledata.h \
     Document/developerdatamanager.h \
     apputils.h \
     WizardUI/generalsettingspage.h \

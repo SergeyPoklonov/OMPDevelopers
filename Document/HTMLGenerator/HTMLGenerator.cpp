@@ -284,7 +284,7 @@ void HTMLGenerator::addHorizontalBars( std::vector<HorizontalBarData> &barsData,
     return QString("%1bar%2").arg(className).arg(barInd);
   };
   
-  for(int i = 0; i < barsData.size(); i++)
+  for(int i = 0; i < (int)barsData.size(); i++)
   {
     const HorizontalBarData &barData = barsData[i];
     
@@ -306,7 +306,7 @@ void HTMLGenerator::addHorizontalBars( std::vector<HorizontalBarData> &barsData,
   
   addHTMLLine("</style>");
   
-  for(int i = 0; i < barsData.size(); i++)
+  for(int i = 0; i < (int)barsData.size(); i++)
   {
     const HorizontalBarData &barData = barsData[i];
     
@@ -331,6 +331,50 @@ void HTMLGenerator::addHTMLLine(QString lineText)
     return;
   
   m_HTMLText += QString("%1\n").arg(lineText);
+}
+
+void HTMLGenerator::addTable( QString tableCaption, const HTMLTableData &tableData )
+{
+  if( !tableData.colCount() )
+    return;
+
+  const QString tableHTMLName = makeNameUnique("table");
+  const QString drawFunctionName = makeNameUnique("drawTable");
+
+  addHTMLLine( QString("<p><b>%1</b></p>").arg(tableCaption) );
+
+  addHTMLLine( QString("<div id=""%1""></div>").arg( tableHTMLName ) );
+  addHTMLLine( "<script type=""text/javascript"" src=""https://www.gstatic.com/charts/loader.js""></script>" );
+  addHTMLLine( "<script type=""text/javascript"">" );
+  addHTMLLine( "google.charts.load('current', {'packages':['table']});" );
+  addHTMLLine( QString("google.charts.setOnLoadCallback(%1);").arg( drawFunctionName ) );
+  addHTMLLine( QString("function %1() {").arg(drawFunctionName) );
+  addHTMLLine( "var data = new google.visualization.DataTable();" );
+
+  for(int i = 0; i < tableData.colCount(); i++)
+  {
+    addHTMLLine( QString("data.addColumn(%1);").arg( tableData.getColString(i) ) );
+  }
+
+  if( tableData.rowCount() )
+  {
+    addHTMLLine("data.addRows([");
+
+    for(int i = 0; i < tableData.rowCount(); i++)
+    {
+      if( i )
+        m_HTMLText += ",";
+
+      addHTMLLine( QString("[%1]").arg( tableData.getRowString(i) ) );
+    }
+
+    addHTMLLine("]);");
+  }
+
+  addHTMLLine( QString("var table = new google.visualization.Table(document.getElementById('%1'));").arg(tableHTMLName) );
+  addHTMLLine( "table.draw(data, {showRowNumber: true, allowHtml: true});" );
+  addHTMLLine( "}" );
+  addHTMLLine( "</script>" );
 }
 
 void HTMLGenerator::addPieChart( QString chartCaption, const HTMLPieChartData &pieData )
@@ -380,7 +424,7 @@ void HTMLGenerator::addPieChart( QString chartCaption, const HTMLPieChartData &p
   {
     m_HTMLText += ", \n slices: { \n";
     
-    for(int i = 0; i < slices.size(); i++)
+    for(int i = 0; i < (int)slices.size(); i++)
     {
       if( i )
         m_HTMLText += ",";
@@ -404,14 +448,14 @@ void HTMLGenerator::addOverdueIssuesTable( const std::vector<CRedmineIssueData> 
 {
   if( issuesList.size() )
   {
-    m_HTMLText += "<table border=1>\n";
-    m_HTMLText += QString("<caption>%1</caption>\n").arg( "Просроченные задачи" );
-    m_HTMLText += "<tr>\n";
-    m_HTMLText += "<th>Задача</th>\n";
-    m_HTMLText += "<th>Deadline</th>\n";
-    m_HTMLText += "<th>Дата закрытия</th>\n";
-    m_HTMLText += "<th>Включена в план</th>\n";
-    m_HTMLText += "</tr>\n";
+    HTMLTableData tableData;
+
+    tableData.setHeader( HTMLTableHeaderData()
+                         .addCol("Задача",HTMLTableHeaderData::ctString)
+                         .addCol("Deadline",HTMLTableHeaderData::ctString)
+                         .addCol("Дата закрытия",HTMLTableHeaderData::ctString)
+                         .addCol("Включена в план",HTMLTableHeaderData::ctBoolean)
+                         );
 
     std::vector<CRedmineIssueData> sortedIssuesList( issuesList );
 
@@ -425,14 +469,15 @@ void HTMLGenerator::addOverdueIssuesTable( const std::vector<CRedmineIssueData> 
 
     for( const CRedmineIssueData &issueData : sortedIssuesList )
     {
-      m_HTMLText += QString("<tr><td>%1</td><td>%2</td><td>%3</td><td>%4</td> </tr>\n")
-                    .arg( makeRedmineIssueURL(issueData) )
-                    .arg( issueData.DeadLine().toString("yyyy-MM-dd") )
-                    .arg( issueData.CloseDate().isValid() ? issueData.CloseDate().toString("yyyy-MM-dd") : "-" )
-                    .arg( issueData.IsInPlan() ? "Да" : "-" );
+      tableData.addRow( HTMLTableRowData()
+                        .addColData( makeRedmineIssueURL(issueData) )
+                        .addColData( issueData.DeadLine().toString("yyyy-MM-dd") )
+                        .addColData( issueData.CloseDate().isValid() ? issueData.CloseDate().toString("yyyy-MM-dd") : "-" )
+                        .addColData( issueData.IsInPlan() )
+                        );
     }
 
-    m_HTMLText += "</table>\n";
+    addTable( "Просроченные задачи", tableData );
   }
 }
 
@@ -440,30 +485,31 @@ void HTMLGenerator::addRevisionsTable( QString tableCaption, const std::vector<C
 {
   if( revsList.size() )
   {
-    m_HTMLText += "<table border=1>\n";
-    m_HTMLText += QString("<caption>%1</caption>\n").arg( tableCaption );
-    m_HTMLText += "<tr>\n";
-    m_HTMLText += "<th>Трудоемкость</th>\n";
-    m_HTMLText += "<th>Ссылка</th>\n";
-    m_HTMLText += "<th>По Redmine</th>\n";
-    m_HTMLText += "</tr>\n";
-    
+    HTMLTableData tableData;
+
+    tableData.setHeader( HTMLTableHeaderData()
+                         .addCol("Трудоемкость",HTMLTableHeaderData::ctNumber)
+                         .addCol("Ссылка",HTMLTableHeaderData::ctString)
+                         .addCol("По Redmine",HTMLTableHeaderData::ctBoolean)
+                         );
+
     std::vector<CRevisionData> sortedRevsList( revsList );
-    
+
     std::sort(sortedRevsList.begin(), sortedRevsList.end(), [](const CRevisionData &f, const CRevisionData &s)
     {
       return f.HoursSpent() < s.HoursSpent();
     });
-    
+
     for( const CRevisionData &revData : sortedRevsList )
     {
-      m_HTMLText += QString("<tr><td>%1</td><td>%2</td><td>%3</td> </tr>\n")
-                    .arg( revData.HoursSpent() )
-                    .arg( makeGitHTMLRevisionURL( revData.SHA() ) )
-                    .arg( revData.RedmineLinked() ? "Да" : "Нет" );
+      tableData.addRow( HTMLTableRowData()
+                        .addColData( revData.HoursSpent() )
+                        .addColData( makeGitHTMLRevisionURL( revData.SHA() ) )
+                        .addColData( revData.RedmineLinked() )
+                        );
     }
-    
-    m_HTMLText += "</table>\n";
+
+    addTable( tableCaption, tableData );
   }
 }
 
