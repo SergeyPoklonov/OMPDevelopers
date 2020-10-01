@@ -71,10 +71,10 @@ public:
   HTMLTableRowData() {}
   ~HTMLTableRowData() {}
 
-  HTMLTableRowData& addColData(QString str);
-  HTMLTableRowData& addColData(bool b);
-  HTMLTableRowData& addColData(double f);
-  HTMLTableRowData& addColData(double f, QString lbl);
+  HTMLTableRowData& addColData(QString str, bool isNull = false);
+  HTMLTableRowData& addColData(bool b, bool isNull = false);
+  HTMLTableRowData& addColData(double f, bool isNull = false);
+  HTMLTableRowData& addColData(double f, QString lbl, bool isNull = false);
   HTMLTableRowData& addNull();
 
   QString colHtmlStr(int colind) const;

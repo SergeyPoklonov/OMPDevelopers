@@ -7,6 +7,7 @@
 
 #include <vector>
 #include <set>
+#include <map>
 
 class CRedmineTimeData
 {
@@ -63,10 +64,13 @@ public:
     void setDeadLine(QDate d);
 
     bool isClosed() const;
-    bool isOverdued( QDate onDate ) const;
+    bool isOverdued() const;
 
     QString Name() const;
     void setName(QString str);
+
+    QString PerformerName() const;
+    void setPerformerName(QString str);
 
     enum customValues
     {
@@ -85,6 +89,7 @@ private:
     QDate m_DeadLine;
     QDate m_CloseDate;
     QString m_Name;
+    QString m_AssignedTo;
 };
 
 class CRevisionData
@@ -141,7 +146,7 @@ public:
   double spentOnPlanHrs( std::map<long,CRedmineIssueData> &issuesData ) const;
   double spentNonPlanHrs( std::map<long,CRedmineIssueData> &issuesData ) const;
 
-  std::vector<CRedmineIssueData> getOverdueIssues( std::map<long,CRedmineIssueData> &issuesData ) const;
+  void getIssuesWithHrsSpent( const std::map<long,CRedmineIssueData> &issuesData, std::vector<CRedmineIssueData> &issues, std::map<long, double> &hrsSpentForIssues) const;
 
   void setDeveloperData(CDeveloperData devData);
   

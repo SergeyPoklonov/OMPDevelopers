@@ -34,7 +34,7 @@ private:
 
   void addTable( QString tableCaption, const HTMLTableData &tableData );
   void addRevisionsTable( QString tableCaption, const std::vector<CRevisionData> &revsList );
-  void addOverdueIssuesTable( const std::vector<CRedmineIssueData> &issuesList );
+  void addIssuesTable( const std::vector<CRedmineIssueData> &issuesList, const std::map<long, double> &hrsSpentForIssues );
 
   void addPieChart( QString chartCaption, const HTMLPieChartData &pieData );
   void addPlanNonPlanPieChart( QString chartCaption, std::vector< CDeveloperWorkData >&srcDevList );

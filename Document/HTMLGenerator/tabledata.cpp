@@ -57,34 +57,42 @@ HTMLTableCellDataNumber::HTMLTableCellDataNumber(double f, QString lbl)
 
 QString HTMLTableCellDataNumber::getDataHTMLStr()
 {
-  if( m_Val.second.length() )
-  {
-    return QString("{v: %1, f: '%2'}").arg(m_Val.first).arg(m_Val.second);
-  }
-
-  return QString::number(m_Val.first);
+  return QString("{v: %1, f: '%2'}").arg(m_Val.first).arg(m_Val.second);
 }
 
-HTMLTableRowData& HTMLTableRowData::addColData(QString str)
+HTMLTableRowData& HTMLTableRowData::addColData(QString str, bool isNull)
 {
+  if( isNull )
+    return addNull();
+
   m_ColData.push_back( std::shared_ptr<HTMLTableCellData>(HTMLTableCellData::createData(str)) );
   return *this;
 }
 
-HTMLTableRowData& HTMLTableRowData::addColData(bool b)
+HTMLTableRowData& HTMLTableRowData::addColData(bool b, bool isNull)
 {
+  if( isNull )
+    return addNull();
+
   m_ColData.push_back( std::shared_ptr<HTMLTableCellData>(HTMLTableCellData::createData(b)) );
   return *this;
 }
 
-HTMLTableRowData& HTMLTableRowData::addColData(double f)
+HTMLTableRowData& HTMLTableRowData::addColData(double f, bool isNull)
 {
-  return addColData(f,"");
+  return addColData(f,QString::number(f),isNull);
 }
 
-HTMLTableRowData& HTMLTableRowData::addColData(double f, QString lbl)
+HTMLTableRowData& HTMLTableRowData::addColData(double f, QString lbl, bool isNull)
 {
-  m_ColData.push_back( std::shared_ptr<HTMLTableCellData>(HTMLTableCellData::createData(f,lbl)) );
+  if( isNull )
+  {
+    m_ColData.push_back( std::shared_ptr<HTMLTableCellData>(HTMLTableCellData::createData(0.0," ")) );
+  }
+  else
+  {
+    m_ColData.push_back( std::shared_ptr<HTMLTableCellData>(HTMLTableCellData::createData(f,lbl)) );
+  }
   return *this;
 }
 

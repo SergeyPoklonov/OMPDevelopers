@@ -167,9 +167,11 @@ QVector<QPair<QString, QString>> HTMLGenerator::generateHTMLFilesTexts( const Do
 
         // список просроченных задач
         std::map<long,CRedmineIssueData> issues = Doc().devStatistic().getIssues();
-        std::vector<CRedmineIssueData> overdueIssues = devData.getOverdueIssues( issues );
+        std::vector<CRedmineIssueData> overdueIssues;
+        std::map<long, double> hrsSpentForIssues;
+        devData.getIssuesWithHrsSpent( issues, overdueIssues, hrsSpentForIssues);
         {
-          addOverdueIssuesTable( overdueIssues );
+          addIssuesTable( overdueIssues, hrsSpentForIssues );
         }
 
         std::vector<CRevisionData> nonRMRevisions = devData.nonRedmineRevisionsList(false);
@@ -444,7 +446,7 @@ void HTMLGenerator::addPieChart( QString chartCaption, const HTMLPieChartData &p
   m_HTMLText += "</script> \n";
 }
 
-void HTMLGenerator::addOverdueIssuesTable( const std::vector<CRedmineIssueData> &issuesList )
+void HTMLGenerator::addIssuesTable( const std::vector<CRedmineIssueData> &issuesList, const std::map<long, double> &hrsSpentForIssues )
 {
   if( issuesList.size() )
   {
@@ -454,6 +456,7 @@ void HTMLGenerator::addOverdueIssuesTable( const std::vector<CRedmineIssueData> 
                          .addCol("Задача",HTMLTableHeaderData::ctString)
                          .addCol("Deadline",HTMLTableHeaderData::ctString)
                          .addCol("Дата закрытия",HTMLTableHeaderData::ctString)
+                         .addCol("Затрачено,ч", HTMLTableHeaderData::ctNumber)
                          .addCol("Включена в план",HTMLTableHeaderData::ctBoolean)
                          );
 
@@ -469,15 +472,19 @@ void HTMLGenerator::addOverdueIssuesTable( const std::vector<CRedmineIssueData> 
 
     for( const CRedmineIssueData &issueData : sortedIssuesList )
     {
+      auto spentIt = hrsSpentForIssues.find( issueData.ID() );
+      const double spentHrs = spentIt != hrsSpentForIssues.end() ? spentIt->second : 0.0;
+
       tableData.addRow( HTMLTableRowData()
                         .addColData( makeRedmineIssueURL(issueData) )
                         .addColData( issueData.DeadLine().toString("yyyy-MM-dd") )
                         .addColData( issueData.CloseDate().isValid() ? issueData.CloseDate().toString("yyyy-MM-dd") : "-" )
+                        .addColData( spentHrs, spentHrs == 0.0 )
                         .addColData( issueData.IsInPlan() )
                         );
     }
 
-    addTable( "Просроченные задачи", tableData );
+    addTable( "Задачи в работе", tableData );
   }
 }
 

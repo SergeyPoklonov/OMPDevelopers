@@ -349,6 +349,7 @@ bool RedmineAnalyzer::ReadIssues( const std::set<long> &issues, std::map<long,CR
 
       QJsonObject performerObject = issueObject.take("assigned_to").toObject();
       issueData.setPerformerID( performerObject.take("id").toInt() );
+      issueData.setPerformerName( performerObject.take("name").toString() );
 
       QVariant nameVar = issueObject.take("subject").toVariant();
       issueData.setName( nameVar.toString() );

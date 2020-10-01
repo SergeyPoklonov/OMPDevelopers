@@ -16,6 +16,7 @@ void CRedmineIssueData::clear()
     m_DeadLine = QDate();
     m_CloseDate = QDate();
     m_Name.clear();
+    m_AssignedTo.clear();
 }
 
 long CRedmineIssueData::ID() const
@@ -109,12 +110,22 @@ void CRedmineIssueData::setName(QString str)
   m_Name = str;
 }
 
-bool CRedmineIssueData::isOverdued( QDate onDate ) const
+QString CRedmineIssueData::PerformerName() const
+{
+  return m_AssignedTo;
+}
+
+void CRedmineIssueData::setPerformerName(QString str)
+{
+  m_AssignedTo = str;
+}
+
+bool CRedmineIssueData::isOverdued() const
 {
   if( !DeadLine().isValid() )
     return false;
 
-  QDate deadlineCheckDate = isClosed() && CloseDate().isValid() ? CloseDate() : onDate;
+  QDate deadlineCheckDate = isClosed() && CloseDate().isValid() ? CloseDate() : QDate::currentDate();
 
   return DeadLine() < deadlineCheckDate;
 }
@@ -149,26 +160,41 @@ double CDeveloperWorkData::getWageRate() const
   return m_DevData.getWageRate();
 }
 
-std::vector<CRedmineIssueData> CDeveloperWorkData::getOverdueIssues( std::map<long,CRedmineIssueData> &issuesData ) const
+void CDeveloperWorkData::getIssuesWithHrsSpent( const std::map<long,CRedmineIssueData> &issuesData, std::vector<CRedmineIssueData> &issuesList, std::map<long, double> &hrsSpentForIssues) const
 {
-  std::vector<CRedmineIssueData> retIssuesList;
+  // добавляем все задачи на которые списывалась трудоемкость
+  issuesList.clear();
+  hrsSpentForIssues.clear();
+
   std::set<long> addedIssues;
 
   for( const CRedmineTimeData &te : m_RedmineTimeList )
   {
-    CRedmineIssueData issue = issuesData[te.IssueID()];
+    const CRedmineIssueData &issue = issuesData.find( te.IssueID() )->second;
+
+    hrsSpentForIssues[te.IssueID()] += te.HoursSpent();
 
     if( addedIssues.find(issue.ID()) != addedIssues.end() )
       continue;
 
-    if( issue.isOverdued( QDate::currentDate() ) )
+    issuesList.push_back(issue);
+    addedIssues.insert( issue.ID() );
+  }
+
+  // добавляем те, на которые списания не было, но они просрочены
+  for(auto &issuePair : issuesData)
+  {
+    const CRedmineIssueData &issue = issuePair.second;
+
+    if( addedIssues.find(issue.ID()) != addedIssues.end() )
+      continue;
+
+    if( issue.PerformerName() == m_DevData.getName() && issue.isOverdued() )
     {
-      retIssuesList.push_back(issue);
+      issuesList.push_back(issue);
       addedIssues.insert( issue.ID() );
     }
   }
-
-  return retIssuesList;
 }
 
 double CDeveloperWorkData::spentOnPlanHrs(std::map<long,CRedmineIssueData> &issuesData) const
