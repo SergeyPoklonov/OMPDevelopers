@@ -310,6 +310,9 @@ bool RedmineAnalyzer::ReadIssues( const std::set<long> &issues, std::map<long,CR
     
     std::vector<long> curIssuesList;
     curIssuesList.assign(issuesList.begin() + issuesOffset, issuesList.begin() + std::min( (stepNum+1) * maxRecordsPerStep, (int)issuesList.size() ) );
+
+    if( curIssuesList.empty() )
+      break;
     
     const QString isssuesStr = valuesToString(curIssuesList, ",");
     

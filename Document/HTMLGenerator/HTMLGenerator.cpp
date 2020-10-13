@@ -454,6 +454,7 @@ void HTMLGenerator::addIssuesTable( const std::vector<CRedmineIssueData> &issues
 
     tableData.setHeader( HTMLTableHeaderData()
                          .addCol("Задача",HTMLTableHeaderData::ctString)
+                         .addCol("Трекер",HTMLTableHeaderData::ctString)
                          .addCol("Deadline",HTMLTableHeaderData::ctString)
                          .addCol("Дата закрытия",HTMLTableHeaderData::ctString)
                          .addCol("Затрачено,ч", HTMLTableHeaderData::ctNumber)
@@ -477,6 +478,7 @@ void HTMLGenerator::addIssuesTable( const std::vector<CRedmineIssueData> &issues
 
       tableData.addRow( HTMLTableRowData()
                         .addColData( makeRedmineIssueURL(issueData) )
+                        .addColData( Doc().devStatistic().trackerName( issueData.Tracker() ) )
                         .addColData( issueData.DeadLine().toString("yyyy-MM-dd") )
                         .addColData( issueData.CloseDate().isValid() ? issueData.CloseDate().toString("yyyy-MM-dd") : "-" )
                         .addColData( spentHrs, spentHrs == 0.0 )
